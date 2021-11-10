@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">EZ Place</string>
+
+    <!-- IntroActivity-->
+    <string name="lets_get_started_text">Let\'s get started.</string>
+    <string name="intro_text_description">
+        Make the placement process transparent and easy with EZ Place.
+    </string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_up">SIGN UP</string>
+
+</resources>

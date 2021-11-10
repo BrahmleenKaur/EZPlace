@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "831504374555",
+    "project_id": "ez-place-374a2",
+    "storage_bucket": "ez-place-374a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831504374555:android:e2229101141f7bf5e411be",
+        "android_client_info": {
+          "package_name": "com.example.ezplace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831504374555-5li1mutq5spvjd2bdbre1sejma75ubso.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsCmbBD8fpcZbPO5vlYT0mq37P0Cbk6EM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831504374555-5li1mutq5spvjd2bdbre1sejma75ubso.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
