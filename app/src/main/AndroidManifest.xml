@@ -9,15 +9,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.SignInActivity" />
+
+        <activity android:name=".activities.UpdateProfileActivity" />
+
+        <activity android:name=".activities.SignUpActivity" />
+
         <activity
             android:name=".activities.IntroActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="fullSensor" />
         <activity android:name=".activities.BaseActivity" />
 
         <activity
             android:name=".activities.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,8 +32,7 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:screenOrientation="fullSensor">
-        </activity>
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

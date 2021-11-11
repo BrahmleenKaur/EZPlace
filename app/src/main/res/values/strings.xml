@@ -9,4 +9,29 @@
     <string name="sign_in">SIGN IN</string>
     <string name="sign_up">SIGN UP</string>
 
+    <!-- SignUpActivity -->
+    <string name="sign_up_description_text">Enter your name, email id and password to register with us.</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="enter_first_name">Please enter first name.</string>
+    <string name="enter_last_name">Please enter last name.</string>
+    <string name="enter_email">Please enter your email id.</string>
+    <string name="enter_password">Please enter password.</string>
+
+    <!-- Progress Dialog-->
+    <string name="please_wait">Please Wait&#8230;</string>
+
+    <string name="college_name">College Name</string>
+    <string name="college_roll_number">College Roll Number</string>
+    <string name="branch">Branch Code</string>
+    <string name="cgpa">CGPA</string>
+
+    <!-- SignInActivity -->
+    <string name="sign_in_description_text">Enter your email id and password to sign in.</string>
+
+    <string name="update_profile">Update Profile</string>
+    <string name="update">UPDATE</string>
+
 </resources>

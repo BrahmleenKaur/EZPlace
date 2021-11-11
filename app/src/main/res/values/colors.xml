@@ -15,4 +15,6 @@
 
     <color name="green_light">#6EDD56</color>
     <color name="green_dark">#0AAC0D</color>
+
+    <color name="snackbar_error_color">#F72400</color>
 </resources>
