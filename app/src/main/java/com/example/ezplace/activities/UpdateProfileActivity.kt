@@ -38,6 +38,7 @@ class UpdateProfileActivity : BaseActivity() {
 
         val userHashMap = HashMap<String, Any>()
 
+
         if (et_first_name_update_profile.text.toString() != mStudentDetails.firstName) {
             userHashMap[Constants.FIRST_NAME] = et_first_name_update_profile.text.toString()
         }

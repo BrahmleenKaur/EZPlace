@@ -3,11 +3,10 @@
 
     <!-- IntroActivity-->
     <string name="lets_get_started_text">Let\'s get started.</string>
-    <string name="intro_text_description">
-        Make the placement process transparent and easy with EZ Place.
-    </string>
-    <string name="sign_in">SIGN IN</string>
-    <string name="sign_up">SIGN UP</string>
+    <string name="intro_text_description">Make the placement process transparent and easy with EZ Place.</string>
+    <string name="sign_in">Already have an account ?</string>
+    <string name="sign_up_as_student">SIGN UP AS STUDENT</string>
+    <string name="sign_up_as_tpo">SIGN UP AS TPO</string>
 
     <!-- SignUpActivity -->
     <string name="sign_up_description_text">Enter your name, email id and password to register with us.</string>
@@ -19,6 +18,9 @@
     <string name="enter_last_name">Please enter last name.</string>
     <string name="enter_email">Please enter your email id.</string>
     <string name="enter_password">Please enter password.</string>
+    <string name="enter_college_name">Please enter your college name.</string>
+    <string name="sign_up">Sign Up</string>
+
 
     <!-- Progress Dialog-->
     <string name="please_wait">Please Wait&#8230;</string>
@@ -33,5 +35,30 @@
 
     <string name="update_profile">Update Profile</string>
     <string name="update">UPDATE</string>
+
+    <!-- MainActivity -->
+    <string name="upcoming">Upcoming</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="previous">Previous</string>
+    <string name="main_activity_title">Companies</string>
+
+    <string name="nav_my_profile">My Profile</string>
+    <string name="nav_sign_out">Sign Out</string>
+
+    <!-- Alert Dialog -->
+    <string name="are_you_sure">Are You Sure ?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="sign_out_alert_text">You will be signed out.</string>
+
+    <!-- NewCompanyDetails Activity-->
+    <string name="new_company">New Company</string>
+    <string name="company_name">Company Name</string>
+    <string name="cgpa_cut_off">CGPA Cut Off</string>
+    <string name="branches_allowed">Branches Allowed</string>
+    <string name="ctc_details">CTC Details</string>
+    <string name="location">Location</string>
+    <string name="deadline_to_apply">Deadline to apply</string>
+    <string name="submit">Submit</string>
 
 </resources>

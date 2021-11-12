@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.example.ezplace.activities.SignInActivity
 import com.example.ezplace.activities.SignUpActivity
 import com.example.ezplace.models.Student
+import com.example.ezplace.models.TPO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -14,7 +15,7 @@ import com.google.firebase.ktx.Firebase
 class FirebaseAuthClass() {
     private lateinit var auth: FirebaseAuth
 
-    fun signUp(student : Student, password: String, activity : SignUpActivity){
+    fun signUpStudent(student : Student, password: String, activity : SignUpActivity){
         val email = student.email
         auth = Firebase.auth
         auth.createUserWithEmailAndPassword(email, password)
@@ -23,11 +24,37 @@ class FirebaseAuthClass() {
                 // If the registration is successfully done
                 if (task.isSuccessful) {
                     val firebaseUser: FirebaseUser = task.result!!.user!!
-                    val registeredEmail = firebaseUser.email!!
+                    //val registeredEmail = firebaseUser.email!!
                     student.id = firebaseUser.uid
                     // call the registerUser function of FirestoreClass to make an entry in the database.
                     FirestoreClass().registerStudent(activity, student)
 
+                } else {
+                    Toast.makeText(
+                        activity,
+                        task.exception!!.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.e("signuperror", "${task.exception!!.message}")
+                    activity.hideProgressDialog()
+                }
+
+            }
+    }
+
+    fun signUpTPO(tpo : TPO, password: String, activity : SignUpActivity){
+        val email = tpo.email
+        auth = Firebase.auth
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+
+                // If the registration is successfully done
+                if (task.isSuccessful) {
+                    val firebaseUser: FirebaseUser = task.result!!.user!!
+                    //val registeredEmail = firebaseUser.email!!
+                    tpo.id = firebaseUser.uid
+                    // call the registerUser function of FirestoreClass to make an entry in the database.
+                    FirestoreClass().registerTPO(activity, tpo)
                 } else {
                     Toast.makeText(
                         activity,

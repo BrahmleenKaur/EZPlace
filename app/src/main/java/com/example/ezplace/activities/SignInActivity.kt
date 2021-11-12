@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.example.ezplace.R
 import com.example.ezplace.firebase.FirebaseAuthClass
 import com.example.ezplace.models.Student
+import com.example.ezplace.models.TPO
 import com.example.ezplace.utils.Constants
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
@@ -63,11 +64,21 @@ class SignInActivity : BaseActivity() {
     /**
      * A function to get the user details from the firestore database after authentication.
      */
-    fun signInSuccess(student: Student) {
+    fun signInSuccessByStudent(student: Student) {
         hideProgressDialog()
         Toast.makeText(this, "${student.firstName} signed in successfully.", Toast.LENGTH_LONG).show()
         intent = Intent(this, MainActivity::class.java)
         intent.putExtra(Constants.STUDENT_DETAILS, student)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        this.finish()
+    }
+
+    fun signInSuccessByTPO(tpo: TPO) {
+        hideProgressDialog()
+        Toast.makeText(this, "${tpo.firstName} signed in successfully.", Toast.LENGTH_LONG).show()
+        intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(Constants.TPO_DETAILS, tpo)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         this.finish()

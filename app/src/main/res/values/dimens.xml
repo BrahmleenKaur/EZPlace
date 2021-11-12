@@ -39,7 +39,7 @@
     <dimen name="progress_text_marginStart">16dp</dimen>
     <dimen name="progress_text_size">16sp</dimen>
 
-    <!-- UpdateProfile Activity -->
+    <!-- UpdateProfile Activity and NewCompanyDetailsActivity-->
     <dimen name="my_profile_screen_content_marginStartEnd">16dp</dimen>
     <dimen name="my_profile_screen_content_marginTopBottom">10dp</dimen>
     <dimen name="my_profile_screen_content_padding">16dp</dimen>
@@ -51,5 +51,25 @@
     <dimen name="card_view_elevation">10dp</dimen>
     <dimen name="card_view_corner_radius">10dp</dimen>
     <dimen name="card_view_layout_content_padding">16dp</dimen>
+
+    <!-- Main Activity -->
+    <dimen name="radio_group_margin_top">10dp</dimen>
+    <dimen name="radio_button_text_size">15sp</dimen>
+
+    <!-- Floating Action button -->
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="standard_55">65dp</dimen>
+    <dimen name="standard_105">125dp</dimen>
+    <dimen name="standard_155">185dp</dimen>
+    <dimen name="standard_205">245dp</dimen>
+
+    <dimen name="height_of_nav_main">200dp</dimen>
+    <dimen name="nav_image_size">80dp</dimen>
+    <dimen name="nav_content_margin_StartEnd">16dp</dimen>
+    <dimen name="nav_content_margin_top">5dp</dimen>
+    <dimen name="nav_content_margin_bottom">10dp</dimen>
+    <dimen name="nav_user_name_text_size">18sp</dimen>
+    <dimen name="nav_image_circular_border_width">1dp</dimen>
+    <dimen name="nav_divider_height">0.5dp</dimen>
 
 </resources>

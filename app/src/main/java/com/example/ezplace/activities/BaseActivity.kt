@@ -1,15 +1,20 @@
 package com.example.ezplace.activities
 
+import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import android.widget.Toolbar
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.example.ezplace.R
+import com.example.ezplace.firebase.FirebaseAuthClass
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.dialog_progress.*
@@ -72,5 +77,34 @@ open class BaseActivity : AppCompatActivity() {
 
     fun hideProgressDialog() {
         mProgressDialog.dismiss()
+    }
+
+    fun showAlertDialog(activity: Activity, text: String)  {
+        AlertDialog.Builder(this)
+            .setMessage(text)
+            .setTitle(getString(R.string.are_you_sure))
+            .setPositiveButton(
+                getString(R.string.yes)
+            ) { _, _ ->
+                when(activity){
+                    is MainActivity ->{
+                        if (FirebaseAuthClass().getCurrentUserID().isNotEmpty())
+                            FirebaseAuthClass().signOut()
+
+                        val intent = Intent(activity, IntroActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        activity.finish()
+                    }
+                }
+            }.setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+                when(activity){
+                    is MainActivity ->{
+                        dialog.dismiss()
+                    }
+                }
+            }
+            .show()
     }
 }

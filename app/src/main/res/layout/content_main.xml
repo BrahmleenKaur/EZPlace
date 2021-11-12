@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.MainActivity">
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/radio_group_margin_top"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_upcoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@drawable/custom_radio_button"
+            android:button="@android:color/transparent"
+            android:textStyle="bold"
+            android:textSize="@dimen/radio_button_text_size"
+            android:text="@string/upcoming"
+            android:layout_weight="1"/>
+
+        <RadioButton
+            android:id="@+id/rb_ongoing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@drawable/custom_radio_button"
+            android:button="@android:color/transparent"
+            android:checked="true"
+            android:textStyle="bold"
+            android:textSize="@dimen/radio_button_text_size"
+            android:text="@string/ongoing"
+            android:layout_weight="1"/>
+
+        <RadioButton
+            android:id="@+id/rb_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@drawable/custom_radio_button"
+            android:button="@android:color/transparent"
+            android:textStyle="bold"
+            android:textSize="@dimen/radio_button_text_size"
+            android:text="@string/previous"
+            android:layout_weight="1"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_companies_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_no_companies_available"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="200dp"
+            android:layout_marginHorizontal="10dp"
+            android:text="Ongoing"
+            android:textColor="@color/secondary_text_color"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>
