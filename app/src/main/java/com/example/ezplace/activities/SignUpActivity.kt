@@ -51,7 +51,7 @@ class SignUpActivity : BaseActivity() {
         val password: String = et_password_sign_up.text.toString().trim { it <= ' ' }
         val collegeName: String = et_college_name_sign_up.text.toString().trim { it <= ' ' }
 
-        if (validateForm(firstName, lastName,email, password)) {
+        if (validateForm(firstName,email, password)) {
 
             if(isStudent){
                 val student = Student()
@@ -86,7 +86,7 @@ class SignUpActivity : BaseActivity() {
     /**
      * A function to validate the entries of a new user.
      */
-    private fun validateForm(firstName: String, lastName :String,email: String, password: String): Boolean {
+    private fun validateForm(firstName: String,email: String, password: String): Boolean {
         return when {
             TextUtils.isEmpty(firstName) -> {
                 showErrorSnackBar(getString(R.string.enter_first_name))
@@ -120,7 +120,10 @@ class SignUpActivity : BaseActivity() {
         Toast.makeText(this,
             "${FirebaseAuthClass().getCurrentUserMailId()} has successfully registered with EZ Place!",
             Toast.LENGTH_LONG).show()
-        startActivity(Intent(this,UpdateProfileActivity::class.java))
+
+        val intent = Intent(this,UpdateProfileActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
         // Finish the Sign-Up Screen
         finish()
     }

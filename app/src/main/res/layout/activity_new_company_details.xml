@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
             android:layout_marginTop="@dimen/new_company_screen_marginTopBottom"
+            android:layout_marginBottom="@dimen/new_company_screen_marginTopBottom"
             android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
             android:background="@color/white">
 
@@ -47,13 +48,19 @@
                 android:orientation="vertical"
                 android:padding="@dimen/my_profile_screen_content_padding">
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/autoCompanyNameTextView"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/new_company_til_marginTop"
-                    android:hint="@string/company_name"
-                    android:textSize="@dimen/et_text_size"/>
+                    android:layout_marginTop="@dimen/new_company_til_marginTop">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_new_company_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/company_name"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -101,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/new_company_til_marginTop"
-                    android:hint="@string/branches_allowed"
+                    android:text="@string/branches_allowed"
                     android:textSize="@dimen/et_text_size" />
 
                 <LinearLayout

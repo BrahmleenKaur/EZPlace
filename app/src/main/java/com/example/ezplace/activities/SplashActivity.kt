@@ -40,9 +40,14 @@ class SplashActivity : BaseActivity() {
     fun signInSuccessByStudent(loggedInStudent: Student) {
         Log.i("student Main","Student Main")
         Toast.makeText(this, "${loggedInStudent.firstName} signed in successfully.", Toast.LENGTH_LONG).show()
-        intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(Constants.STUDENT_DETAILS, loggedInStudent)
-        startActivity(intent)
+
+        if(loggedInStudent.branch.isEmpty())
+            startActivity(Intent(this, UpdateProfileActivity::class.java))
+        else{
+            intent = Intent(this, MainActivity::class.java)
+            intent.putExtra(Constants.STUDENT_DETAILS, loggedInStudent)
+            startActivity(intent)
+        }
         this.finish()
     }
 

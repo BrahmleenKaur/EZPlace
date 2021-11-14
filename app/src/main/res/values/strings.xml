@@ -4,7 +4,8 @@
     <!-- IntroActivity-->
     <string name="lets_get_started_text">Let\'s get started.</string>
     <string name="intro_text_description">Make the placement process transparent and easy with EZ Place.</string>
-    <string name="sign_in">Already have an account ?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="already_have_an_account">Already have an account ?</string>
     <string name="sign_up_as_student">SIGN UP AS STUDENT</string>
     <string name="sign_up_as_tpo">SIGN UP AS TPO</string>
 
@@ -25,16 +26,19 @@
     <!-- Progress Dialog-->
     <string name="please_wait">Please Wait&#8230;</string>
 
-    <string name="college_name">College Name</string>
-    <string name="college_roll_number">College Roll Number</string>
-    <string name="branch">Branch Code</string>
-    <string name="cgpa">CGPA</string>
 
     <!-- SignInActivity -->
     <string name="sign_in_description_text">Enter your email id and password to sign in.</string>
 
+    <!-- Update profile activity -->
     <string name="update_profile">Update Profile</string>
     <string name="update">UPDATE</string>
+    <string name="college_name">College Name</string>
+    <string name="college_roll_number">College Roll Number</string>
+    <string name="college_code">College Code</string>
+    <string name="branch">Branch Code</string>
+    <string name="cgpa">CGPA</string>
+    <string name="select_branch">Select branch</string>
 
     <!-- MainActivity -->
     <string name="upcoming">Upcoming</string>
@@ -78,6 +82,13 @@
     <string name="allowed">Allowed</string>
     <string name="not_allowed">Not allowed</string>
     <string name="company_is_added">Company added successfully</string>
+    <string name="default_notification_channel_id">EZ Place notification channel Id</string>
+
+    <string name="tap_to_view_more">Tap to view more</string>
+    <string name="enter_your_college_code">Please enter your college code.</string>
+    <string name="select_you_branch">Please select your branch.</string>
+    <string name="enter_cgpa">Please enter your cgpa.</string>
+    <string name="enter_roll_number">Please enter your roll number.</string>
 
 
 </resources>

@@ -30,18 +30,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
-        android:layout_marginTop="@dimen/my_profile_screen_content_marginTopBottom"
-        android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
-        android:layout_marginBottom="@dimen/my_profile_screen_content_marginTopBottom"
-        android:background="@color/white"
-        android:orientation="vertical"
+        android:background="@color/light_blue"
         android:gravity="center">
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="@dimen/card_view_elevation">
+            android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
+            android:layout_marginBottom="@dimen/my_profile_screen_content_marginTopBottom"
+            android:layout_marginTop="@dimen/my_profile_screen_content_marginTopBottom"
+            android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
+            android:background="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -81,16 +80,13 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/my_profile_et_email_marginTop">
+                    android:layout_marginTop="@dimen/my_profile_name_til_marginTop">
 
                     <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/et_email_update_profile"
+                        android:id="@+id/et_roll_number_update_profile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:hint="@string/email"
-                        android:inputType="textEmailAddress"
+                        android:hint="@string/college_roll_number"
                         android:textSize="@dimen/et_text_size" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -104,24 +100,25 @@
                         android:id="@+id/et_college_code_update_profile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/college_name"
+                        android:hint="@string/college_code"
                         android:textSize="@dimen/et_text_size" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/my_profile_name_til_marginTop">
+                    android:layout_marginTop="@dimen/my_profile_name_til_marginTop"
+                    android:text="@string/select_branch"
+                    android:textSize="@dimen/et_text_size" />
 
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/et_branch_update_profile"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/branch"
-                        android:textSize="@dimen/et_text_size" />
+                <RadioGroup
+                    android:id="@+id/rg_branches_update_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                </com.google.android.material.textfield.TextInputLayout>
+                </RadioGroup>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -136,25 +133,26 @@
                         android:textSize="@dimen/et_text_size" />
 
                 </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-        </ScrollView>
 
-        <Button
-            android:id="@+id/btn_update"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/my_profile_btn_update_marginTop"
-            android:background="@drawable/shape_button_rounded_blue"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
-            android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
-            android:paddingTop="@dimen/btn_paddingTopBottom"
-            android:paddingBottom="@dimen/btn_paddingTopBottom"
-            android:text="@string/update"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/btn_text_size" />
+                <Button
+                    android:id="@+id/btn_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/my_profile_btn_update_marginTop"
+                    android:background="@drawable/shape_button_rounded_blue"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
+                    android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
+                    android:paddingTop="@dimen/btn_paddingTopBottom"
+                    android:paddingBottom="@dimen/btn_paddingTopBottom"
+                    android:text="@string/update"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/btn_text_size" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 </LinearLayout>

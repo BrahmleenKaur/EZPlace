@@ -73,7 +73,7 @@ class FirebaseAuthClass() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    FirestoreClass().loadStudentData(activity)
+                    FirestoreClass().loadStudentOrTPOData(activity)
                 } else {
                     Toast.makeText(
                         activity,

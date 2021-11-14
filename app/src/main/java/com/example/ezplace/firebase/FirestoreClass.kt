@@ -96,6 +96,9 @@ class FirestoreClass{
                     is UpdateProfileActivity -> {
                         activity.setStudentDataInUI(loggedInUser)
                     }
+                    is MainActivity ->{
+                        activity.loadStudentDataSuccess(loggedInUser)
+                    }
                 }
             }
             .addOnFailureListener { e ->
@@ -152,19 +155,34 @@ class FirestoreClass{
     }
 
 
-    fun updateUserProfileData(activity: UpdateProfileActivity, userHashMap: HashMap<String, Any>) {
+    fun updateStudentProfileData(activity: Activity, studentHashMap: HashMap<String, Any>) {
         mFireStore.collection(Constants.STUDENTS) // Collection Name
             .document(FirebaseAuthClass().getCurrentUserID()) // Document ID
-            .update(userHashMap) // A hashmap of fields which are to be updated.
+            .update(studentHashMap) // A hashmap of fields which are to be updated.
             .addOnSuccessListener {
                 // Profile data is updated successfully.
                 Log.i(activity.javaClass.simpleName, "Profile Data updated successfully!")
                 Toast.makeText(activity, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
                 // Notify the success result.
-                activity.profileUpdateSuccess()
+
+                when(activity){
+                    is UpdateProfileActivity ->{
+                        activity.profileUpdateSuccess()
+                    }
+                    is MainActivity ->{
+                        activity.tokenUpdateSuccess()
+                    }
+                }
             }
             .addOnFailureListener { e ->
-                activity.hideProgressDialog()
+                when(activity){
+                    is UpdateProfileActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                    is MainActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                }
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while updating profile.",
@@ -188,25 +206,7 @@ class FirestoreClass{
 //            }
 //    }
 
-    fun getCollegeCode(company : Company,tpoId:String,activity : NewCompanyDetailsActivity){
-        mFireStore.collection(Constants.TPO)
-            .document(tpoId)
-            .get()
-            .addOnSuccessListener { TPODocument->
-                val collegeCode:String = TPODocument.toObject(TPO::class.java)!!.collegeCode
-                addCompanyInCollege(company,collegeCode,activity)
-            }
-            .addOnFailureListener {e->
-                activity.hideProgressDialog()
-                Log.e(
-                    activity.javaClass.simpleName,
-                    "Error while getting college code.",
-                    e
-                )
-            }
-    }
-
-    private fun addCompanyInCollege(company: Company, collegeCode : String, activity: NewCompanyDetailsActivity){
+    fun addCompanyInCollege(company: Company, collegeCode : String, activity: NewCompanyDetailsActivity){
         var companyHashMap = HashMap<String,Company>()
         companyHashMap[company.name]=company
 
@@ -216,13 +216,42 @@ class FirestoreClass{
             .document(company.name)
             .set(company)
             .addOnSuccessListener {
-                activity.companyRegisteredSuccess()
+                activity.companyRegisteredSuccess(company)
             }
             .addOnFailureListener {e->
                 activity.hideProgressDialog()
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while adding company in college.",
+                    e
+                )
+            }
+    }
+
+    fun getEligibleStudentsFcmTokens(company: Company, collegeCode : String, activity: NewCompanyDetailsActivity){
+        mFireStore.collection(Constants.STUDENTS)
+            .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
+            .whereIn(
+                Constants.BRANCH,
+                company.branchesAllowed
+            )
+            .whereLessThanOrEqualTo(Constants.BACKLOGS_ALLOWED,company.backLogsAllowed)
+            .whereEqualTo(Constants.IS_PLACED_ABOVE_THRESHOLD,0)
+            .get()
+            .addOnSuccessListener { studentDocuments ->
+                var eligibleStudentsFcmTokens : ArrayList<String> = ArrayList()
+                for (student in studentDocuments) {
+                    // Convert all the document snapshot to the Student object using the data model class.
+                    val studentObject = student.toObject(Student::class.java)!!
+                    eligibleStudentsFcmTokens.add(studentObject.fcmToken)
+                }
+                activity.getEligibleStudentsFcmTokensSuccess(eligibleStudentsFcmTokens,company.name)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while fetching eligible students.",
                     e
                 )
             }
