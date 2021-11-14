@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:background="@drawable/shape_button_rounded_green"
+            android:background="@drawable/shape_button_rounded_blue"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
             android:paddingTop="@dimen/btn_paddingTopBottom"

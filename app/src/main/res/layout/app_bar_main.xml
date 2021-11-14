@@ -52,94 +52,7 @@
             />
 
         <LinearLayout
-            android:id="@+id/ll_createPost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom|end">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_createPost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                style="bold"
-                android:textColor="@color/black"
-                android:layout_marginTop="30dp"
-                android:text="Add Place"/>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_createPost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
-                app:borderWidth="0dp"
-                android:backgroundTint="#BCEF6A"
-                app:maxImageSize="40dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_dashboard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom|end">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_dashboard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="bold"
-                android:textColor="@color/black"
-                android:visibility="gone"
-                android:layout_marginTop="30dp"
-                android:text="Dashboard"/>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_dashboard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
-                app:borderWidth="0dp"
-                android:backgroundTint="#BCEF6A"
-                app:maxImageSize="30dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_shop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom|end">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="bold"
-                android:textColor="@color/black"
-                android:visibility="gone"
-                android:layout_marginTop="30dp"
-                android:text="Shop"/>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
-                app:borderWidth="0dp"
-                app:maxImageSize="30dp"
-                android:backgroundTint="#BCEF6A" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_donate"
+            android:id="@+id/ll_add_new_company"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="bold"
@@ -148,30 +61,29 @@
             android:layout_gravity="bottom|end">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_donate"
+                android:id="@+id/tv_add_new_company"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="bold"
                 android:textColor="@color/black"
                 android:visibility="gone"
                 android:layout_marginTop="30dp"
-                android:text="Donate"/>
+                android:text="@string/add_new_company"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_donate"
+                android:id="@+id/fab_add_new_company"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/fab_margin"
                 app:borderWidth="0dp"
-                android:backgroundTint="#BCEF6A"
+                android:backgroundTint="@color/light_blue"
                 app:maxImageSize="30dp"
                 />
 
         </LinearLayout>
 
     </FrameLayout>
-
 
 </LinearLayout>
 

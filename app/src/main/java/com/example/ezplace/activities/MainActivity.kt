@@ -60,15 +60,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab.setImageResource(R.drawable.ic_wrong)
         fab.scaleType = ImageView.ScaleType.FIT_XY
 
-        ll_createPost.animate().translationY(-resources.getDimension(R.dimen.standard_55))
-        ll_dashboard.animate().translationY(-resources.getDimension(R.dimen.standard_105))
-        ll_donate.animate().translationY(-resources.getDimension(R.dimen.standard_155))
-        ll_shop.animate().translationY(-resources.getDimension(R.dimen.standard_205))
+        ll_add_new_company.animate().translationY(-resources.getDimension(R.dimen.standard_55))
 
-        tv_createPost.visibility= View.VISIBLE
-        tv_dashboard.visibility= View.VISIBLE
-        tv_donate.visibility= View.VISIBLE
-        tv_shop.visibility= View.VISIBLE
+        tv_add_new_company.visibility= View.VISIBLE
     }
 
     private fun closeFABMenu() {
@@ -80,15 +74,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab.scaleType = ImageView.ScaleType.FIT_XY
 
 
-        ll_createPost.animate().translationY(0F)
-        ll_dashboard.animate().translationY(0F)
-        ll_donate.animate().translationY(0F)
-        ll_shop.animate().translationY(0F)
+        ll_add_new_company.animate().translationY(0F)
 
-        tv_createPost.visibility= View.GONE
-        tv_dashboard.visibility= View.GONE
-        tv_donate.visibility= View.GONE
-        tv_shop.visibility= View.GONE
+        tv_add_new_company.visibility= View.GONE
     }
 
     private fun toggleDrawer() {
@@ -142,6 +130,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         }
 
+        fab_add_new_company.setOnClickListener{
+            startActivity(Intent(this,NewCompanyDetailsActivity::class.java))
+            closeFABMenu()
+        }
+
     }
 
     private fun setForStudent(){
@@ -162,10 +155,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text = "Hi ${mStudent.firstName}"
 
         fab.visibility = View.GONE
-        fab_donate.visibility = View.GONE
-        fab_createPost.visibility = View.GONE
-        fab_dashboard.visibility = View.GONE
-        fab_shop.visibility = View.GONE
+        fab_add_new_company.visibility = View.GONE
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {

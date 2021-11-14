@@ -60,5 +60,24 @@
     <string name="location">Location</string>
     <string name="deadline_to_apply">Deadline to apply</string>
     <string name="submit">Submit</string>
+    <string name="computer_science">Computer Science</string>
+    <string name="electronics_and_communication">Electronics and Communication</string>
+    <string name="electrical">Electrical</string>
+    <string name="instrumentation_and_control">Instrumentation and Control</string>
+    <string name="mechanical">Mechanical</string>
+    <string name="textile">Textile</string>
+    <string name="add_new_company">Add new company</string>
+    <string name="enter_company_name">Please enter the company name</string>
+    <string name="enter_cgpa_cut_off">Please enter CGPA Cut off</string>
+    <string name="enter_at_least_one_branch">Please enter at least one branch</string>
+    <string name="enter_company_location">Please enter company location</string>
+    <string name="enter_deadline_to_apply">Please enter deadline to apply</string>
+    <string name="enter_backlogs_details">Please enter backlogs details</string>
+    <string name="enter_ctc_details">Enter CTC details</string>
+    <string name="backlogs">Backlogs</string>
+    <string name="allowed">Allowed</string>
+    <string name="not_allowed">Not allowed</string>
+    <string name="company_is_added">Company added successfully</string>
+
 
 </resources>

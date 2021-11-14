@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.ezplace.activities.*
 import com.example.ezplace.models.College
+import com.example.ezplace.models.Company
 import com.example.ezplace.models.Student
 import com.example.ezplace.models.TPO
 import com.example.ezplace.utils.Constants
@@ -54,9 +55,9 @@ class FirestoreClass{
 
     fun registerTPO(activity : SignUpActivity, tpoInfo: TPO) {
         mFireStore.collection(Constants.TPO)
-            // Here the document id is the Student ID.
+            // Here the document id is the TPO ID.
             .document(tpoInfo.id)
-            // Here the studentInfo are field values and the SetOption is set to merge. It is for if we want to merge
+            // Here the tpoInfo is field values and the SetOption is set to merge. It is for if we want to merge
             .set(tpoInfo, SetOptions.merge())
             .addOnSuccessListener {
                 // Here call a function of base activity for transferring the result to it.
@@ -172,5 +173,59 @@ class FirestoreClass{
             }
     }
 
+//    fun loadCompanyNames(activity: NewCompanyDetailsActivity){
+//        mFireStore.collection(Constants.COMPANIES)
+//            .get()
+//            .addOnSuccessListener { companies->
+//                var companiesNamesList : ArrayList<String> = ArrayList()
+//                var companiesHashmapNameAndId : HashMap<String,String> = HashMap<String,String>()
+//                for (company in companies) {
+//                    val companyObject = company.toObject(Company::class.java)
+//                    companiesHashmapNameAndId[companyObject.companyName]= companyObject.companyID
+//                    companiesNamesList.add(companyObject.companyName)
+//                }
+//                activity.getCompaniesNamesSuccess(companiesNamesList,companiesHashmapNameAndId)
+//            }
+//    }
+
+    fun getCollegeCode(company : Company,tpoId:String,activity : NewCompanyDetailsActivity){
+        mFireStore.collection(Constants.TPO)
+            .document(tpoId)
+            .get()
+            .addOnSuccessListener { TPODocument->
+                val collegeCode:String = TPODocument.toObject(TPO::class.java)!!.collegeCode
+                addCompanyInCollege(company,collegeCode,activity)
+            }
+            .addOnFailureListener {e->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while getting college code.",
+                    e
+                )
+            }
+    }
+
+    private fun addCompanyInCollege(company: Company, collegeCode : String, activity: NewCompanyDetailsActivity){
+        var companyHashMap = HashMap<String,Company>()
+        companyHashMap[company.name]=company
+
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .collection(Constants.COMPANIES)
+            .document(company.name)
+            .set(company)
+            .addOnSuccessListener {
+                activity.companyRegisteredSuccess()
+            }
+            .addOnFailureListener {e->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while adding company in college.",
+                    e
+                )
+            }
+    }
 
 }

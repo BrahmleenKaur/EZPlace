@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.NewCompanyDetailsActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_new_company"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/dark_blue">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/new_company"
+            android:textColor="@color/white"
+            android:textSize="@dimen/toolbar_title_text_size"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!--This layout is just used for applying a background image to the screen below the toolbar.-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_blue"
+        android:gravity="center">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
+            android:layout_marginTop="@dimen/new_company_screen_marginTopBottom"
+            android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="@dimen/my_profile_screen_content_padding">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/autoCompanyNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/new_company_til_marginTop"
+                    android:hint="@string/company_name"
+                    android:textSize="@dimen/et_text_size"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/new_company_til_marginTop">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_cgpa_cut_off"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/cgpa_cut_off"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/backlogs"
+                    android:layout_marginTop="@dimen/new_company_til_marginTop"/>
+
+                <RadioGroup
+                    android:id="@+id/rg_backlogs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_backlogs_allowed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/allowed"/>
+
+                    <RadioButton
+                        android:id="@+id/rb_backlogs_not_allowed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/not_allowed"/>
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/et_branches_allowed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/new_company_til_marginTop"
+                    android:hint="@string/branches_allowed"
+                    android:textSize="@dimen/et_text_size" />
+
+                <LinearLayout
+                    android:id="@+id/ll_check_boxes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/checkbox_linear_layout_margin_top"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/new_company_screen_marginTopBottom">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_ctc_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:hint="@string/ctc_details"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/new_company_screen_marginTopBottom">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_location_new_company"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/location"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/new_company_screen_marginTopBottom">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_deadline_to_apply"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/deadline_to_apply"
+                        android:inputType="date"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btn_submit_new_company"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/my_profile_btn_update_marginTop"
+                    android:background="@drawable/shape_button_rounded_blue"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingTop="@dimen/btn_paddingTopBottom"
+                    android:paddingBottom="@dimen/btn_paddingTopBottom"
+                    android:text="@string/submit"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/btn_text_size" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+</LinearLayout>

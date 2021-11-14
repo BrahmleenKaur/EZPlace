@@ -70,7 +70,7 @@ class SignUpActivity : BaseActivity() {
                 tpo.collegeName = collegeName
                 tpo.email=email
 
-                val college = College()
+                val college = College(collegeName,HashMap())
                 college.collegeName=collegeName
 
                 // Show the progress dialog.

@@ -72,4 +72,11 @@
     <dimen name="nav_image_circular_border_width">1dp</dimen>
     <dimen name="nav_divider_height">0.5dp</dimen>
 
+    <!-- NewCompany Activity -->
+    <dimen name="new_company_screen_marginStartEnd">16dp</dimen>
+    <dimen name="new_company_screen_marginTopBottom">5dp</dimen>
+    <dimen name="new_company_screen_padding">16dp</dimen>
+    <dimen name="new_company_til_marginTop">10dp</dimen>
+    <dimen name="checkbox_linear_layout_margin_top">10dp</dimen>
+
 </resources>

@@ -142,7 +142,7 @@
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_button_rounded_green"
+            android:background="@drawable/shape_button_rounded_blue"
             android:foreground="?attr/selectableItemBackground"
             android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
             android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
