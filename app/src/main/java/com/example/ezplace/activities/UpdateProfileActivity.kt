@@ -111,7 +111,7 @@ class UpdateProfileActivity : BaseActivity() {
                 showErrorSnackBar(getString(R.string.enter_first_name))
                 false
             }
-            TextUtils.isEmpty(firstName) -> {
+            TextUtils.isEmpty(rollNumber) -> {
                 showErrorSnackBar(getString(R.string.enter_roll_number))
                 false
             }
