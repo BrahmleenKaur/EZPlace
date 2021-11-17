@@ -44,18 +44,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginBottom="85dp"
+            android:layout_marginEnd="@dimen/fab_margin"
             app:borderWidth="0dp"
             android:backgroundTint="@color/dark_blue"
             android:src="@drawable/ic_fab"
-            app:maxImageSize="40dp"
-            />
+            app:maxImageSize="40dp" />
 
         <LinearLayout
             android:id="@+id/ll_add_new_company"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="bold"
+            android:layout_marginBottom="85dp"
+            android:layout_marginEnd="@dimen/fab_margin"
             android:textColor="@color/black"
             android:orientation="horizontal"
             android:layout_gravity="bottom|end">
@@ -65,9 +67,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="bold"
+                android:layout_marginBottom="5dp"
                 android:textColor="@color/black"
                 android:visibility="gone"
-                android:layout_marginTop="30dp"
+                android:layout_marginEnd="@dimen/tv_fab_margin_end"
                 android:text="@string/add_new_company"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -75,7 +78,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
                 app:borderWidth="0dp"
                 android:backgroundTint="@color/light_blue"
                 app:maxImageSize="30dp"

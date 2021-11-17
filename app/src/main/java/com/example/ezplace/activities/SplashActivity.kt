@@ -23,10 +23,11 @@ class SplashActivity : BaseActivity() {
         fullScreenMode()
         customFont(tv_app_name)
 
-        // 3 SECOND DELAY BEFORE SWITCHING TO NEXT ACTIVITY
+        /** 3 SECOND DELAY BEFORE SWITCHING TO NEXT ACTIVITY */
         Handler(Looper.getMainLooper()).postDelayed({
             val currentUserID = FirebaseAuthClass().getCurrentUserID()
 
+            /** Auto Sign-in feature */
             if (currentUserID.isNotEmpty()) {
                 // TPC is Training and Placement Officer
                 FirestoreClass().loadStudentOrTPOData(this)
@@ -37,10 +38,12 @@ class SplashActivity : BaseActivity() {
         }, 300)
     }
 
+    /** Student is auto signed-in successfully */
     fun signInSuccessByStudent(loggedInStudent: Student) {
-        Log.i("student Main","Student Main")
         Toast.makeText(this, "${loggedInStudent.firstName} signed in successfully.", Toast.LENGTH_LONG).show()
 
+        /** If the student's profile is empty, then send to
+         * Update profile activity , otherwise to Main activity*/
         if(loggedInStudent.branch.isEmpty())
             startActivity(Intent(this, UpdateProfileActivity::class.java))
         else{
@@ -51,8 +54,11 @@ class SplashActivity : BaseActivity() {
         this.finish()
     }
 
+    /** TPO is auto signed-in successfully */
     fun signInSuccessByTPO(loggedInTPO: TPO) {
         Toast.makeText(this, "${loggedInTPO.email} signed in successfully.", Toast.LENGTH_SHORT).show()
+
+        /** Send TPO to Main activity */
         intent = Intent(this, MainActivity::class.java)
         intent.putExtra(Constants.TPO_DETAILS, loggedInTPO)
         startActivity(intent)

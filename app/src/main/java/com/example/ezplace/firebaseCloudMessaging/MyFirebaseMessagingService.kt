@@ -24,6 +24,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
+    /** When a new message s received */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -46,7 +47,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendNewTokenToServer(token: String) {
-        // Here we have saved the token in the Shared Preferences
+        /** Here we have saved the token in the Shared Preferences */
         val sharedPreferences =
             this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -54,6 +55,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         editor.apply()
     }
 
+    /** Sends notification with given title and message */
     private fun sendNotification(title: String, message: String) {
         val intent :Intent
         if (FirebaseAuthClass().getCurrentUserID().isNotEmpty()){
@@ -90,7 +92,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Chnnel EZ Place Title",
+                "Channel EZ Place Title",
                 NotificationManager.IMPORTANCE_HIGH
             )
 

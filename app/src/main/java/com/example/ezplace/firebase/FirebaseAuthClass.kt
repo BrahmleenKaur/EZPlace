@@ -22,7 +22,7 @@ class FirebaseAuthClass() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
 
-                // If the registration is successfully done
+                /** If the registration is successfully done */
                 if (task.isSuccessful) {
                     val firebaseUser: FirebaseUser = task.result!!.user!!
                     //val registeredEmail = firebaseUser.email!!
@@ -49,7 +49,7 @@ class FirebaseAuthClass() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
 
-                // If the registration is successfully done
+                /** If the registration is successfully done */
                 if (task.isSuccessful) {
                     val firebaseUser: FirebaseUser = task.result!!.user!!
                     //val registeredEmail = firebaseUser.email!!

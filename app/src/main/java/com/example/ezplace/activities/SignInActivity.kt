@@ -50,19 +50,22 @@ class SignInActivity : BaseActivity() {
      * A function to validate the entries of a user.
      */
     private fun validateForm(email: String, password: String): Boolean {
-        return if (TextUtils.isEmpty(email)) {
-            showErrorSnackBar(getString(R.string.enter_email))
-            false
-        } else if (TextUtils.isEmpty(password)) {
-            showErrorSnackBar(getString(R.string.enter_password))
-            false
-        } else {
-            true
+
+        return when{
+            (TextUtils.isEmpty(email)) ->{
+                showErrorSnackBar(getString(R.string.enter_email))
+                false
+            }
+            TextUtils.isEmpty(password) -> {
+                showErrorSnackBar(getString(R.string.enter_password))
+                false
+            }
+            else -> true
         }
     }
 
     /**
-     * A function to get the user details from the firestore database after authentication.
+     * After successful sign-in , sends the student to Main activity
      */
     fun signInSuccessByStudent(student: Student) {
         hideProgressDialog()
@@ -74,6 +77,9 @@ class SignInActivity : BaseActivity() {
         this.finish()
     }
 
+    /**
+     * After successful sign-in , sends the TPO to Main activity
+     */
     fun signInSuccessByTPO(tpo: TPO) {
         hideProgressDialog()
         Toast.makeText(this, "${tpo.firstName} signed in successfully.", Toast.LENGTH_LONG).show()

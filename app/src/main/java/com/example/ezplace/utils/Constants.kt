@@ -31,6 +31,7 @@ object Constants {
     const val EMAIL ="email"
     const val COMPANY_NAME_AND_LAST_ROUND = "companiesListAndLastRound"
     const val NUMBER_OF_BACKLOGS = "numberOfBacklogs"
+    const val ROUNDS_OVER = "roundsOver"
 
     const val STUDENT_DETAILS: String = "studentDetails"
     const val TPO_DETAILS: String = "tpoDetails"
@@ -53,7 +54,7 @@ object Constants {
 
     // Branches list
     val ALL_BRANCHES = arrayOf(
-        "Computer Science", "Electronics and Communication", "Electrical",
+        "Computer Science", "Information Technology", "Electronics and Communication", "Electrical",
         "Instrumentation and Control", "Mechanical", "Chemical", "Textile"
     )
 

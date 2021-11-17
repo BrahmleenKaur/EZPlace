@@ -6,9 +6,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.CheckBox
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import com.example.ezplace.R
-import com.example.ezplace.firebase.FirebaseAuthClass
 import com.example.ezplace.firebase.FirestoreClass
 import com.example.ezplace.models.Company
 import com.example.ezplace.models.CompanyNameAndLastRound
@@ -23,12 +21,10 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class NewCompanyDetailsActivity : BaseActivity() {
 
-    lateinit var collegeCode : String
+    lateinit var collegeCode: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,17 +32,19 @@ class NewCompanyDetailsActivity : BaseActivity() {
 
         setupActionBar(toolbar_new_company)
 
-        if(intent.hasExtra(Constants.COLLEGE_CODE))
+        /** Initialize college Code passed from previous activity i.e. Main activity */
+        if (intent.hasExtra(Constants.COLLEGE_CODE))
             collegeCode = intent.getStringExtra(Constants.COLLEGE_CODE)!!
 
         addBranchesCheckboxesInLayout()
 
         btn_submit_new_company.setOnClickListener {
-            // Call a function to add new company in the database.
+            /**Call a function to add new company in the database */
             submitNewCompanyDetails()
         }
     }
 
+    /** Shows the list of branches in the layout */
     private fun addBranchesCheckboxesInLayout() {
         val checkboxLinearLayout = ll_check_boxes
 
@@ -58,11 +56,11 @@ class NewCompanyDetailsActivity : BaseActivity() {
     }
 
     private fun submitNewCompanyDetails() {
-        // Here we get the text from editText and trim the space
+        /**Here we get the text from editText and trim the space */
         val companyName: String = et_new_company_name.text.toString().trim { it <= ' ' }
         val cgpaCutOffString: String = et_cgpa_cut_off.text.toString().trim { it <= ' ' }
         val ctcDetails = et_ctc_details.text.toString().trim { it <= ' ' }
-        val jobProfile = et_job_profile.text.toString().trim { it <= ' '}
+        val jobProfile = et_job_profile.text.toString().trim { it <= ' ' }
         val companyLocation: String = et_location_new_company.text.toString().trim { it <= ' ' }
         val deadlineToApply: String = et_deadline_to_apply.text.toString().trim { it <= ' ' }
         val backLogsAllowed: Int = if (rb_backlogs_allowed.isSelected) 1 else 0
@@ -90,59 +88,59 @@ class NewCompanyDetailsActivity : BaseActivity() {
             val cgpaCutOff = cgpaCutOffString.toDouble()
             var company = Company(
                 companyName, cgpaCutOff,
-                backLogsAllowed, branchesAllowed, ctcDetails,jobProfile,
-                companyLocation, deadlineToApply,ArrayList(),0)
-            Log.i("tag2",collegeCode)
-            registerCompanyInCollegeDatabase(company)
+                backLogsAllowed, branchesAllowed, ctcDetails,
+                companyLocation, deadlineToApply, jobProfile,
+                ArrayList(), 0
+            )
+
+            /** Update company details in database */
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().addCompanyInCollege(company, collegeCode, this)
         }
     }
 
-    private fun registerCompanyInCollegeDatabase(company: Company) {
-        showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().addCompanyInCollege(company,collegeCode,this)
-    }
-
-    fun companyRegisteredSuccess(company : Company) {
+    fun companyRegisteredSuccess(company: Company) {
         hideProgressDialog()
         Toast.makeText(
             this, getString(R.string.company_is_added),
             Toast.LENGTH_LONG
         ).show()
 
-        // Get eligible students list according to company constraints
-        FirestoreClass().getEligibleStudents(company,collegeCode,this)
+        /**Get eligible students list according to company constraints */
+        FirestoreClass().getEligibleStudents(company, collegeCode, this)
     }
 
-    fun getEligibleStudentsSuccess(eligibleStudents : ArrayList<Student>,companyName : String){
+    /** Successfully fetched list of eligible students according to company constraints */
+    fun getEligibleStudentsSuccess(eligibleStudents: ArrayList<Student>, companyName: String) {
         hideProgressDialog()
 
-        var eligibleStudentsIds :ArrayList<String> = ArrayList()
-        Log.i("stu2",eligibleStudents.size.toString())
-        //Notify all these eligible students regarding new company
-        // This will be done in background using Async tasks
-        for(student in eligibleStudents){
-            val token=student.fcmToken
-            val id=student.id
+        var eligibleStudentsIds: ArrayList<String> = ArrayList()
+
+        /** Notify all these eligible students regarding new company
+        This will be done in background using Async tasks*/
+        for (student in eligibleStudents) {
+            val token = student.fcmToken
+            val id = student.id
             eligibleStudentsIds.add(id)
-            Log.i("stu",student.firstName)
             SendNotificationToEligibleStudentsAsyncTask(companyName, token).execute()
         }
+
+        /** Update the eligible student's database */
         showProgressDialog(getString(R.string.please_wait))
-        val companyLastRoundObject = CompanyNameAndLastRound(companyName,1)
-        FirestoreClass().updateCompanyInStudentDatabase(eligibleStudentsIds, companyLastRoundObject,this)
+        val companyLastRoundObject = CompanyNameAndLastRound(companyName, 1)
+        FirestoreClass().updateCompanyInStudentDatabase(
+            eligibleStudentsIds,
+            companyLastRoundObject,
+            this
+        )
     }
 
-    fun updateCompanyInStudentDatabaseSuccess(){
-        Log.i("update","here")
+    fun updateCompanyInStudentDatabaseSuccess() {
         hideProgressDialog()
         finish()
     }
 
-
-    /**
-     * A function to validate the details of a new company.
-     */
-
+    /** A function to validate the details of a new company.*/
     private fun validateForm(
         companyName: String,
         cgpaCutOff: String,
@@ -191,8 +189,12 @@ class NewCompanyDetailsActivity : BaseActivity() {
         }
     }
 
-    private inner class SendNotificationToEligibleStudentsAsyncTask(val companyName: String, val token : String) :
-        AsyncTask<Any, Void, String>() {
+
+    /** Async Task to send notification to eligible students */
+    private inner class SendNotificationToEligibleStudentsAsyncTask(
+        val companyName: String,
+        val token: String
+    ) : AsyncTask<Any, Void, String>() {
 
         override fun doInBackground(vararg p0: Any?): String {
             var result: String

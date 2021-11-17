@@ -13,15 +13,17 @@ import com.google.firebase.firestore.SetOptions
 class FirestoreClass {
     private val mFireStore = FirebaseFirestore.getInstance()
 
+    /** Register student in firestore after sign-up */
     fun registerStudent(activity: SignUpActivity, studentInfo: Student) {
-        val id=studentInfo.id
+        val id = studentInfo.id
         mFireStore.collection(Constants.STUDENTS)
-            // Here the document id is the Student ID.
+            /** Here the document id is the Student ID. */
             .document(id)
-            // Here the studentInfo are field values and the SetOption is set to merge. It is for if we want to merge
+            /** Here the studentInfo are field values and the
+             * SetOption is set to merge. It is for if we want to merge */
             .set(studentInfo, SetOptions.merge())
             .addOnSuccessListener {
-                // Here call a function of base activity for transferring the result to it.
+                /** Here call a function of base activity for transferring the result to it. */
                 activity.studentRegisteredSuccess()
             }
             .addOnFailureListener { e ->
@@ -78,8 +80,6 @@ class FirestoreClass {
             .document(FirebaseAuthClass().getCurrentUserID())
             .get()
             .addOnSuccessListener { document ->
-                Log.i("detail", document.toString())
-
                 // Here we have received the document snapshot which is converted into the Student Data model object.
                 val loggedInUser = document.toObject(Student::class.java)!!
 
@@ -93,10 +93,6 @@ class FirestoreClass {
                     }
                     is UpdateProfileActivity -> {
                         activity.setStudentDataInUI(loggedInUser)
-                    }
-                    is MainActivity -> {
-                        Log.i("yes","yes")
-                        activity.loadStudentDataSuccess(loggedInUser)
                     }
                 }
             }
@@ -156,7 +152,6 @@ class FirestoreClass {
                 )
             }
     }
-
 
     fun updateStudentProfileData(activity: Activity, studentHashMap: HashMap<String, Any>) {
         mFireStore.collection(Constants.STUDENTS) // Collection Name
@@ -225,8 +220,8 @@ class FirestoreClass {
         collegeCode: String,
         activity: NewCompanyDetailsActivity
     ) {
-        Log.i("stu3",collegeCode)
-        if(company.backLogsAllowed == 0) {
+        Log.i("stu3", collegeCode)
+        if (company.backLogsAllowed == 0) {
             mFireStore.collection(Constants.STUDENTS)
                 .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
                 .whereIn(
@@ -257,8 +252,7 @@ class FirestoreClass {
                         e
                     )
                 }
-        }
-        else{
+        } else {
             mFireStore.collection(Constants.STUDENTS)
                 .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
                 .whereIn(
@@ -293,20 +287,26 @@ class FirestoreClass {
 
     fun updateCompanyInStudentDatabase(
         studentsList: ArrayList<String>,
-        companyLastRoundObject : CompanyNameAndLastRound,
+        companyLastRoundObject: CompanyNameAndLastRound,
         activity: NewCompanyDetailsActivity
     ) {
-        for(id in studentsList){
+        for (id in studentsList) {
             mFireStore.collection(Constants.STUDENTS)
                 .document(id)
-                .update(Constants.COMPANY_NAME_AND_LAST_ROUND,FieldValue.arrayUnion(companyLastRoundObject))
-                .addOnCompleteListener { task->
-                    if(task.isSuccessful){
+                .update(
+                    Constants.COMPANY_NAME_AND_LAST_ROUND,
+                    FieldValue.arrayUnion(companyLastRoundObject)
+                )
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
                         companyLastRoundObject.lastRound -= 1
                         mFireStore.collection(Constants.STUDENTS)
                             .document(id)
-                            .update(Constants.COMPANY_NAME_AND_LAST_ROUND,FieldValue.arrayRemove(companyLastRoundObject))
-                            .addOnFailureListener { e->
+                            .update(
+                                Constants.COMPANY_NAME_AND_LAST_ROUND,
+                                FieldValue.arrayRemove(companyLastRoundObject)
+                            )
+                            .addOnFailureListener { e ->
                                 Log.e(
                                     activity.javaClass.simpleName,
                                     "Error while updating company in student database.",
@@ -315,7 +315,7 @@ class FirestoreClass {
                             }
                     }
                 }
-                .addOnFailureListener { e->
+                .addOnFailureListener { e ->
                     Log.e(
                         activity.javaClass.simpleName,
                         "Error while updating company in student database.",
@@ -326,25 +326,59 @@ class FirestoreClass {
         activity.updateCompanyInStudentDatabaseSuccess()
     }
 
-    fun getCompaniesListFromDatabase(companyNames : ArrayList<String>,collegeCode : String,activity: MainActivity){
-        if(companyNames.size==0){
+    fun getSpecificCompaniesDetailsFromDatabase(
+        companyNames: ArrayList<String>,
+        collegeCode: String,
+        roundsOver: Int,
+        activity: MainActivity
+    ) {
+        if (companyNames.size == 0) {
             activity.populateRecyclerView(ArrayList())
             return
         }
         mFireStore.collection(Constants.COLLEGES)
             .document(collegeCode)
             .collection(Constants.COMPANIES)
-            .whereIn(Constants.NAME,companyNames)
+            .whereIn(Constants.NAME, companyNames)
+            .whereEqualTo(Constants.ROUNDS_OVER, roundsOver)
             .get()
             .addOnSuccessListener { companyDocuments ->
-                val companyObjects : ArrayList<Company> = ArrayList()
-                for(companyDocument in companyDocuments){
-                    val companyObject = companyDocument.toObject(Company :: class.java)
+                val companyObjects: ArrayList<Company> = ArrayList()
+                for (companyDocument in companyDocuments) {
+                    val companyObject = companyDocument.toObject(Company::class.java)
                     companyObjects.add(companyObject)
                 }
                 activity.populateRecyclerView(companyObjects)
             }
-            .addOnFailureListener { e->
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while fetching companies from database.",
+                    e
+                )
+            }
+    }
+
+    fun getAllCompaniesDetailsFromDatabase(
+        collegeCode: String,
+        roundsOver: Int,
+        activity: MainActivity
+    ) {
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .collection(Constants.COMPANIES)
+            .whereEqualTo(Constants.ROUNDS_OVER, roundsOver)
+            .get()
+            .addOnSuccessListener { companyDocuments ->
+                val companyObjects: ArrayList<Company> = ArrayList()
+                for (companyDocument in companyDocuments) {
+                    val companyObject = companyDocument.toObject(Company::class.java)
+                    companyObjects.add(companyObject)
+                }
+                activity.populateRecyclerView(companyObjects)
+            }
+            .addOnFailureListener { e ->
                 activity.hideProgressDialog()
                 Log.e(
                     activity.javaClass.simpleName,

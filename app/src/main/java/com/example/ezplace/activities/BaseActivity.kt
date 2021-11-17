@@ -5,13 +5,11 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
-import android.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.ezplace.R
 import com.example.ezplace.firebase.FirebaseAuthClass
@@ -19,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.dialog_progress.*
 
+// This class contains re-usable functions
 open class BaseActivity : AppCompatActivity() {
 
     /**
@@ -26,11 +25,10 @@ open class BaseActivity : AppCompatActivity() {
      */
     private lateinit var mProgressDialog: Dialog
 
-    fun fullScreenMode(){
+    fun fullScreenMode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
-        }
-        else {
+        } else {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -38,7 +36,7 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun customFont(textView : TextView){
+    fun customFont(textView: TextView) {
         val typeface: Typeface = Typeface.createFromAsset(assets, "carbon bl.ttf")
         textView.typeface = typeface
     }
@@ -56,9 +54,15 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun showErrorSnackBar(message: String) {
-        val snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG)
+        val snackBar =
+            Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar.view
-        snackBarView.setBackgroundColor(ContextCompat.getColor(this@BaseActivity, R.color.snackbar_error_color))
+        snackBarView.setBackgroundColor(
+            ContextCompat.getColor(
+                this@BaseActivity,
+                R.color.snackbar_error_color
+            )
+        )
         snackBar.show()
     }
 
@@ -79,20 +83,25 @@ open class BaseActivity : AppCompatActivity() {
         mProgressDialog.dismiss()
     }
 
-    fun showAlertDialog(activity: Activity, text: String)  {
+    fun showAlertDialog(activity: Activity, text: String) {
+
         AlertDialog.Builder(this)
             .setMessage(text)
             .setTitle(getString(R.string.are_you_sure))
             .setPositiveButton(
                 getString(R.string.yes)
             ) { _, _ ->
-                when(activity){
-                    is MainActivity ->{
+                when (activity) {
+
+                    is MainActivity -> {
+
+                        //Sign-out user
                         if (FirebaseAuthClass().getCurrentUserID().isNotEmpty())
                             FirebaseAuthClass().signOut()
 
                         activity.clearSharedPreferences()
 
+                        //SEnd the user to Intro activity after signing out
                         val intent = Intent(activity, IntroActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
@@ -101,12 +110,13 @@ open class BaseActivity : AppCompatActivity() {
                 }
             }.setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
-                when(activity){
-                    is MainActivity ->{
+                when (activity) {
+                    is MainActivity -> {
                         dialog.dismiss()
                     }
                 }
             }
             .show()
     }
+
 }
