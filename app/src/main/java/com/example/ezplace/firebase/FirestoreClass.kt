@@ -4,22 +4,20 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import com.example.ezplace.activities.*
-import com.example.ezplace.models.College
-import com.example.ezplace.models.Company
-import com.example.ezplace.models.Student
-import com.example.ezplace.models.TPO
+import com.example.ezplace.models.*
 import com.example.ezplace.utils.Constants
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 
-class FirestoreClass{
+class FirestoreClass {
     private val mFireStore = FirebaseFirestore.getInstance()
 
-    fun registerStudent(activity : SignUpActivity, studentInfo: Student) {
+    fun registerStudent(activity: SignUpActivity, studentInfo: Student) {
+        val id=studentInfo.id
         mFireStore.collection(Constants.STUDENTS)
             // Here the document id is the Student ID.
-            .document(studentInfo.id)
+            .document(id)
             // Here the studentInfo are field values and the SetOption is set to merge. It is for if we want to merge
             .set(studentInfo, SetOptions.merge())
             .addOnSuccessListener {
@@ -36,12 +34,12 @@ class FirestoreClass{
             }
     }
 
-    fun registerCollege(college : College, tpo: TPO, password: String, activity: SignUpActivity){
+    fun registerCollege(college: College, tpo: TPO, password: String, activity: SignUpActivity) {
         mFireStore.collection((Constants.COLLEGES))
             .add(college)
-            .addOnSuccessListener {document ->
-                tpo.collegeCode=document.id
-                FirebaseAuthClass().signUpTPO(tpo,password,activity)
+            .addOnSuccessListener { document ->
+                tpo.collegeCode = document.id
+                FirebaseAuthClass().signUpTPO(tpo, password, activity)
             }
             .addOnFailureListener { e ->
                 activity.hideProgressDialog()
@@ -53,7 +51,7 @@ class FirestoreClass{
             }
     }
 
-    fun registerTPO(activity : SignUpActivity, tpoInfo: TPO) {
+    fun registerTPO(activity: SignUpActivity, tpoInfo: TPO) {
         mFireStore.collection(Constants.TPO)
             // Here the document id is the TPO ID.
             .document(tpoInfo.id)
@@ -87,7 +85,7 @@ class FirestoreClass{
 
                 // Here call a function of base activity for transferring the result to it.
                 when (activity) {
-                    is SplashActivity ->{
+                    is SplashActivity -> {
                         activity.signInSuccessByStudent(loggedInUser)
                     }
                     is SignInActivity -> {
@@ -96,7 +94,8 @@ class FirestoreClass{
                     is UpdateProfileActivity -> {
                         activity.setStudentDataInUI(loggedInUser)
                     }
-                    is MainActivity ->{
+                    is MainActivity -> {
+                        Log.i("yes","yes")
                         activity.loadStudentDataSuccess(loggedInUser)
                     }
                 }
@@ -108,6 +107,9 @@ class FirestoreClass{
                         activity.hideProgressDialog()
                     }
                     is UpdateProfileActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MainActivity -> {
                         activity.hideProgressDialog()
                     }
                 }
@@ -125,26 +127,27 @@ class FirestoreClass{
             .document(FirebaseAuthClass().getCurrentUserID())
             .get()
             .addOnSuccessListener { document ->
-                if(document.exists()){
-                    val loggedInTPO : TPO = document.toObject(TPO::class.java)!!
-                    when(activity){
-                        is SplashActivity ->{
+                if (document.exists()) {
+                    val loggedInTPO: TPO = document.toObject(TPO::class.java)!!
+                    when (activity) {
+                        is SplashActivity -> {
                             activity.signInSuccessByTPO(loggedInTPO)
                         }
-                        is SignInActivity ->{
+                        is SignInActivity -> {
                             activity.signInSuccessByTPO(loggedInTPO)
                         }
                     }
-                }else{
-                    Log.i("tag","student")
+                } else {
+                    Log.i("tag", "student")
                     loadStudentData(activity)
                 }
             }
             .addOnFailureListener { e ->
                 // Here call a function of base activity for transferring the result to it.
-                when(activity){
-                    is SignInActivity ->{
-                        activity.hideProgressDialog()                            }
+                when (activity) {
+                    is SignInActivity -> {
+                        activity.hideProgressDialog()
+                    }
                 }
                 Log.e(
                     activity.javaClass.simpleName,
@@ -165,21 +168,21 @@ class FirestoreClass{
                 Toast.makeText(activity, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
                 // Notify the success result.
 
-                when(activity){
-                    is UpdateProfileActivity ->{
+                when (activity) {
+                    is UpdateProfileActivity -> {
                         activity.profileUpdateSuccess()
                     }
-                    is MainActivity ->{
+                    is MainActivity -> {
                         activity.tokenUpdateSuccess()
                     }
                 }
             }
             .addOnFailureListener { e ->
-                when(activity){
-                    is UpdateProfileActivity ->{
+                when (activity) {
+                    is UpdateProfileActivity -> {
                         activity.hideProgressDialog()
                     }
-                    is MainActivity ->{
+                    is MainActivity -> {
                         activity.hideProgressDialog()
                     }
                 }
@@ -191,24 +194,13 @@ class FirestoreClass{
             }
     }
 
-//    fun loadCompanyNames(activity: NewCompanyDetailsActivity){
-//        mFireStore.collection(Constants.COMPANIES)
-//            .get()
-//            .addOnSuccessListener { companies->
-//                var companiesNamesList : ArrayList<String> = ArrayList()
-//                var companiesHashmapNameAndId : HashMap<String,String> = HashMap<String,String>()
-//                for (company in companies) {
-//                    val companyObject = company.toObject(Company::class.java)
-//                    companiesHashmapNameAndId[companyObject.companyName]= companyObject.companyID
-//                    companiesNamesList.add(companyObject.companyName)
-//                }
-//                activity.getCompaniesNamesSuccess(companiesNamesList,companiesHashmapNameAndId)
-//            }
-//    }
-
-    fun addCompanyInCollege(company: Company, collegeCode : String, activity: NewCompanyDetailsActivity){
-        var companyHashMap = HashMap<String,Company>()
-        companyHashMap[company.name]=company
+    fun addCompanyInCollege(
+        company: Company,
+        collegeCode: String,
+        activity: NewCompanyDetailsActivity
+    ) {
+        var companyHashMap = HashMap<String, Company>()
+        companyHashMap[company.name] = company
 
         mFireStore.collection(Constants.COLLEGES)
             .document(collegeCode)
@@ -218,7 +210,7 @@ class FirestoreClass{
             .addOnSuccessListener {
                 activity.companyRegisteredSuccess(company)
             }
-            .addOnFailureListener {e->
+            .addOnFailureListener { e ->
                 activity.hideProgressDialog()
                 Log.e(
                     activity.javaClass.simpleName,
@@ -228,30 +220,135 @@ class FirestoreClass{
             }
     }
 
-    fun getEligibleStudentsFcmTokens(company: Company, collegeCode : String, activity: NewCompanyDetailsActivity){
-        mFireStore.collection(Constants.STUDENTS)
-            .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
-            .whereIn(
-                Constants.BRANCH,
-                company.branchesAllowed
-            )
-            .whereLessThanOrEqualTo(Constants.BACKLOGS_ALLOWED,company.backLogsAllowed)
-            .whereEqualTo(Constants.IS_PLACED_ABOVE_THRESHOLD,0)
-            .get()
-            .addOnSuccessListener { studentDocuments ->
-                var eligibleStudentsFcmTokens : ArrayList<String> = ArrayList()
-                for (student in studentDocuments) {
-                    // Convert all the document snapshot to the Student object using the data model class.
-                    val studentObject = student.toObject(Student::class.java)!!
-                    eligibleStudentsFcmTokens.add(studentObject.fcmToken)
+    fun getEligibleStudents(
+        company: Company,
+        collegeCode: String,
+        activity: NewCompanyDetailsActivity
+    ) {
+        Log.i("stu3",collegeCode)
+        if(company.backLogsAllowed == 0) {
+            mFireStore.collection(Constants.STUDENTS)
+                .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
+                .whereIn(
+                    Constants.BRANCH,
+                    company.branchesAllowed
+                )
+                .whereGreaterThanOrEqualTo(Constants.CGPA, company.cgpaCutOff)
+                .whereEqualTo(Constants.NUMBER_OF_BACKLOGS, company.backLogsAllowed)
+                .whereEqualTo(Constants.PLACED_ABOVE_THRESHOLD, 0)
+                .get()
+                .addOnSuccessListener { studentDocuments ->
+                    var eligibleStudents: ArrayList<Student> = ArrayList()
+                    for (student in studentDocuments) {
+                        // Convert all the document snapshot to the Student object using the data model class.
+                        val studentObject = student.toObject(Student::class.java)!!
+                        eligibleStudents.add(studentObject)
+                    }
+                    activity.getEligibleStudentsSuccess(
+                        eligibleStudents,
+                        company.name
+                    )
                 }
-                activity.getEligibleStudentsFcmTokensSuccess(eligibleStudentsFcmTokens,company.name)
+                .addOnFailureListener { e ->
+                    activity.hideProgressDialog()
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while fetching eligible students.",
+                        e
+                    )
+                }
+        }
+        else{
+            mFireStore.collection(Constants.STUDENTS)
+                .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
+                .whereIn(
+                    Constants.BRANCH,
+                    company.branchesAllowed
+                )
+                .whereGreaterThanOrEqualTo(Constants.CGPA, company.cgpaCutOff)
+                .whereEqualTo(Constants.PLACED_ABOVE_THRESHOLD, 0)
+                .get()
+                .addOnSuccessListener { studentDocuments ->
+                    var eligibleStudents: ArrayList<Student> = ArrayList()
+                    for (student in studentDocuments) {
+                        // Convert all the document snapshot to the Student object using the data model class.
+                        val studentObject = student.toObject(Student::class.java)!!
+                        eligibleStudents.add(studentObject)
+                    }
+                    activity.getEligibleStudentsSuccess(
+                        eligibleStudents,
+                        company.name
+                    )
+                }
+                .addOnFailureListener { e ->
+                    activity.hideProgressDialog()
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while fetching eligible students.",
+                        e
+                    )
+                }
+        }
+    }
+
+    fun updateCompanyInStudentDatabase(
+        studentsList: ArrayList<String>,
+        companyLastRoundObject : CompanyNameAndLastRound,
+        activity: NewCompanyDetailsActivity
+    ) {
+        for(id in studentsList){
+            mFireStore.collection(Constants.STUDENTS)
+                .document(id)
+                .update(Constants.COMPANY_NAME_AND_LAST_ROUND,FieldValue.arrayUnion(companyLastRoundObject))
+                .addOnCompleteListener { task->
+                    if(task.isSuccessful){
+                        companyLastRoundObject.lastRound -= 1
+                        mFireStore.collection(Constants.STUDENTS)
+                            .document(id)
+                            .update(Constants.COMPANY_NAME_AND_LAST_ROUND,FieldValue.arrayRemove(companyLastRoundObject))
+                            .addOnFailureListener { e->
+                                Log.e(
+                                    activity.javaClass.simpleName,
+                                    "Error while updating company in student database.",
+                                    e
+                                )
+                            }
+                    }
+                }
+                .addOnFailureListener { e->
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while updating company in student database.",
+                        e
+                    )
+                }
+        }
+        activity.updateCompanyInStudentDatabaseSuccess()
+    }
+
+    fun getCompaniesListFromDatabase(companyNames : ArrayList<String>,collegeCode : String,activity: MainActivity){
+        if(companyNames.size==0){
+            activity.populateRecyclerView(ArrayList())
+            return
+        }
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .collection(Constants.COMPANIES)
+            .whereIn(Constants.NAME,companyNames)
+            .get()
+            .addOnSuccessListener { companyDocuments ->
+                val companyObjects : ArrayList<Company> = ArrayList()
+                for(companyDocument in companyDocuments){
+                    val companyObject = companyDocument.toObject(Company :: class.java)
+                    companyObjects.add(companyObject)
+                }
+                activity.populateRecyclerView(companyObjects)
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener { e->
                 activity.hideProgressDialog()
                 Log.e(
                     activity.javaClass.simpleName,
-                    "Error while fetching eligible students.",
+                    "Error while fetching companies from database.",
                     e
                 )
             }

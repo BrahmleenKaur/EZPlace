@@ -54,10 +54,10 @@ class SignUpActivity : BaseActivity() {
         if (validateForm(firstName,email, password)) {
 
             if(isStudent){
-                val student = Student()
-                student.firstName = firstName
-                student.lastName = lastName
-                student.email = email
+                val student = Student(companiesListAndLastRound = ArrayList())
+                student.firstName=firstName
+                student.lastName=lastName
+                student.email=email
 
                 // Show the progress dialog.
                 showProgressDialog(resources.getString(R.string.please_wait))
@@ -70,8 +70,7 @@ class SignUpActivity : BaseActivity() {
                 tpo.collegeName = collegeName
                 tpo.email=email
 
-                val college = College(collegeName,HashMap())
-                college.collegeName=collegeName
+                val college = College()
 
                 // Show the progress dialog.
                 showProgressDialog(resources.getString(R.string.please_wait))

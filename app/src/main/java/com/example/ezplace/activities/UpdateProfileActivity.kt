@@ -58,8 +58,9 @@ class UpdateProfileActivity : BaseActivity() {
         val collegeCode = et_college_code_update_profile.text.toString().trim { it <= ' ' }
         val selectedBranchId = rg_branches_update_profile.checkedRadioButtonId
         val cgpa = et_cgpa_update_profile.text.toString().trim { it <= ' ' }
+        val backlogs = et_backlogs.text.toString().trim { it <= ' '}
 
-        if(validateStudentDetails(firstname,rollNumber,collegeCode,selectedBranchId,cgpa)){
+        if(validateStudentDetails(firstname,rollNumber,collegeCode,selectedBranchId,cgpa, backlogs)){
             val userHashMap = HashMap<String, Any>()
             if (firstname != mStudentDetails.firstName) {
                 userHashMap[Constants.FIRST_NAME] = firstname
@@ -82,6 +83,9 @@ class UpdateProfileActivity : BaseActivity() {
             if (cgpa != mStudentDetails.cgpa.toString()) {
                 userHashMap[Constants.CGPA] = cgpa.toDouble()
             }
+            if(backlogs != mStudentDetails.numberOfBacklogs.toString()){
+                userHashMap[Constants.NUMBER_OF_BACKLOGS]= backlogs.toInt()
+            }
 
             // Update the data in the database.
             if(userHashMap.size > 0) {
@@ -91,6 +95,7 @@ class UpdateProfileActivity : BaseActivity() {
                 mStudentDetails.branch=selectedBranch
                 mStudentDetails.collegeCode=collegeCode
                 mStudentDetails.cgpa=cgpa.toDouble()
+                mStudentDetails.numberOfBacklogs = backlogs.toInt()
 
                 showProgressDialog(resources.getString(R.string.please_wait))
                 FirestoreClass().updateStudentProfileData(this@UpdateProfileActivity, userHashMap)
@@ -105,7 +110,8 @@ class UpdateProfileActivity : BaseActivity() {
         }
     }
 
-    private fun validateStudentDetails(firstName: String,rollNumber : String, collegeCode :String,branchId: Int, cgpa: String): Boolean {
+    private fun validateStudentDetails(firstName: String,rollNumber : String,
+                                       collegeCode :String,branchId: Int, cgpa: String, backlogs : String): Boolean {
         return when {
             TextUtils.isEmpty(firstName) -> {
                 showErrorSnackBar(getString(R.string.enter_first_name))
@@ -125,6 +131,10 @@ class UpdateProfileActivity : BaseActivity() {
             }
             TextUtils.isEmpty(cgpa) -> {
                 showErrorSnackBar(getString(R.string.enter_cgpa))
+                false
+            }
+            TextUtils.isEmpty(backlogs) -> {
+                showErrorSnackBar(getString(R.string.enter_backlogs))
                 false
             }
             else -> {
@@ -157,6 +167,7 @@ class UpdateProfileActivity : BaseActivity() {
         }
 
         et_cgpa_update_profile.setText(student.cgpa.toString())
+        et_backlogs.setText(student.numberOfBacklogs.toString())
     }
 
     /**

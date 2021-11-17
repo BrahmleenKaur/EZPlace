@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 data class College(
     var collegeName : String ="",
-    var companiesList : HashMap<String,Company>
+    var companiesList : HashMap<String,Company> = HashMap()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

@@ -25,8 +25,8 @@ data class TPO(
         parcel.writeString(firstName)
         parcel.writeString(lastName)
         parcel.writeString(email)
-        parcel.writeString(collegeCode)
         parcel.writeString(collegeName)
+        parcel.writeString(collegeCode)
     }
 
     override fun describeContents() = 0

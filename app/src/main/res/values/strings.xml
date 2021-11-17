@@ -45,6 +45,7 @@
     <string name="ongoing">Ongoing</string>
     <string name="previous">Previous</string>
     <string name="main_activity_title">Companies</string>
+    <string name="no_companies_available">No companies under this section.</string>
 
     <string name="nav_my_profile">My Profile</string>
     <string name="nav_sign_out">Sign Out</string>
@@ -61,6 +62,7 @@
     <string name="cgpa_cut_off">CGPA Cut Off</string>
     <string name="branches_allowed">Branches Allowed</string>
     <string name="ctc_details">CTC Details</string>
+    <string name="job_profile">Job profile</string>
     <string name="location">Location</string>
     <string name="deadline_to_apply">Deadline to apply</string>
     <string name="submit">Submit</string>
@@ -77,7 +79,8 @@
     <string name="enter_company_location">Please enter company location</string>
     <string name="enter_deadline_to_apply">Please enter deadline to apply</string>
     <string name="enter_backlogs_details">Please enter backlogs details</string>
-    <string name="enter_ctc_details">Enter CTC details</string>
+    <string name="enter_ctc_details">Please enter CTC details</string>
+    <string name="enter_job_profile">Please enter job profiles.</string>
     <string name="backlogs">Backlogs</string>
     <string name="allowed">Allowed</string>
     <string name="not_allowed">Not allowed</string>
@@ -89,6 +92,8 @@
     <string name="select_you_branch">Please select your branch.</string>
     <string name="enter_cgpa">Please enter your cgpa.</string>
     <string name="enter_roll_number">Please enter your roll number.</string>
+    <string name="number_of_backlogs">Number of backlogs</string>
+    <string name="enter_backlogs">Please enter number of backlogs till date.</string>
 
 
 </resources>

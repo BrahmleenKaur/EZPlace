@@ -11,6 +11,8 @@ import com.example.ezplace.R
 import com.example.ezplace.firebase.FirebaseAuthClass
 import com.example.ezplace.firebase.FirestoreClass
 import com.example.ezplace.models.Company
+import com.example.ezplace.models.CompanyNameAndLastRound
+import com.example.ezplace.models.Student
 import com.example.ezplace.utils.Constants
 import kotlinx.android.synthetic.main.activity_new_company_details.*
 import org.json.JSONObject
@@ -60,6 +62,7 @@ class NewCompanyDetailsActivity : BaseActivity() {
         val companyName: String = et_new_company_name.text.toString().trim { it <= ' ' }
         val cgpaCutOffString: String = et_cgpa_cut_off.text.toString().trim { it <= ' ' }
         val ctcDetails = et_ctc_details.text.toString().trim { it <= ' ' }
+        val jobProfile = et_job_profile.text.toString().trim { it <= ' '}
         val companyLocation: String = et_location_new_company.text.toString().trim { it <= ' ' }
         val deadlineToApply: String = et_deadline_to_apply.text.toString().trim { it <= ' ' }
         val backLogsAllowed: Int = if (rb_backlogs_allowed.isSelected) 1 else 0
@@ -79,6 +82,7 @@ class NewCompanyDetailsActivity : BaseActivity() {
                 cgpaCutOffString,
                 branchesAllowed,
                 ctcDetails,
+                jobProfile,
                 companyLocation,
                 deadlineToApply
             )
@@ -86,8 +90,9 @@ class NewCompanyDetailsActivity : BaseActivity() {
             val cgpaCutOff = cgpaCutOffString.toDouble()
             var company = Company(
                 companyName, cgpaCutOff,
-                backLogsAllowed, branchesAllowed, ctcDetails, companyLocation, deadlineToApply
-            )
+                backLogsAllowed, branchesAllowed, ctcDetails,jobProfile,
+                companyLocation, deadlineToApply,ArrayList(),0)
+            Log.i("tag2",collegeCode)
             registerCompanyInCollegeDatabase(company)
         }
     }
@@ -105,16 +110,31 @@ class NewCompanyDetailsActivity : BaseActivity() {
         ).show()
 
         // Get eligible students list according to company constraints
-        FirestoreClass().getEligibleStudentsFcmTokens(company,collegeCode,this)
+        FirestoreClass().getEligibleStudents(company,collegeCode,this)
     }
 
-    fun getEligibleStudentsFcmTokensSuccess(eligibleStudentsFcmTokens : ArrayList<String>,companyName : String){
+    fun getEligibleStudentsSuccess(eligibleStudents : ArrayList<Student>,companyName : String){
         hideProgressDialog()
+
+        var eligibleStudentsIds :ArrayList<String> = ArrayList()
+        Log.i("stu2",eligibleStudents.size.toString())
         //Notify all these eligible students regarding new company
         // This will be done in background using Async tasks
-        for(token in eligibleStudentsFcmTokens){
+        for(student in eligibleStudents){
+            val token=student.fcmToken
+            val id=student.id
+            eligibleStudentsIds.add(id)
+            Log.i("stu",student.firstName)
             SendNotificationToEligibleStudentsAsyncTask(companyName, token).execute()
         }
+        showProgressDialog(getString(R.string.please_wait))
+        val companyLastRoundObject = CompanyNameAndLastRound(companyName,1)
+        FirestoreClass().updateCompanyInStudentDatabase(eligibleStudentsIds, companyLastRoundObject,this)
+    }
+
+    fun updateCompanyInStudentDatabaseSuccess(){
+        Log.i("update","here")
+        hideProgressDialog()
         finish()
     }
 
@@ -128,6 +148,7 @@ class NewCompanyDetailsActivity : BaseActivity() {
         cgpaCutOff: String,
         branchesAllowed: ArrayList<String>,
         ctcDetails: String,
+        jobProfile: String,
         companyLocation: String,
         deadlineToApply: String
     ): Boolean {
@@ -150,6 +171,10 @@ class NewCompanyDetailsActivity : BaseActivity() {
             }
             TextUtils.isEmpty(ctcDetails) -> {
                 showErrorSnackBar(getString(R.string.enter_ctc_details))
+                false
+            }
+            TextUtils.isEmpty(jobProfile) -> {
+                showErrorSnackBar(getString(R.string.enter_job_profile))
                 false
             }
             TextUtils.isEmpty(companyLocation) -> {

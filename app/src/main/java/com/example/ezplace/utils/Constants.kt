@@ -9,7 +9,7 @@ import android.webkit.MimeTypeMap
 object Constants {
 
     // Firebase Constants
-    // This  is used for the collection name for USERS.
+    // This  is used for the collection names used in firestore
     const val STUDENTS: String = "students"
     const val COLLEGES: String = "colleges"
     const val TPO: String = "tpo"
@@ -25,7 +25,12 @@ object Constants {
     const val CGPA: String = "cgpa"
     const val ROLL_NUMBER ="rollNumber"
     const val BACKLOGS_ALLOWED = "backLogsAllowed"
-    const val IS_PLACED_ABOVE_THRESHOLD ="isPlacedAboveThreshold"
+    const val PLACED_ABOVE_THRESHOLD ="placedAboveThreshold"
+    const val LAST_ROUND ="lastRound"
+    const val NAME="name"
+    const val EMAIL ="email"
+    const val COMPANY_NAME_AND_LAST_ROUND = "companiesListAndLastRound"
+    const val NUMBER_OF_BACKLOGS = "numberOfBacklogs"
 
     const val STUDENT_DETAILS: String = "studentDetails"
     const val TPO_DETAILS: String = "tpoDetails"

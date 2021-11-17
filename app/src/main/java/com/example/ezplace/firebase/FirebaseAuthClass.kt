@@ -7,6 +7,7 @@ import com.example.ezplace.activities.SignInActivity
 import com.example.ezplace.activities.SignUpActivity
 import com.example.ezplace.models.Student
 import com.example.ezplace.models.TPO
+import com.example.ezplace.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -25,10 +26,10 @@ class FirebaseAuthClass() {
                 if (task.isSuccessful) {
                     val firebaseUser: FirebaseUser = task.result!!.user!!
                     //val registeredEmail = firebaseUser.email!!
-                    student.id = firebaseUser.uid
+                    student.id= firebaseUser.uid
                     // call the registerUser function of FirestoreClass to make an entry in the database.
+                    Log.i("stu8",student.toString())
                     FirestoreClass().registerStudent(activity, student)
-
                 } else {
                     Toast.makeText(
                         activity,

@@ -54,7 +54,9 @@
 
     <!-- Main Activity -->
     <dimen name="radio_group_margin_top">10dp</dimen>
-    <dimen name="radio_button_text_size">15sp</dimen>
+    <dimen name="radio_button_text_size">20sp</dimen>
+    <dimen name="radio_group_main_margin_start_end">5dp</dimen>
+    <dimen name="recycler_view_margin_top">10dp</dimen>
 
     <!-- Floating Action button -->
     <dimen name="fab_margin">16dp</dimen>
@@ -78,5 +80,15 @@
     <dimen name="new_company_screen_padding">16dp</dimen>
     <dimen name="new_company_til_marginTop">10dp</dimen>
     <dimen name="checkbox_linear_layout_margin_top">10dp</dimen>
+
+    <!-- Each item of recycler view -->
+    <dimen name="item_company_marginBottom">10dp</dimen>
+    <dimen name="item_company_content_margin">5dp</dimen>
+    <dimen name="item_company_card_corner_radius">10dp</dimen>
+    <dimen name="item_company_title_size">20sp</dimen>
+    <dimen name="item_company_tv_margin_top">5dp</dimen>
+    <dimen name="item_company_job_profile_text_size">15sp</dimen>
+    <dimen name="item_company_date_and_time_text_size">15sp</dimen>
+    <dimen name="item_company_padding">5dp</dimen>
 
 </resources>

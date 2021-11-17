@@ -14,8 +14,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.core.view.get
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ezplace.R
+import com.example.ezplace.adapters.CompanyItemsAdapter
 import com.example.ezplace.firebase.FirestoreClass
+import com.example.ezplace.models.Company
+import com.example.ezplace.models.CompanyNameAndLastRound
 import com.example.ezplace.models.Student
 import com.example.ezplace.models.TPO
 import com.example.ezplace.utils.Constants
@@ -25,6 +29,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -36,32 +41,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mStudent: Student
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var collegeCode : String
+    private var companyLastRoundHashMap : HashMap<String,Int> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupActionBar(toolbar_main_activity)
         toolbar_main_activity.setNavigationIcon(R.drawable.ic_action_navigation_menu)
+
+        Log.i("main","oncreate")
         handleIntent(intent)
 
-        if(isStudent){
-            mSharedPreferences =
-                this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
-
-            val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
-
-            if (tokenUpdated) {
-                showProgressDialog(getString(R.string.please_wait))
-                FirestoreClass().loadStudentData(this)
-            } else {
-                FirebaseMessaging.getInstance().token
-                    .addOnSuccessListener(this@MainActivity) { token ->
-                        updateFcmTokenInDatabase(token)
-                    }
-            }
-        }
-
         rb_ongoing.setOnClickListener {
-            tv_no_companies_available.setText("Ongoing")
+            tv_no_companies_available.text = "Ongoing"
         }
         rb_previous.setOnClickListener {
             tv_no_companies_available.text = "Previous"
@@ -107,6 +99,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onNewIntent(intent: Intent) {
+        Log.i("main","onnew")
         setIntent(intent)
         handleIntent(intent)
         super.onNewIntent(intent)
@@ -117,13 +110,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             intent.hasExtra(Constants.STUDENT_DETAILS) -> {
                 isStudent = true
                 mStudent = intent.getParcelableExtra<Student>(Constants.STUDENT_DETAILS)!!
-                setForStudent()
-            }
-            intent.hasExtra(Constants.IS_STUDENT) -> {
-                isStudent = true
-                mStudent = intent.getParcelableExtra<Student>(Constants.STUDENT_DETAILS)!!
                 collegeCode = mStudent.collegeCode
                 setForStudent()
+                // Create array of companyNames to fetch data from database
+                var companiesList : ArrayList<String> = ArrayList()
+
+                for((companyName,lastRound) in mStudent.companiesListAndLastRound){
+                    companyLastRoundHashMap[companyName]=lastRound
+                    companiesList.add(companyName)
+                }
+                showProgressDialog(getString(R.string.please_wait))
+//                populateRecyclerView(ArrayList())
+                FirestoreClass().getCompaniesListFromDatabase(companiesList,collegeCode,this@MainActivity)
             }
             intent.hasExtra(Constants.TPO_DETAILS) -> {
                 isStudent = false
@@ -136,7 +134,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     @SuppressLint("RestrictedApi")
     private fun setForTPO() {
-        Log.i("here","tpo")
         setSupportActionBar(toolbar_main_activity)
         toolbar_main_activity.setNavigationIcon(R.drawable.ic_action_navigation_menu)
         toolbar_main_activity.setNavigationOnClickListener {
@@ -172,17 +169,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun setForStudent() {
-        Log.i("setForStudent", "setForStudent")
         setSupportActionBar(toolbar_main_activity)
         toolbar_main_activity.setNavigationIcon(R.drawable.ic_action_navigation_menu)
 
         toolbar_main_activity.setNavigationOnClickListener {
             toggleDrawer()
         }
-
-        //TODO
-//        showProgressDialog(resources.getString(R.string.please_wait))
-//        updateNavigationUserDetails(mStudent)
 
         // Assign the NavigationView.OnNavigationItemSelectedListener to navigation view.
         nav_view.setNavigationItemSelectedListener(this)
@@ -191,6 +183,58 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         fab.visibility = View.GONE
         fab_add_new_company.visibility = View.GONE
+    }
+
+    fun populateRecyclerView(companiesList: ArrayList<Company>) {
+        Log.i("rv","yes")
+        hideProgressDialog()
+
+        if (companiesList.size > 0) {
+            rv_companies_list.visibility = View.VISIBLE
+            tv_no_companies_available.visibility = View.GONE
+
+            rv_companies_list.layoutManager = LinearLayoutManager(this@MainActivity)
+            rv_companies_list.setHasFixedSize(true)
+
+            val adapter = CompanyItemsAdapter(this,companiesList)
+            rv_companies_list.adapter = adapter
+            adapter.setOnClickListener(object : CompanyItemsAdapter.OnClickListener {
+                override fun onClick(position: Int, model: Company) {
+                    val intent = Intent(this@MainActivity, RoundDetailsActivity::class.java)
+                    startActivity(intent)
+//                    intent.putExtra(Constants.POST_DETAIL, model)
+//                    intent.putExtra(Constants.POSTEDBYNAME, postedByName)
+//                    intent.putExtra(Constants.BYADMIN, isAdminHere)
+
+//                    if (isAdminHere) startActivityForResult(intent, APPROVE_SPOT_REQUEST_CODE)
+//                    else startActivityForResult(intent, BOOK_SPOT_REQUEST_CODE)
+                }
+            })
+        }
+        else {
+            rv_companies_list.visibility = View.GONE
+            tv_no_companies_available.visibility = View.VISIBLE
+        }
+
+        if(isStudent){
+            mSharedPreferences =
+                this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
+
+            val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
+
+            if (tokenUpdated) {
+                Log.i("no","no")
+                showProgressDialog(getString(R.string.please_wait))
+                FirestoreClass().loadStudentData(this)
+
+            }
+            else {
+                FirebaseMessaging.getInstance().token
+                    .addOnSuccessListener(this@MainActivity) { token ->
+                        updateFcmTokenInDatabase(token)
+                    }
+            }
+        }
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
@@ -231,6 +275,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     fun loadStudentDataSuccess(student : Student){
+        Log.i("main","lsds")
         hideProgressDialog()
     }
 
