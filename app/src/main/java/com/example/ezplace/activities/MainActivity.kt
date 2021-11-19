@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -28,7 +28,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     /** Stores if the Floating Action Button is open or closed */
@@ -45,7 +44,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mSharedPreferences: SharedPreferences
 
     /**The college code to which the student or tpo belongs*/
-    private lateinit var collegeCode: String
+    lateinit var collegeCode: String
 
     /** A hashmap to store the last round till
     which the student has made progress for each company*/
@@ -63,13 +62,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         bottomNavigationView.setOnNavigationItemSelectedListener {
             /**Create array of company names to fetch data from database*/
             var companiesList: ArrayList<String> = ArrayList()
-            if(isStudent){
+            if (isStudent) {
                 for ((companyName, lastRound) in mStudent.companiesListAndLastRound) {
                     companyLastRoundHashMap[companyName] = lastRound
                     companiesList.add(companyName)
                 }
             }
-            when(it.itemId){
+            when (it.itemId) {
                 /** Shows list of Ongoing companies */
                 R.id.bn_ongoing -> {
                     showProgressDialog(getString(R.string.please_wait))
@@ -177,10 +176,31 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             closeFABMenu()
         }
 
+        fab_add_new_pr.setOnClickListener {
+            val intent: Intent = Intent(this, AddPrActivity::class.java)
+            intent.putExtra(Constants.COLLEGE_CODE, collegeCode)
+            startActivity(intent)
+            closeFABMenu()
+        }
+
+        fab_enable_or_disable_update_profile.setOnClickListener {
+            val tvText =tv_enable_or_disable_update_profile.text.toString()
+            if (tvText ==
+                getString(R.string.disable_update_profile_button_fab))
+                showAlertDialog(this,getString(R.string.disable_update_profile_button))
+            else
+                showAlertDialog(this,getString(R.string.enable_update_profile_button))
+        }
+
         tv_block_view.setOnClickListener {
             closeFABMenu()
         }
 
+        loadCompaniesForTPO()
+
+    }
+
+    private fun loadCompaniesForTPO() {
         /**Load TPO data to screen from database*/
         showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().getAllCompaniesDetailsFromDatabase(
@@ -188,7 +208,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             roundsOver = 0,
             this@MainActivity
         )
-
     }
 
     /** Setup UI for Student */
@@ -201,6 +220,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab.visibility = View.GONE
         fab_add_new_company.visibility = View.GONE
 
+        loadCompaniesForStudent()
+    }
+
+    private fun loadCompaniesForStudent() {
         /** To load student's data to screen */
         // Create array of companyNames to fetch data from database
         var companiesList: ArrayList<String> = ArrayList()
@@ -218,14 +241,40 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         )
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.refresh -> {
+                if (isStudent) {
+                    loadCompaniesForStudent()
+                } else {
+                    loadCompaniesForTPO()
+                }
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun showFABMenu() {
         isFABOpen = true
 
         tv_block_view.visibility = View.VISIBLE
         fab.setImageResource(R.drawable.ic_wrong)
         fab.scaleType = ImageView.ScaleType.FIT_XY
+
         ll_add_new_company.animate().translationY(-resources.getDimension(R.dimen.standard_55))
+        ll_add_new_pr.animate().translationY(-resources.getDimension(R.dimen.standard_105))
+        ll_enable_or_disable_update_profile.animate()
+            .translationY(-resources.getDimension(R.dimen.standard_155))
+
         tv_add_new_company.visibility = View.VISIBLE
+        tv_add_new_pr.visibility = View.VISIBLE
+        tv_enable_or_disable_update_profile.visibility = View.VISIBLE
     }
 
     private fun closeFABMenu() {
@@ -234,13 +283,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         tv_block_view.visibility = View.GONE
         fab.setImageResource(R.drawable.ic_fab)
         fab.scaleType = ImageView.ScaleType.FIT_XY
+
         ll_add_new_company.animate().translationY(0F)
+        ll_add_new_pr.animate().translationY(0F)
+        ll_enable_or_disable_update_profile.animate().translationY(0F)
+
         tv_add_new_company.visibility = View.GONE
+        tv_add_new_pr.visibility = View.GONE
+        tv_enable_or_disable_update_profile.visibility = View.GONE
     }
 
     /** Shows items in recycler view */
     fun populateRecyclerView(companiesList: ArrayList<Company>) {
-        Log.i("tag",companiesList.size.toString())
         hideProgressDialog()
 
         if (companiesList.size > 0) {
@@ -280,13 +334,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    private fun checkFCMToken(){
+    private fun checkFCMToken() {
         /** Using shared preference in private mode so that other apps cannot access it */
         mSharedPreferences =
             this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
 
+        /** Variable is used get the value either token is updated in the database or not.*/
         val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
 
+        /**Here if the token is already updated than we don't need to update it every time. */
         /** If the token is not updated, get a new token and update it in database*/
         if (!tokenUpdated) {
             FirebaseMessaging.getInstance().token
@@ -318,25 +374,32 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         when (menuItem.itemId) {
 
             R.id.nav_my_profile -> {
+                menuItem.isCheckable = false
                 /** Takes user to UpdateProfile activity */
                 startActivity(Intent(this, UpdateProfileActivity::class.java))
-                menuItem.isChecked = false
             }
 
             R.id.nav_sign_out -> {
+                menuItem.isCheckable = false
                 /**Here sign outs the user from firebase in this device.*/
-                showAlertDialog(this@MainActivity, getString(R.string.sign_out_alert_text))
+                showAlertDialog(this,getString(R.string.sign_out_alert_text))
             }
         }
 
-        /** Close the drawer if it is open */
-        if (drawer_layout.isDrawerOpen(GravityCompat.START))
-            drawer_layout.closeDrawer(GravityCompat.START)
+        /** Close the drawer*/
+        drawer_layout.closeDrawer(GravityCompat.START)
+
         return true
     }
 
     /** clears the Firebase Cloud Messaging token stored in device */
     fun clearSharedPreferences() {
-        if (isStudent) mSharedPreferences.edit().clear().apply()
+        if (isStudent) {
+            mSharedPreferences.edit().clear().apply()
+        }
+    }
+
+    fun updateCollegeSuccess(){
+        hideProgressDialog()
     }
 }

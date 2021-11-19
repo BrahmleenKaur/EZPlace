@@ -52,6 +52,41 @@
             app:maxImageSize="40dp" />
 
         <LinearLayout
+            android:id="@+id/ll_enable_or_disable_update_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="bold"
+            android:layout_marginBottom="85dp"
+            android:layout_marginEnd="@dimen/fab_margin"
+            android:textColor="@color/black"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|end">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_enable_or_disable_update_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="bold"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/tv_fab_margin_end"
+                android:text="@string/disable_update_profile_button_fab"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_enable_or_disable_update_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                app:borderWidth="0dp"
+                android:backgroundTint="@color/light_blue"
+                android:src="@drawable/ic_lock"
+                app:maxImageSize="30dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ll_add_new_company"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,9 +102,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="bold"
-                android:layout_marginBottom="5dp"
                 android:textColor="@color/black"
                 android:visibility="gone"
+                android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/tv_fab_margin_end"
                 android:text="@string/add_new_company"/>
 
@@ -80,7 +115,43 @@
                 android:layout_gravity="bottom|end"
                 app:borderWidth="0dp"
                 android:backgroundTint="@color/light_blue"
+                android:src="@drawable/ic_add_company"
+                app:maxImageSize="50dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_add_new_pr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="bold"
+            android:layout_marginBottom="85dp"
+            android:layout_marginEnd="@dimen/fab_margin"
+            android:textColor="@color/black"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|end">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_add_new_pr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="bold"
+                android:visibility="gone"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/tv_fab_margin_end"
+                android:text="@string/add_new_pr"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_new_pr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                app:borderWidth="0dp"
+                android:backgroundTint="@color/light_blue"
                 app:maxImageSize="30dp"
+                android:src="@drawable/ic_add_pr"
                 />
 
         </LinearLayout>
@@ -88,4 +159,3 @@
     </FrameLayout>
 
 </LinearLayout>
-

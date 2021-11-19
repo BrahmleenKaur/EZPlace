@@ -32,6 +32,8 @@ object Constants {
     const val COMPANY_NAME_AND_LAST_ROUND = "companiesListAndLastRound"
     const val NUMBER_OF_BACKLOGS = "numberOfBacklogs"
     const val ROUNDS_OVER = "roundsOver"
+    const val SELECT_COLLEGE_NAME = "Select college name"
+    const val IS_UPDATE_BUTTON_ENABLED: String="isUpdateProfileButtonEnabled"
 
     const val STUDENT_DETAILS: String = "studentDetails"
     const val TPO_DETAILS: String = "tpoDetails"

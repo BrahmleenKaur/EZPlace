@@ -26,6 +26,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     /** When a new message s received */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        val mSharedPreferences =
+            this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
+        if(!mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)) return
         super.onMessageReceived(remoteMessage)
 
         remoteMessage.data.isNotEmpty().let {

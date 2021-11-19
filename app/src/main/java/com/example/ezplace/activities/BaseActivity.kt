@@ -13,8 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.ezplace.R
 import com.example.ezplace.firebase.FirebaseAuthClass
+import com.example.ezplace.firebase.FirestoreClass
+import com.example.ezplace.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_sign_in.*
+import kotlinx.android.synthetic.main.activity_update_profile.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.dialog_progress.*
 
 // This class contains re-usable functions
@@ -95,17 +99,35 @@ open class BaseActivity : AppCompatActivity() {
 
                     is MainActivity -> {
 
-                        //Sign-out user
-                        if (FirebaseAuthClass().getCurrentUserID().isNotEmpty())
-                            FirebaseAuthClass().signOut()
+                        if(text == getString(R.string.sign_out_alert_text)){
+                            //Sign-out user
+                            if (FirebaseAuthClass().getCurrentUserID().isNotEmpty())
+                                FirebaseAuthClass().signOut()
 
-                        activity.clearSharedPreferences()
+                            activity.clearSharedPreferences()
 
-                        //SEnd the user to Intro activity after signing out
-                        val intent = Intent(activity, IntroActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        activity.finish()
+                            //SEnd the user to Intro activity after signing out
+                            val intent = Intent(activity, IntroActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                            activity.finish()
+                        }
+                        else {
+                            val collegeHashmap = HashMap<String,Int>()
+                            if(text == getString(R.string.disable_update_profile_button)){
+                                collegeHashmap[Constants.IS_UPDATE_BUTTON_ENABLED] = 0
+                                fab_enable_or_disable_update_profile.setImageResource(R.drawable.ic_unlock)
+                                tv_enable_or_disable_update_profile.text = getString(R.string.enable_update_profile_button_fab)
+                            }
+                            else{
+                                collegeHashmap[Constants.IS_UPDATE_BUTTON_ENABLED] = 1
+                                fab_enable_or_disable_update_profile.setImageResource(R.drawable.ic_lock)
+                                tv_enable_or_disable_update_profile.text =
+                                    getString(R.string.disable_update_profile_button_fab)
+                            }
+                            showProgressDialog(getString(R.string.please_wait))
+                            FirestoreClass().updateCollege(activity.collegeCode,collegeHashmap,activity)
+                        }
                     }
                 }
             }.setNegativeButton(getString(R.string.cancel)) { dialog, _ ->

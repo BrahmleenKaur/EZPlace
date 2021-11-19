@@ -38,9 +38,10 @@ class FirestoreClass {
 
     fun registerCollege(college: College, tpo: TPO, password: String, activity: SignUpActivity) {
         mFireStore.collection((Constants.COLLEGES))
-            .add(college)
-            .addOnSuccessListener { document ->
-                tpo.collegeCode = document.id
+            .document(college.collegeName)
+            .set(college)
+            .addOnSuccessListener {
+                tpo.collegeCode = college.collegeName
                 FirebaseAuthClass().signUpTPO(tpo, password, activity)
             }
             .addOnFailureListener { e ->
@@ -53,21 +54,71 @@ class FirestoreClass {
             }
     }
 
-    fun registerTPO(activity: SignUpActivity, tpoInfo: TPO) {
+    fun registerTPO(activity: Activity, tpoInfo: TPO) {
         mFireStore.collection(Constants.TPO)
             // Here the document id is the TPO ID.
             .document(tpoInfo.id)
             // Here the tpoInfo is field values and the SetOption is set to merge. It is for if we want to merge
             .set(tpoInfo, SetOptions.merge())
             .addOnSuccessListener {
-                // Here call a function of base activity for transferring the result to it.
-                activity.tpoRegisteredSuccess(tpoInfo)
+                when(activity){
+                    is SignUpActivity ->{
+                        // Here call a function of base activity for transferring the result to it.
+                        activity.tpoRegisteredSuccess(tpoInfo)
+                    }
+                    is AddPrActivity ->{
+                        activity.addPrSuccess()
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                when(activity){
+                    is SignUpActivity ->{
+                        // Here call a function of base activity for transferring the result to it.
+                        activity.hideProgressDialog()
+                    }
+                    is AddPrActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error registering tpo",
+                    e
+                )
+            }
+    }
+
+    fun updateCollege(collegeCode : String,collegeHashmap : HashMap<String,Int>,activity: MainActivity){
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .set(collegeHashmap, SetOptions.merge())
+            .addOnSuccessListener {
+                activity.updateCollegeSuccess()
             }
             .addOnFailureListener { e ->
                 activity.hideProgressDialog()
                 Log.e(
                     activity.javaClass.simpleName,
-                    "Error registering tpo",
+                    "Error updating college",
+                    e
+                )
+            }
+    }
+
+    fun getCollege(collegeCode : String, activity: UpdateProfileActivity){
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .get()
+            .addOnSuccessListener { document ->
+                 var isUpdateButtonEnabled : Long =document[Constants.IS_UPDATE_BUTTON_ENABLED] as Long
+                activity.getCollegeSuccess(isUpdateButtonEnabled)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error getting college",
                     e
                 )
             }
@@ -385,6 +436,19 @@ class FirestoreClass {
                     "Error while fetching companies from database.",
                     e
                 )
+            }
+    }
+
+    /** Get college names from the database */
+    fun getCollegeNames(activity : UpdateProfileActivity){
+        mFireStore.collection(Constants.COLLEGES)
+            .get()
+            .addOnSuccessListener { collegeDocuments ->
+                var collegeNames = ArrayList<String>()
+                for(document in collegeDocuments){
+                    collegeNames.add(document.id)
+                }
+                activity.getCollegeNamesSuccess(collegeNames)
             }
     }
 

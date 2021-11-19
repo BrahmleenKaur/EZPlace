@@ -97,19 +97,15 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <Spinner
+                        android:id="@+id/dropdown_college_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/my_profile_name_til_marginTop">
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/et_college_code_update_profile"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/college_code"
-                            android:textSize="@dimen/et_text_size" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginTop="@dimen/my_profile_name_til_marginTop"
+                        android:background="@android:drawable/btn_dropdown"
+                        android:dropDownSelector="@color/light_blue"
+                        android:dropDownWidth="match_parent"
+                        android:spinnerMode="dropdown"/>
 
                     <TextView
                         android:layout_width="match_parent"
