@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -55,9 +56,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setContentView(R.layout.activity_main)
 
         setUpNavigationView()
-
         handleIntent(intent)
+    }
 
+    private fun clickListenerForBottomNavigationView() {
         /** Set OnClick listeners for bottom navigation view options */
         bottomNavigationView.setOnNavigationItemSelectedListener {
             /**Create array of company names to fetch data from database*/
@@ -140,6 +142,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 isStudent = true
                 mStudent = intent.getParcelableExtra<Student>(Constants.STUDENT_DETAILS)!!
                 collegeCode = mStudent.collegeCode
+                clickListenerForBottomNavigationView()
                 setForStudent()
             }
             intent.hasExtra(Constants.TPO_DETAILS) -> {
@@ -184,12 +187,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
         fab_enable_or_disable_update_profile.setOnClickListener {
-            val tvText =tv_enable_or_disable_update_profile.text.toString()
+            val tvText = tv_enable_or_disable_update_profile.text.toString()
             if (tvText ==
-                getString(R.string.disable_update_profile_button_fab))
-                showAlertDialog(this,getString(R.string.disable_update_profile_button))
+                getString(R.string.disable_update_profile_button_fab)
+            )
+                showAlertDialog(this, getString(R.string.disable_update_profile_button))
             else
-                showAlertDialog(this,getString(R.string.enable_update_profile_button))
+                showAlertDialog(this, getString(R.string.enable_update_profile_button))
         }
 
         tv_block_view.setOnClickListener {
@@ -219,11 +223,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         /**Floating Action Button is only visible to TPO*/
         fab.visibility = View.GONE
         fab_add_new_company.visibility = View.GONE
+        fab_add_new_pr.visibility = View.GONE
+        fab_enable_or_disable_update_profile.visibility = View.GONE
 
         loadCompaniesForStudent()
     }
 
     private fun loadCompaniesForStudent() {
+
         /** To load student's data to screen */
         // Create array of companyNames to fetch data from database
         var companiesList: ArrayList<String> = ArrayList()
@@ -313,14 +320,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             adapter.setOnClickListener(object : CompanyItemsAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Company) {
                     val intent = Intent(this@MainActivity, RoundDetailsActivity::class.java)
-                    startActivity(intent)
-                    // TODO ROUND DETAILS
-//                    intent.putExtra(Constants.POST_DETAIL, model)
-//                    intent.putExtra(Constants.POSTEDBYNAME, postedByName)
+                    intent.putExtra(Constants.COMPANY_DETAIL, model)
+//                    intent.putExtra(Constants.STUDENT_DETAIL, mStudent)
 //                    intent.putExtra(Constants.BYADMIN, isAdminHere)
-
-//                    if (isAdminHere) startActivityForResult(intent, APPROVE_SPOT_REQUEST_CODE)
-//                    else startActivityForResult(intent, BOOK_SPOT_REQUEST_CODE)
+                    startActivity(intent)
                 }
             })
         } else {
@@ -382,7 +385,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.nav_sign_out -> {
                 menuItem.isCheckable = false
                 /**Here sign outs the user from firebase in this device.*/
-                showAlertDialog(this,getString(R.string.sign_out_alert_text))
+                showAlertDialog(this, getString(R.string.sign_out_alert_text))
             }
         }
 
@@ -399,7 +402,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    fun updateCollegeSuccess(){
+    fun updateCollegeSuccess() {
         hideProgressDialog()
     }
 }

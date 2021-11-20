@@ -1,5 +1,7 @@
 package com.example.ezplace.activities
 
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.os.AsyncTask
 import android.os.Bundle
 import android.text.TextUtils
@@ -21,14 +23,20 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class NewCompanyDetailsActivity : BaseActivity() {
 
     lateinit var collegeCode: String
+    private val myCalendar: Calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_company_details)
+        setContentView(com.example.ezplace.R.layout.activity_new_company_details)
 
         setupActionBar(toolbar_new_company)
 
@@ -38,10 +46,34 @@ class NewCompanyDetailsActivity : BaseActivity() {
 
         addBranchesCheckboxesInLayout()
 
+        val date =
+            OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                myCalendar.set(Calendar.YEAR, year)
+                myCalendar.set(Calendar.MONTH, monthOfYear)
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                updateLabel()
+            }
+
+        et_deadline_to_apply.setOnClickListener {
+            var myDatePicker = DatePickerDialog(
+                this@NewCompanyDetailsActivity, date, myCalendar
+                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)
+            )
+            myDatePicker.datePicker.minDate = (System.currentTimeMillis())
+            myDatePicker.show()
+        }
+
         btn_submit_new_company.setOnClickListener {
             /**Call a function to add new company in the database */
             submitNewCompanyDetails()
         }
+    }
+
+    private fun updateLabel() {
+        val myFormat = "dd/MM/yyyy"
+        val sdf = SimpleDateFormat(myFormat, Locale.US)
+        et_deadline_to_apply.setText(sdf.format(myCalendar.time))
     }
 
     /** Shows the list of branches in the layout */
@@ -86,10 +118,18 @@ class NewCompanyDetailsActivity : BaseActivity() {
             )
         ) {
             val cgpaCutOff = cgpaCutOffString.toDouble()
+            var deadlineLong : Long =0
+            try {
+                val sdf = SimpleDateFormat("dd/MM/yyyy")
+                val date = sdf.parse(deadlineToApply)
+                deadlineLong = date.time
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
             var company = Company(
                 companyName, cgpaCutOff,
                 backLogsAllowed, branchesAllowed, ctcDetails,
-                companyLocation, deadlineToApply, jobProfile,
+                companyLocation, deadlineLong, jobProfile,
                 ArrayList(), 0
             )
 

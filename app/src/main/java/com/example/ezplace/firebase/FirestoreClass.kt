@@ -61,23 +61,23 @@ class FirestoreClass {
             // Here the tpoInfo is field values and the SetOption is set to merge. It is for if we want to merge
             .set(tpoInfo, SetOptions.merge())
             .addOnSuccessListener {
-                when(activity){
-                    is SignUpActivity ->{
+                when (activity) {
+                    is SignUpActivity -> {
                         // Here call a function of base activity for transferring the result to it.
                         activity.tpoRegisteredSuccess(tpoInfo)
                     }
-                    is AddPrActivity ->{
+                    is AddPrActivity -> {
                         activity.addPrSuccess()
                     }
                 }
             }
             .addOnFailureListener { e ->
-                when(activity){
-                    is SignUpActivity ->{
+                when (activity) {
+                    is SignUpActivity -> {
                         // Here call a function of base activity for transferring the result to it.
                         activity.hideProgressDialog()
                     }
-                    is AddPrActivity ->{
+                    is AddPrActivity -> {
                         activity.hideProgressDialog()
                     }
                 }
@@ -89,7 +89,11 @@ class FirestoreClass {
             }
     }
 
-    fun updateCollege(collegeCode : String,collegeHashmap : HashMap<String,Int>,activity: MainActivity){
+    fun updateCollege(
+        collegeCode: String,
+        collegeHashmap: HashMap<String, Int>,
+        activity: MainActivity
+    ) {
         mFireStore.collection(Constants.COLLEGES)
             .document(collegeCode)
             .set(collegeHashmap, SetOptions.merge())
@@ -106,12 +110,15 @@ class FirestoreClass {
             }
     }
 
-    fun getCollege(collegeCode : String, activity: UpdateProfileActivity){
+    fun getCollege(collegeCode: String, activity: UpdateProfileActivity) {
         mFireStore.collection(Constants.COLLEGES)
             .document(collegeCode)
             .get()
             .addOnSuccessListener { document ->
-                 var isUpdateButtonEnabled : Long =document[Constants.IS_UPDATE_BUTTON_ENABLED] as Long
+                var isUpdateButtonEnabled: Long = 1
+                if (document.exists())
+                    isUpdateButtonEnabled =
+                document[Constants.IS_UPDATE_BUTTON_ENABLED] as Long
                 activity.getCollegeSuccess(isUpdateButtonEnabled)
             }
             .addOnFailureListener { e ->
@@ -185,7 +192,6 @@ class FirestoreClass {
                         }
                     }
                 } else {
-                    Log.i("tag", "student")
                     loadStudentData(activity)
                 }
             }
@@ -204,6 +210,59 @@ class FirestoreClass {
             }
     }
 
+    fun getEligibleCompaniesNamesForOneStudent(student: Student, activity: UpdateProfileActivity) {
+        if (student.numberOfBacklogs > 0) {
+            mFireStore.collection(Constants.COLLEGES)
+                .document(student.collegeCode)
+                .collection(Constants.COMPANIES)
+                .whereLessThanOrEqualTo(Constants.DEADLINE_TO_APPLY, System.currentTimeMillis())
+                .whereArrayContains(Constants.BRANCHES_ALLOWED, student.branch)
+                .whereEqualTo(Constants.BACKLOGS_ALLOWED, 1)
+                .get()
+                .addOnSuccessListener { companyDocuments ->
+                    var companyNames = ArrayList<String>()
+                    for (companyDoc in companyDocuments) {
+                        val companyObject = companyDoc.toObject(Company::class.java)
+                        if (companyObject.cgpaCutOff >= student.cgpa)
+                            companyNames.add(companyObject.name)
+                    }
+                    activity.getEligibleCompaniesNamesSuccess(companyNames)
+                }
+                .addOnFailureListener { e ->
+                    activity.hideProgressDialog()
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while getting eligible companies",
+                        e
+                    )
+                }
+        } else {
+            mFireStore.collection(Constants.COLLEGES)
+                .document(student.collegeCode)
+                .collection(Constants.COMPANIES)
+                .whereGreaterThanOrEqualTo(Constants.DEADLINE_TO_APPLY, System.currentTimeMillis())
+                .whereArrayContains(Constants.BRANCHES_ALLOWED, student.branch)
+                .get()
+                .addOnSuccessListener { companyDocuments ->
+                    var companyNames = ArrayList<String>()
+                    for (companyDoc in companyDocuments) {
+                        val companyObject = companyDoc.toObject(Company::class.java)
+                        if (companyObject.cgpaCutOff <= student.cgpa)
+                            companyNames.add(companyObject.name)
+                    }
+                    activity.getEligibleCompaniesNamesSuccess(companyNames)
+                }
+                .addOnFailureListener { e ->
+                    activity.hideProgressDialog()
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while getting eligible companies",
+                        e
+                    )
+                }
+        }
+    }
+
     fun updateStudentProfileData(activity: Activity, studentHashMap: HashMap<String, Any>) {
         mFireStore.collection(Constants.STUDENTS) // Collection Name
             .document(FirebaseAuthClass().getCurrentUserID()) // Document ID
@@ -211,9 +270,7 @@ class FirestoreClass {
             .addOnSuccessListener {
                 // Profile data is updated successfully.
                 Log.i(activity.javaClass.simpleName, "Profile Data updated successfully!")
-                Toast.makeText(activity, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
                 // Notify the success result.
-
                 when (activity) {
                     is UpdateProfileActivity -> {
                         activity.profileUpdateSuccess()
@@ -271,7 +328,6 @@ class FirestoreClass {
         collegeCode: String,
         activity: NewCompanyDetailsActivity
     ) {
-        Log.i("stu3", collegeCode)
         if (company.backLogsAllowed == 0) {
             mFireStore.collection(Constants.STUDENTS)
                 .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
@@ -440,15 +496,23 @@ class FirestoreClass {
     }
 
     /** Get college names from the database */
-    fun getCollegeNames(activity : UpdateProfileActivity){
+    fun getCollegeNames(activity: UpdateProfileActivity) {
         mFireStore.collection(Constants.COLLEGES)
             .get()
             .addOnSuccessListener { collegeDocuments ->
                 var collegeNames = ArrayList<String>()
-                for(document in collegeDocuments){
+                for (document in collegeDocuments) {
                     collegeNames.add(document.id)
                 }
                 activity.getCollegeNamesSuccess(collegeNames)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while fetching companies from database.",
+                    e
+                )
             }
     }
 

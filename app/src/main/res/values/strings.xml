@@ -61,7 +61,7 @@
     <string name="company_name">Company Name</string>
     <string name="cgpa_cut_off">CGPA Cut Off</string>
     <string name="branches_allowed">Branches Allowed</string>
-    <string name="ctc_details">CTC Details</string>
+    <string name="ctc_details">CTC Details :</string>
     <string name="job_profile">Job profile</string>
     <string name="location">Location</string>
     <string name="deadline_to_apply">Deadline to apply</string>
@@ -102,6 +102,8 @@
     <string name="disable_update_profile_button">Update profile button for all the students will be disabled.</string>
     <string name="enable_update_profile_button">Update profile button for all the students will be enabled.</string>
     <string name="enable_update_profile_button_fab">Enable  update profile button</string>
+    <string name="rounds_details">Round details</string>
+    <string name="about_company">About company</string>
 
 
 </resources>

@@ -63,6 +63,7 @@
     <dimen name="standard_155">185dp</dimen>
     <dimen name="standard_205">245dp</dimen>
     <dimen name="tv_fab_margin_end">10dp</dimen>
+    <dimen name="fab_padding">10dp</dimen>
 
     <dimen name="height_of_nav_main">200dp</dimen>
     <dimen name="nav_image_size">80dp</dimen>
@@ -93,5 +94,8 @@
 
     <dimen name="design_bottom_navigation_text_size">10sp</dimen>
     <dimen name="design_bottom_navigation_active_text_size">15sp</dimen>
+    <dimen name="about_company_tv_margin_top">10dp</dimen>
+    <dimen name="about_company_lv_margin_top">5dp</dimen>
+    <dimen name="fab_margin_about_company">15dp</dimen>
 
 </resources>

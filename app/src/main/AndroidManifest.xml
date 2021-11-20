@@ -27,8 +27,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.AddPrActivity"
+            android:name=".activities.AboutCompanyActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.AddPrActivity"
+            android:screenOrientation="unspecified" />
         <activity
             android:name=".activities.RoundDetailsActivity"
             android:screenOrientation="unspecified" />

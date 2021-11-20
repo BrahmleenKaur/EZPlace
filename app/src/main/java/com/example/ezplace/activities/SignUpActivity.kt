@@ -52,7 +52,7 @@ class SignUpActivity : BaseActivity() {
         if (validateForm(firstName,email, password)) {
 
             if(isStudent){
-                val student = Student(companiesListAndLastRound = ArrayList())
+                val student = Student()
                 student.firstName=firstName
                 student.lastName=lastName
                 student.email=email
