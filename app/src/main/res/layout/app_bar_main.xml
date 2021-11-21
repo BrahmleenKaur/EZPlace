@@ -48,7 +48,7 @@
             android:layout_marginEnd="@dimen/fab_margin"
             app:borderWidth="0dp"
             android:backgroundTint="@color/dark_blue"
-            android:src="@drawable/ic_fab"
+            android:src="@drawable/ic_add"
             app:maxImageSize="40dp" />
 
         <LinearLayout

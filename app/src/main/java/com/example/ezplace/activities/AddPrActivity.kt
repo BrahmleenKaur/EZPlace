@@ -2,6 +2,7 @@ package com.example.ezplace.activities
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.widget.Toast
 import com.example.ezplace.R
 import com.example.ezplace.firebase.FirebaseAuthClass
 import com.example.ezplace.models.TPO
@@ -71,5 +72,7 @@ class AddPrActivity : BaseActivity() {
 
     fun addPrSuccess(){
         hideProgressDialog()
+
+        Toast.makeText(this,"New PR added successfully", Toast.LENGTH_LONG).show()
     }
 }

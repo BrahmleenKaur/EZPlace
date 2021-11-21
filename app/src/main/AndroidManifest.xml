@@ -26,24 +26,46 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".activities.DeclareResultsActivity"
+            android:exported="false"
+            android:screenOrientation="unspecified"/>
+
+        <activity
+            android:name=".activities.ViewResultsActivity"
+            android:exported="false"
+            android:screenOrientation="unspecified"/>
+
+        <activity
+            android:name=".activities.AddRoundActivity"
+            android:exported="false"
+            android:screenOrientation="unspecified"/>
+
         <activity
             android:name=".activities.AboutCompanyActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="unspecified"/>
+
         <activity
             android:name=".activities.AddPrActivity"
             android:screenOrientation="unspecified" />
+
         <activity
             android:name=".activities.RoundDetailsActivity"
             android:screenOrientation="unspecified" />
         <activity
             android:name=".activities.NewCompanyDetailsActivity"
             android:screenOrientation="unspecified" />
+
         <activity
             android:name=".activities.SignInActivity"
             android:screenOrientation="unspecified" />
+
         <activity
             android:name=".activities.UpdateProfileActivity"
             android:screenOrientation="unspecified" />
+
         <activity
             android:name=".activities.SignUpActivity"
             android:screenOrientation="unspecified" />

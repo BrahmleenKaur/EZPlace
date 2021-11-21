@@ -97,5 +97,12 @@
     <dimen name="about_company_tv_margin_top">10dp</dimen>
     <dimen name="about_company_lv_margin_top">5dp</dimen>
     <dimen name="fab_margin_about_company">15dp</dimen>
+    <dimen name="item_round_button_margin_start_end">5dp</dimen>
+    <dimen name="item_round_btn_text_size">20sp</dimen>
+    <dimen name="item_round_btn_padding">5dp</dimen>
+    <dimen name="table_margin_top">5dp</dimen>
+    <dimen name="table_margin">10dp</dimen>
+
+    <!-- Round details activity -->
 
 </resources>

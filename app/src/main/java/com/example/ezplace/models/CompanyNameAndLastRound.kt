@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 data class CompanyNameAndLastRound(
     var companyName : String="",
-    var lastRound :Int=0
+    var lastRound :Int=1    /**This is 1 ahead of the rounds cleared by a student */
 ) : Parcelable{
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

@@ -2,7 +2,6 @@ package com.example.ezplace.firebase
 
 import android.app.Activity
 import android.util.Log
-import android.widget.Toast
 import com.example.ezplace.activities.*
 import com.example.ezplace.models.*
 import com.example.ezplace.utils.Constants
@@ -118,7 +117,7 @@ class FirestoreClass {
                 var isUpdateButtonEnabled: Long = 1
                 if (document.exists())
                     isUpdateButtonEnabled =
-                document[Constants.IS_UPDATE_BUTTON_ENABLED] as Long
+                        document[Constants.IS_UPDATE_BUTTON_ENABLED] as Long
                 activity.getCollegeSuccess(isUpdateButtonEnabled)
             }
             .addOnFailureListener { e ->
@@ -139,18 +138,24 @@ class FirestoreClass {
             .get()
             .addOnSuccessListener { document ->
                 // Here we have received the document snapshot which is converted into the Student Data model object.
-                val loggedInUser = document.toObject(Student::class.java)!!
+                val loggedInStudent = document.toObject(Student::class.java)!!
 
                 // Here call a function of base activity for transferring the result to it.
                 when (activity) {
+                    is RoundDetailsActivity -> {
+                        activity.loadStudentDataSuccess(loggedInStudent)
+                    }
+                    is MainActivity -> {
+                        activity.updateStudentDetailsSuccess(loggedInStudent)
+                    }
                     is SplashActivity -> {
-                        activity.signInSuccessByStudent(loggedInUser)
+                        activity.signInSuccessByStudent(loggedInStudent)
                     }
                     is SignInActivity -> {
-                        activity.signInSuccessByStudent(loggedInUser)
+                        activity.signInSuccessByStudent(loggedInStudent)
                     }
                     is UpdateProfileActivity -> {
-                        activity.setStudentDataInUI(loggedInUser)
+                        activity.setStudentDataInUI(loggedInStudent)
                     }
                 }
             }
@@ -169,7 +174,7 @@ class FirestoreClass {
                 }
                 Log.e(
                     activity.javaClass.simpleName,
-                    "Error while getting loggedIn user details",
+                    "Error while getting loggedIn student details",
                     e
                 )
             }
@@ -311,7 +316,7 @@ class FirestoreClass {
             .document(company.name)
             .set(company)
             .addOnSuccessListener {
-                activity.companyRegisteredSuccess(company)
+                activity.companyRegisteredSuccess()
             }
             .addOnFailureListener { e ->
                 activity.hideProgressDialog()
@@ -395,7 +400,7 @@ class FirestoreClass {
     fun updateCompanyInStudentDatabase(
         studentsList: ArrayList<String>,
         companyLastRoundObject: CompanyNameAndLastRound,
-        activity: NewCompanyDetailsActivity
+        activity: Activity
     ) {
         for (id in studentsList) {
             mFireStore.collection(Constants.STUDENTS)
@@ -423,6 +428,7 @@ class FirestoreClass {
                     }
                 }
                 .addOnFailureListener { e ->
+                    if(activity is AddRoundActivity) activity.hideProgressDialog()
                     Log.e(
                         activity.javaClass.simpleName,
                         "Error while updating company in student database.",
@@ -430,7 +436,15 @@ class FirestoreClass {
                     )
                 }
         }
-        activity.updateCompanyInStudentDatabaseSuccess()
+        when(activity){
+            is NewCompanyDetailsActivity->{
+                activity.updateCompanyInStudentDatabaseSuccess(studentsList)
+            }
+            is AddRoundActivity ->{
+                activity.updateStudentsDatabaseSuccess()
+            }
+        }
+
     }
 
     fun getSpecificCompaniesDetailsFromDatabase(
@@ -511,6 +525,114 @@ class FirestoreClass {
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while fetching companies from database.",
+                    e
+                )
+            }
+    }
+
+    fun addRoundInCompany(
+        round: Round,
+        companyName: String,
+        collegeCode: String,
+        activity: AddRoundActivity
+    ) {
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .collection(Constants.COMPANIES)
+            .document(companyName)
+            .update(Constants.ROUNDS_LIST, FieldValue.arrayUnion(round))
+            .addOnSuccessListener {
+                activity.addRoundInCompanySuccess()
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while adding new round",
+                    e
+                )
+            }
+    }
+
+    fun loadCompany(companyName: String, collegeCode: String, activity: RoundDetailsActivity) {
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .collection(Constants.COMPANIES)
+            .document(companyName)
+            .get()
+            .addOnSuccessListener { companyDoc ->
+                val companyOBject = companyDoc.toObject(Company::class.java)
+                if (companyOBject != null) {
+                    activity.loadCompanySuccess(companyOBject)
+                }
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while a loading company data",
+                    e
+                )
+            }
+    }
+
+    fun getAllStudents(collegeCode: String, activity: NewCompanyDetailsActivity) {
+        mFireStore.collection(Constants.STUDENTS)
+            .whereEqualTo(Constants.COLLEGE_CODE,collegeCode)
+            .get()
+            .addOnSuccessListener { studentDocs ->
+                val studentsList = ArrayList<Student>()
+                for(student in studentDocs){
+                    studentsList.add(student.toObject(Student::class.java))
+                }
+                activity.getAllStudentsSuccess(studentsList)
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while fetching all students",
+                    e
+                )
+            }
+    }
+
+    fun getStudentsFromIds(eligibleStudentsIds: ArrayList<String>, activity: Activity) {
+        mFireStore.collection(Constants.STUDENTS)
+            .whereIn(Constants.ID,eligibleStudentsIds)
+            .get()
+            .addOnSuccessListener { studentDocs ->
+                val studentsList = ArrayList<Student>()
+                for(student in studentDocs){
+                    studentsList.add(student.toObject(Student::class.java))
+                }
+                when(activity){
+                    is AddRoundActivity ->{
+                        activity.getStudentsFromIdsSuccess(studentsList)
+                    }
+                    is ViewResultsActivity ->{
+                        activity.setUpUI(studentsList)
+                    }
+                    is DeclareResultsActivity ->{
+                        activity.setUpUI(studentsList)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                when(activity){
+                    is AddRoundActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                    is ViewResultsActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                    is DeclareResultsActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while fetching students from ids",
                     e
                 )
             }

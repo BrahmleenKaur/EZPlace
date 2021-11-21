@@ -8,7 +8,18 @@ import android.webkit.MimeTypeMap
 
 object Constants {
 
+    const val SECOND_LAST_ROUND: String = "Second last round"
+    const val ROUND_ARRAY = "Round array"
+    const val ROUND: String ="round"
+    const val SCREENING_ROUND: String= "Screening round"
+    const val OVER = "OVER"
+    const val NOT_CLEARED ="NOT CLEARED"
+    const val PENDING = " PENDING"
+    const val CLEARED ="CLEARED"
+    const val ROUNDS_LIST ="roundsList"
     const val COMPANY_DETAIL: String = "Company Details"
+    const val DECLARE_RESULTS = "Declare results"
+    const val VIEW_RESULTS = "View results"
 
     // Firebase Constants
     // This  is used for the collection names used in firestore

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -61,7 +60,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun clickListenerForBottomNavigationView() {
         /** Set OnClick listeners for bottom navigation view options */
-        bottomNavigationView.setOnNavigationItemSelectedListener {
+        bottomNavigationView.setOnItemSelectedListener{
             /**Create array of company names to fetch data from database*/
             var companiesList: ArrayList<String> = ArrayList()
             if (isStudent) {
@@ -149,6 +148,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 isStudent = false
                 var tpo: TPO = intent.getParcelableExtra<TPO>(Constants.TPO_DETAILS)!!
                 collegeCode = tpo.collegeCode
+                clickListenerForBottomNavigationView()
                 setForTPO(tpo)
             }
         }
@@ -162,6 +162,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         nav_view.setNavigationItemSelectedListener(this)
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text =
             "Hi ${tpo.firstName}"
+
+
 
         /** Floating Action Button listener*/
         fab.setOnClickListener {
@@ -229,6 +231,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         loadCompaniesForStudent()
     }
 
+    private fun updateStudentDetails(){
+        showProgressDialog(getString(R.string.please_wait))
+        FirestoreClass().loadStudentData(this)
+    }
+
+    fun updateStudentDetailsSuccess(student: Student){
+        mStudent = student
+        hideProgressDialog()
+
+        loadCompaniesForStudent()
+    }
+
     private fun loadCompaniesForStudent() {
 
         /** To load student's data to screen */
@@ -250,22 +264,31 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
+
+        val addItem: MenuItem = menu.findItem(R.id.add)
+        addItem.isVisible = false
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.refresh -> {
-                if (isStudent) {
-                    loadCompaniesForStudent()
-                } else {
-                    loadCompaniesForTPO()
-                }
+                refresh()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun refresh(){
+        if (isStudent) {
+            updateStudentDetails()
+        } else {
+            loadCompaniesForTPO()
+        }
+    }
+
 
     private fun showFABMenu() {
         isFABOpen = true
@@ -288,7 +311,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         isFABOpen = false
 
         tv_block_view.visibility = View.GONE
-        fab.setImageResource(R.drawable.ic_fab)
+        fab.setImageResource(R.drawable.ic_add)
         fab.scaleType = ImageView.ScaleType.FIT_XY
 
         ll_add_new_company.animate().translationY(0F)
@@ -320,10 +343,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             adapter.setOnClickListener(object : CompanyItemsAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Company) {
                     val intent = Intent(this@MainActivity, RoundDetailsActivity::class.java)
+                    if (isStudent)
+                        intent.putExtra(Constants.STUDENT_DETAILS, mStudent)
                     intent.putExtra(Constants.COMPANY_DETAIL, model)
-//                    intent.putExtra(Constants.STUDENT_DETAIL, mStudent)
-//                    intent.putExtra(Constants.BYADMIN, isAdminHere)
+                    intent.putExtra(Constants.COLLEGE_CODE, collegeCode)
                     startActivity(intent)
+                    refresh()
                 }
             })
         } else {

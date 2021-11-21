@@ -104,6 +104,22 @@
     <string name="enable_update_profile_button_fab">Enable  update profile button</string>
     <string name="rounds_details">Round details</string>
     <string name="about_company">About company</string>
+    <string name="add_round">Add new round</string>
+    <string name="round_name">Round name</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="venue">Venue</string>
+    <string name="enter_round_name">Please add round name</string>
+    <string name="enter_round_date">Please enter round date</string>
+    <string name="enter_round_time">Please enter round time</string>
+    <string name="enter_round_venue">Please enter venue of round</string>
+    <string name="cleared">Cleared</string>
+    <string name="declare_results">Declare results</string>
+    <string name="view_results">View results</string>
+    <string name="no_rounds_added">No rounds have been added yet</string>
+    <string name="results">Results</string>
+    <string name="roll_number">ROLL NUMBER</string>
+    <string name="name">NAME</string>
 
 
 </resources>

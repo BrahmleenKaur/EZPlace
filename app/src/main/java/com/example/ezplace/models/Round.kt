@@ -2,20 +2,22 @@ package com.example.ezplace.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 data class Round(
-    var number : Int,
-    var date: String,
-    var time : String,
-    var selectedStudents : ArrayList<String>,
-    var notSelectedStudents : ArrayList<String>,
-    var isOver : Int
+    var number : Int=0,
+    var name : String ="",
+    var date: Long=0,
+    var time : String ="",
+    var venue : String ="",
+    var selectedStudents : ArrayList<String> = ArrayList(),
+    var notSelectedStudents : ArrayList<String> = ArrayList(),
+    var isOver : Int = 0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
+        parcel.readString()!!,
+        parcel.readLong()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readArrayList(null)!! as ArrayList<String>,
@@ -25,8 +27,10 @@ data class Round(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel){
         parcel.writeInt(number)
-        parcel.writeString(date)
+        parcel.writeString(name)
+        parcel.writeLong(date)
         parcel.writeString(time)
+        parcel.writeString(venue)
         parcel.writeList(selectedStudents)
         parcel.writeList(notSelectedStudents)
         parcel.writeInt(isOver)

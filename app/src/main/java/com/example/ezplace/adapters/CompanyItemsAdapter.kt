@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ezplace.R
 import com.example.ezplace.models.Company
 import kotlinx.android.synthetic.main.item_company.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 open class CompanyItemsAdapter(private val context: Context,
                             private var companiesList: ArrayList<Company>)
@@ -47,13 +50,19 @@ open class CompanyItemsAdapter(private val context: Context,
 
         if (holder is MyViewHolder) {
             val lastRound : Int = company.roundsList.size
-            val title = company.name + "- Round "+ lastRound.toString()
+            var title = ""
+            for(character in company.name){
+                title += character.uppercaseChar()
+            }
+            title += " - Round $lastRound"
 
             holder.itemView.tv_item_company_name.text = title
             holder.itemView.tv_item_company_job_profile.text = company.jobProfile
 
-            if(lastRound >1){
-                holder.itemView.tv_item_company_date.text = company.roundsList[lastRound-1].date
+            if(lastRound >=1){
+                val dateString: String =
+                    SimpleDateFormat("MM/dd/yyyy").format(Date(company.roundsList[lastRound-1].date))
+                holder.itemView.tv_item_company_date.text = dateString
                 holder.itemView.tv_item_company_time.text = company.roundsList[lastRound-1].time
             }
             else{
