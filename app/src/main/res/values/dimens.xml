@@ -102,6 +102,8 @@
     <dimen name="item_round_btn_padding">5dp</dimen>
     <dimen name="table_margin_top">5dp</dimen>
     <dimen name="table_margin">10dp</dimen>
+    <dimen name="declare_btn_margin_top_bottom">25dp</dimen>
+    <dimen name="tv_declare_results_text_size">20sp</dimen>
 
     <!-- Round details activity -->
 

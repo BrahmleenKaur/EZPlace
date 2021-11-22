@@ -118,12 +118,6 @@ open class BaseActivity : AppCompatActivity() {
                                 FirebaseAuthClass().signOut()
 
                             activity.clearSharedPreferences()
-
-                            //SEnd the user to Intro activity after signing out
-                            val intent = Intent(activity, IntroActivity::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            startActivity(intent)
-                            activity.finish()
                         }
                         else {
                             val collegeHashmap = HashMap<String,Int>()

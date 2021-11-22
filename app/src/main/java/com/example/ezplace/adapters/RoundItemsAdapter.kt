@@ -12,16 +12,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ezplace.R
 import com.example.ezplace.activities.DeclareResultsActivity
 import com.example.ezplace.activities.ViewResultsActivity
+import com.example.ezplace.models.Company
 import com.example.ezplace.models.Round
 import com.example.ezplace.utils.Constants
 import kotlinx.android.synthetic.main.item_round.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 open class RoundItemsAdapter(
     private val context: Context,
-    private var roundsList: ArrayList<Round>, private var lastClearedRound: Int = -1
+    private var roundsList: ArrayList<Round>, private var lastClearedRound: Int,
+    private var company : Company
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
@@ -71,7 +74,7 @@ open class RoundItemsAdapter(
             holder.itemView.tv_item_round_time.text = roundTime
             holder.itemView.tv_item_round_venue.text = roundVenue
 
-            val lastTwoRounds = ArrayList<Round>()
+            val tagHashMap = HashMap<String,Any>()
             val size = roundsList.size
 
             // lastClearedRound = -1 means it is tpo, else it is student whose min vale is 0
@@ -95,7 +98,7 @@ open class RoundItemsAdapter(
                             R.color.dark_blue
                         )
                     )
-                    lastTwoRounds.add(roundsList[size-2])
+                    tagHashMap[Constants.SECOND_LAST_ROUND] = roundsList[size-2]
                 }
             } else {
                 holder.itemView.cv_declare_results.visibility = View.GONE
@@ -122,8 +125,9 @@ open class RoundItemsAdapter(
                 }
             }
 
-            lastTwoRounds.add(round)
-            holder.itemView.tag = lastTwoRounds
+            tagHashMap[Constants.ROUND] = round
+            tagHashMap[Constants.COMPANY] = company
+            holder.itemView.tag = tagHashMap
         }
     }
 
@@ -163,8 +167,9 @@ open class RoundItemsAdapter(
         }
 
         override fun onClick(view: View?) {
-            val lastTwoRounds= itemView.tag as ArrayList<Round>
-            val round = lastTwoRounds.last()
+            val tagHashMap= itemView.tag as HashMap<String,Any>
+            val round = tagHashMap[Constants.ROUND] as Round
+            val company = tagHashMap[Constants.COMPANY] as Company
 
             if(btnTextView.text == Constants.VIEW_RESULTS){
                 val intent = Intent(context,ViewResultsActivity::class.java)
@@ -172,10 +177,11 @@ open class RoundItemsAdapter(
                 context.startActivity(intent)
             }
             else{
-                val secondLastRound = lastTwoRounds[0]
+                val secondLastRound = tagHashMap[Constants.SECOND_LAST_ROUND] as Round
                 val intent = Intent(context,DeclareResultsActivity::class.java)
                 intent.putExtra(Constants.ROUND,round)
                 intent.putExtra(Constants.SECOND_LAST_ROUND,secondLastRound)
+                intent.putExtra(Constants.COMPANY,company)
                 context.startActivity(intent)
             }
         }

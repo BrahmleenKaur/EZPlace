@@ -8,6 +8,12 @@ import android.webkit.MimeTypeMap
 
 object Constants {
 
+    const val IS_PR: String ="is pr"
+    const val STUDENT_EMAIL: String ="student email"
+    const val STUDENT_PASSWORD ="student password"
+    const val PR_EMAIL ="tpo email"
+    const val PR_PASSWORD ="tpo password"
+    const val COMPANY: String ="Company"
     const val SECOND_LAST_ROUND: String = "Second last round"
     const val ROUND_ARRAY = "Round array"
     const val ROUND: String ="round"

@@ -37,6 +37,7 @@ class NewCompanyDetailsActivity : BaseActivity() {
     private val myCalendar: Calendar = Calendar.getInstance()
     private lateinit var company : Company
     private var eligibleStudents = ArrayList<Student>()
+    private var eligibleStudentsIds: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,7 +143,6 @@ class NewCompanyDetailsActivity : BaseActivity() {
     fun getEligibleStudentsSuccess(eligibleStudents: ArrayList<Student>, companyName: String) {
 
         this.eligibleStudents = eligibleStudents
-        var eligibleStudentsIds: ArrayList<String> = ArrayList()
 
         /** Notify all these eligible students regarding new company
         This will be done in background using Async tasks*/
@@ -193,7 +193,7 @@ class NewCompanyDetailsActivity : BaseActivity() {
 
         for(student in students){
             val message = "${company.name}'s Screening round not cleared"
-            if(!eligibleStudents.contains(student)){
+            if(!(eligibleStudentsIds.contains(student.id))){
                 SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
             }
         }

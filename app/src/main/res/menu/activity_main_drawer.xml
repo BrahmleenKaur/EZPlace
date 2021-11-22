@@ -5,6 +5,12 @@
             android:id="@+id/nav_my_profile"
             android:title="@string/nav_my_profile" />
         <item
+            android:id="@+id/switch_to_student_account"
+            android:title="@string/swicth_to_student" />
+        <item
+            android:id="@+id/switch_to_pr_account"
+            android:title="@string/switch_to_pr" />
+        <item
             android:id="@+id/nav_sign_out"
             android:title="@string/nav_sign_out" />
     </group>

@@ -400,7 +400,8 @@ class FirestoreClass {
     fun updateCompanyInStudentDatabase(
         studentsList: ArrayList<String>,
         companyLastRoundObject: CompanyNameAndLastRound,
-        activity: Activity
+        activity: Activity,
+        selectedStudentsUpdated: Boolean = true
     ) {
         for (id in studentsList) {
             mFireStore.collection(Constants.STUDENTS)
@@ -428,7 +429,7 @@ class FirestoreClass {
                     }
                 }
                 .addOnFailureListener { e ->
-                    if(activity is AddRoundActivity) activity.hideProgressDialog()
+                    if (activity is AddRoundActivity) activity.hideProgressDialog()
                     Log.e(
                         activity.javaClass.simpleName,
                         "Error while updating company in student database.",
@@ -436,12 +437,19 @@ class FirestoreClass {
                     )
                 }
         }
-        when(activity){
-            is NewCompanyDetailsActivity->{
+        when (activity) {
+            is NewCompanyDetailsActivity -> {
                 activity.updateCompanyInStudentDatabaseSuccess(studentsList)
             }
-            is AddRoundActivity ->{
+            is AddRoundActivity -> {
                 activity.updateStudentsDatabaseSuccess()
+            }
+            is DeclareResultsActivity -> {
+                if (selectedStudentsUpdated) {
+                    activity.notSelectedStudentsDatabaseUpdated()
+                } else {
+                    activity.selectedStudentsDatabaseUpdated()
+                }
             }
         }
 
@@ -534,7 +542,7 @@ class FirestoreClass {
         round: Round,
         companyName: String,
         collegeCode: String,
-        activity: AddRoundActivity
+        activity: Activity
     ) {
         mFireStore.collection(Constants.COLLEGES)
             .document(collegeCode)
@@ -542,13 +550,61 @@ class FirestoreClass {
             .document(companyName)
             .update(Constants.ROUNDS_LIST, FieldValue.arrayUnion(round))
             .addOnSuccessListener {
-                activity.addRoundInCompanySuccess()
+                when (activity) {
+                    is AddRoundActivity -> {
+                        activity.addRoundInCompanySuccess()
+                    }
+                    is DeclareResultsActivity -> {
+                        round.selectedStudents.clear()
+                        round.isOver = 0
+                        deleteRoundFromCompany(round, companyName, collegeCode, activity)
+                    }
+                }
             }
             .addOnFailureListener { e ->
-                activity.hideProgressDialog()
+                when (activity) {
+                    is AddRoundActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is DeclareResultsActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                }
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while adding new round",
+                    e
+                )
+            }
+    }
+
+    private fun deleteRoundFromCompany(
+        round: Round,
+        companyName: String,
+        collegeCode: String,
+        activity: Activity
+    ) {
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .collection(Constants.COMPANIES)
+            .document(companyName)
+            .update(Constants.ROUNDS_LIST, FieldValue.arrayRemove(round))
+            .addOnSuccessListener {
+                when (activity) {
+                    is DeclareResultsActivity -> {
+                        activity.companyDatabaseUpdated()
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                when (activity) {
+                    is DeclareResultsActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while deleting round",
                     e
                 )
             }
@@ -578,11 +634,11 @@ class FirestoreClass {
 
     fun getAllStudents(collegeCode: String, activity: NewCompanyDetailsActivity) {
         mFireStore.collection(Constants.STUDENTS)
-            .whereEqualTo(Constants.COLLEGE_CODE,collegeCode)
+            .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
             .get()
             .addOnSuccessListener { studentDocs ->
                 val studentsList = ArrayList<Student>()
-                for(student in studentDocs){
+                for (student in studentDocs) {
                     studentsList.add(student.toObject(Student::class.java))
                 }
                 activity.getAllStudentsSuccess(studentsList)
@@ -599,40 +655,72 @@ class FirestoreClass {
 
     fun getStudentsFromIds(eligibleStudentsIds: ArrayList<String>, activity: Activity) {
         mFireStore.collection(Constants.STUDENTS)
-            .whereIn(Constants.ID,eligibleStudentsIds)
+            .whereIn(Constants.ID, eligibleStudentsIds)
             .get()
             .addOnSuccessListener { studentDocs ->
                 val studentsList = ArrayList<Student>()
-                for(student in studentDocs){
+                for (student in studentDocs) {
                     studentsList.add(student.toObject(Student::class.java))
                 }
-                when(activity){
-                    is AddRoundActivity ->{
+                when (activity) {
+                    is AddRoundActivity -> {
                         activity.getStudentsFromIdsSuccess(studentsList)
                     }
-                    is ViewResultsActivity ->{
+                    is ViewResultsActivity -> {
                         activity.setUpUI(studentsList)
                     }
-                    is DeclareResultsActivity ->{
+                    is DeclareResultsActivity -> {
                         activity.setUpUI(studentsList)
                     }
                 }
             }
             .addOnFailureListener { e ->
-                when(activity){
-                    is AddRoundActivity ->{
+                when (activity) {
+                    is AddRoundActivity -> {
                         activity.hideProgressDialog()
                     }
-                    is ViewResultsActivity ->{
+                    is ViewResultsActivity -> {
                         activity.hideProgressDialog()
                     }
-                    is DeclareResultsActivity ->{
+                    is DeclareResultsActivity -> {
                         activity.hideProgressDialog()
                     }
                 }
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while fetching students from ids",
+                    e
+                )
+            }
+    }
+
+    fun updateCompanyInCollegeDatabase(
+        companyHashMap: HashMap<String, Int>,
+        companyName: String,
+        collegeCode: String,
+        activity: Activity
+    ) {
+        mFireStore.collection(Constants.COLLEGES)
+            .document(collegeCode)
+            .collection(Constants.COMPANIES)
+            .document(companyName)
+            .set(companyHashMap, SetOptions.merge())
+            .addOnSuccessListener {
+                when(activity){
+                    is DeclareResultsActivity ->{
+                        activity.companyUpdatedInCollegeDatabaseSuccess()
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                when (activity) {
+                    is DeclareResultsActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while updating company in college",
                     e
                 )
             }

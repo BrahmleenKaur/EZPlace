@@ -25,6 +25,28 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <CheckBox
+        android:id="@+id/cb_declare_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/is_this_the_last_round"
+        android:layout_gravity="start"
+        android:layout_margin="@dimen/table_margin"
+        android:paddingLeft="5dp"
+        android:textSize="@dimen/tv_declare_results_text_size"/>
+
+    <TextView
+        android:id="@+id/tv_top_declare_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/declare_results_text_view"
+        android:layout_margin="@dimen/table_margin"
+        android:paddingLeft="5dp"
+        android:gravity="start"
+        android:textSize="@dimen/tv_declare_results_text_size"
+        android:textColor="@color/black"
+        android:paddingRight="5dp"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -38,7 +60,9 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp">
 
-            <TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_background_header">
 
                 <TextView
                     android:id="@+id/tv_roll_table_heading_declare"
@@ -47,21 +71,22 @@
                     android:layout_weight="1"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:background="@drawable/table_cell_background"
-                    android:backgroundTint="@color/light_blue"
+                    android:gravity="center"
+                    android:textColor="@color/black"
                     android:padding="5dp"
                     android:text="@string/roll_number" />
 
                 <TextView
+                    android:id="@+id/tv_name_table_heading"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:backgroundTint="@color/light_blue"
-                    android:background="@drawable/table_cell_background"
+                    android:background="@drawable/table_cell_background_header"
                     android:padding="5dp"
-                    android:gravity="start"
+                    android:textColor="@color/black"
+                    android:gravity="center"
                     android:text="@string/name" />
 
             </TableRow>
@@ -69,5 +94,26 @@
         </TableLayout>
 
     </ScrollView>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/btn_declare_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_button_rounded_blue"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+        android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
+        android:paddingTop="@dimen/btn_paddingTopBottom"
+        android:paddingBottom="@dimen/btn_paddingTopBottom"
+        android:text="@string/submit"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/btn_text_size"
+        android:layout_marginTop="@dimen/declare_btn_margin_top_bottom"
+        android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"/>
 
 </LinearLayout>

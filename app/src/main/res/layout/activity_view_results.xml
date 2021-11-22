@@ -26,6 +26,19 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <TextView
+        android:id="@+id/tv_top_view_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:layout_margin="@dimen/table_margin"
+        android:paddingLeft="5dp"
+        android:gravity="center"
+        android:textSize="@dimen/tv_declare_results_text_size"
+        android:textColor="@color/black"
+        android:paddingRight="5dp"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -39,7 +52,9 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp">
 
-            <TableRow>
+            <TableRow
+                android:layout_height="wrap_content"
+                android:background="@drawable/table_cell_background_header">
 
                 <TextView
                     android:id="@+id/tv_roll_table_heading"
@@ -48,24 +63,21 @@
                     android:layout_weight="1"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:textColor="@color/white"
-                    android:background="@drawable/table_cell_background"
-                    android:backgroundTint="@color/light_blue"
+                    android:gravity="center"
+                    android:textColor="@color/black"
                     android:padding="5dp"
                     android:text="@string/roll_number" />
 
                 <TextView
-                    android:id="@+id/tv_name_table_heading"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:backgroundTint="@color/light_blue"
-                    android:background="@drawable/table_cell_background"
+                    android:background="@drawable/table_cell_background_header"
                     android:padding="5dp"
-                    android:textColor="@color/white"
-                    android:gravity="start"
+                    android:textColor="@color/black"
+                    android:gravity="center"
                     android:text="@string/name" />
 
             </TableRow>

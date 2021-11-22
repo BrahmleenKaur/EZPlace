@@ -82,6 +82,7 @@ class AddRoundActivity : BaseActivity() {
                 e.printStackTrace()
             }
             var round = Round()
+            round.number = company.roundsList.size +1
             round.name=name
             round.date=roundDate
             round.time=time
@@ -112,7 +113,7 @@ class AddRoundActivity : BaseActivity() {
         var totalRounds = company.roundsList.size
         val companyLastRoundObject = CompanyNameAndLastRound(company.name, totalRounds+1)
         FirestoreClass().updateCompanyInStudentDatabase(
-            company.roundsList[totalRounds-2].selectedStudents,
+            company.roundsList[totalRounds-1].selectedStudents,
             companyLastRoundObject,
             this
         )

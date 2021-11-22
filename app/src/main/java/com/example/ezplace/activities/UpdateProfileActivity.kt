@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
@@ -101,7 +100,7 @@ class UpdateProfileActivity : BaseActivity() {
 
         /** Get college details to check if update
          * profile button is to be enabled or disabled */
-        if(mStudentDetails.collegeCode.isNotEmpty())
+        if (mStudentDetails.collegeCode.isNotEmpty())
             getCollegeDetails()
         else
             hideProgressDialog()
@@ -109,7 +108,7 @@ class UpdateProfileActivity : BaseActivity() {
     }
 
     /** Fetch college details from database */
-    private fun getCollegeDetails(){
+    private fun getCollegeDetails() {
         FirestoreClass().getCollege(mStudentDetails.collegeCode, this)
     }
 
@@ -191,13 +190,15 @@ class UpdateProfileActivity : BaseActivity() {
                  * is updating profile for the first time after sign up,
                  * we need to update this students database with the companies
                  * which are already stored in the database  */
-                if(isRollNumberEmpty){
+                if (isRollNumberEmpty) {
                     showProgressDialog(getString(R.string.please_wait))
-                    FirestoreClass().getEligibleCompaniesNamesForOneStudent(mStudentDetails,this)
-                }
-                else{
+                    FirestoreClass().getEligibleCompaniesNamesForOneStudent(mStudentDetails, this)
+                } else {
                     showProgressDialog(resources.getString(R.string.please_wait))
-                    FirestoreClass().updateStudentProfileData(this@UpdateProfileActivity, userHashMap)
+                    FirestoreClass().updateStudentProfileData(
+                        this@UpdateProfileActivity,
+                        userHashMap
+                    )
                 }
             } else {
                 /** if no changes detected, then just send to Main activity */
@@ -210,19 +211,19 @@ class UpdateProfileActivity : BaseActivity() {
         }
     }
 
-    fun getEligibleCompaniesNamesSuccess(companyNames : ArrayList<String>){
+    fun getEligibleCompaniesNamesSuccess(companyNames: ArrayList<String>) {
         hideProgressDialog()
 
         //TODO UPDATE COMPANY DATA (put student in round 0)
 
         var companyNamesAndLastRounds = ArrayList<CompanyNameAndLastRound>()
-        for(companyName in companyNames){
+        for (companyName in companyNames) {
             var companyNameAndLastRoundObject = CompanyNameAndLastRound()
             companyNameAndLastRoundObject.companyName = companyName
             companyNameAndLastRoundObject.lastRound = 1
             companyNamesAndLastRounds.add(companyNameAndLastRoundObject)
         }
-        userHashMap[Constants.COMPANY_NAME_AND_LAST_ROUND]=companyNamesAndLastRounds
+        userHashMap[Constants.COMPANY_NAME_AND_LAST_ROUND] = companyNamesAndLastRounds
         mStudentDetails.companiesListAndLastRound = companyNamesAndLastRounds
 
         showProgressDialog(resources.getString(R.string.please_wait))
@@ -253,6 +254,14 @@ class UpdateProfileActivity : BaseActivity() {
             }
             TextUtils.isEmpty(cgpa) -> {
                 showErrorSnackBar(getString(R.string.enter_cgpa))
+                false
+            }
+            cgpa.toFloat() < 0 -> {
+                showErrorSnackBar(getString(R.string.valid_cgpa))
+                false
+            }
+            cgpa.toFloat() > 10 -> {
+                showErrorSnackBar(getString(R.string.valid_cgpa))
                 false
             }
             TextUtils.isEmpty(backlogs) -> {

@@ -34,6 +34,7 @@ class RoundDetailsActivity : BaseActivity() {
         toolbar_round_details.title = company.name + "$'s rounds"
         setupActionBar(toolbar_round_details)
 
+        onCreateOptionsMenu(toolbar_round_details.menu)
         handleIntent(intent)
 
         fab_about_company.setOnClickListener {
@@ -54,16 +55,27 @@ class RoundDetailsActivity : BaseActivity() {
             if(roundsList.isNotEmpty()){
                 val lastRound=roundsList.last()
                 if(lastRound.isOver == 0){
-                    addItem.isEnabled = false
-                    addItem.icon=ContextCompat.getDrawable(this, R.drawable.ic_add_grey)
+                    disableAddMenuItem()
                 }
                 else{
-                    addItem.isEnabled = true
-                    addItem.icon=ContextCompat.getDrawable(this, R.drawable.ic_add)
+                    enableAddMenuItem()
                 }
             }
         }
         return true
+    }
+
+    private fun disableAddMenuItem(){
+        val menu : Menu = toolbar_round_details.menu
+        val addItem: MenuItem = menu.findItem(R.id.add)
+        addItem.isEnabled = false
+        addItem.icon=ContextCompat.getDrawable(this, R.drawable.ic_add_grey)
+    }
+    private fun enableAddMenuItem(){
+        val menu : Menu = toolbar_round_details.menu
+        val addItem: MenuItem = menu.findItem(R.id.add)
+        addItem.isEnabled = true
+        addItem.icon=ContextCompat.getDrawable(this, R.drawable.ic_add)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -120,7 +132,6 @@ class RoundDetailsActivity : BaseActivity() {
         val roundsList : ArrayList<Round> = company.roundsList
 
         if (roundsList.size > 0) {
-
             /** Setting up recycler view */
             rv_rounds_list.visibility = View.VISIBLE
             tv_no_rounds_added.visibility = View.GONE
@@ -128,20 +139,15 @@ class RoundDetailsActivity : BaseActivity() {
             rv_rounds_list.layoutManager = LinearLayoutManager(this)
             rv_rounds_list.setHasFixedSize(true)
 
-            val adapter = RoundItemsAdapter(this, roundsList)
+            val adapter = RoundItemsAdapter(this, roundsList,-1,company = company)
             rv_rounds_list.adapter = adapter
 
-            /** On click listener for each item of recycler view */
-//            adapter.setOnClickListener(object : CompanyItemsAdapter.OnClickListener {
-//                override fun onClick(position: Int, model: Company) {
-//                    val intent = Intent(this@MainActivity, RoundDetailsActivity::class.java)
-//                    if (isStudent)
-//                        intent.putExtra(Constants.STUDENT_DETAILS, mStudent)
-//                    intent.putExtra(Constants.COMPANY_DETAIL, model)
-//                    intent.putExtra(Constants.COLLEGE_CODE, collegeCode)
-//                    startActivity(intent)
-//                }
-//            })
+            if(roundsList.last().isOver == 0){
+                disableAddMenuItem()
+            }
+            else{
+                enableAddMenuItem()
+            }
         } else {
             rv_rounds_list.visibility = View.GONE
             tv_no_rounds_added.visibility = View.VISIBLE
@@ -173,7 +179,7 @@ class RoundDetailsActivity : BaseActivity() {
             rv_rounds_list.layoutManager = LinearLayoutManager(this)
             rv_rounds_list.setHasFixedSize(true)
 
-            val adapter = RoundItemsAdapter(this, roundsList,lastRoundForCompany-1)
+            val adapter = RoundItemsAdapter(this, roundsList,lastRoundForCompany-1,company)
             rv_rounds_list.adapter = adapter
 
             /** On click listener for each item of recycler view */

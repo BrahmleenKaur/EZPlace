@@ -120,6 +120,15 @@
     <string name="results">Results</string>
     <string name="roll_number">ROLL NUMBER</string>
     <string name="name">NAME</string>
+    <string name="declare_results_text_view">Tap a row to select it.</string>
+    <string name="no_students_selected_from_previous_round">No student cleared the last round</string>
+    <string name="valid_cgpa">CGPA should be between 1 and 10</string>
+    <string name="passwords_not_matching">Passwords do not match</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="wrong_email">Email Id is ill-formatted</string>
+    <string name="swicth_to_student">Switch to Student account</string>
+    <string name="switch_to_pr">Switch to PR account</string>
+    <string name="is_this_the_last_round">Is this the final round ?</string>
 
 
 </resources>

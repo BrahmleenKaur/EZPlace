@@ -38,6 +38,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     /**A variable to store details of current student*/
     private lateinit var mStudent: Student
+    private lateinit var mTPO: TPO
 
     /** A SharedPreference object points to a file containing key-value pairs */
     /** Here it is used to store Firebase Cloud Messaging Token in the device */
@@ -54,13 +55,17 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        /** Using shared preference in private mode so that other apps cannot access it */
+        mSharedPreferences =
+            this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
+
         setUpNavigationView()
         handleIntent(intent)
     }
 
     private fun clickListenerForBottomNavigationView() {
         /** Set OnClick listeners for bottom navigation view options */
-        bottomNavigationView.setOnItemSelectedListener{
+        bottomNavigationView.setOnItemSelectedListener {
             /**Create array of company names to fetch data from database*/
             var companiesList: ArrayList<String> = ArrayList()
             if (isStudent) {
@@ -146,10 +151,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
             intent.hasExtra(Constants.TPO_DETAILS) -> {
                 isStudent = false
-                var tpo: TPO = intent.getParcelableExtra<TPO>(Constants.TPO_DETAILS)!!
-                collegeCode = tpo.collegeCode
+                mTPO = intent.getParcelableExtra<TPO>(Constants.TPO_DETAILS)!!
+                collegeCode = mTPO.collegeCode
                 clickListenerForBottomNavigationView()
-                setForTPO(tpo)
+                setForTPO(mTPO)
             }
         }
     }
@@ -159,10 +164,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         /**Disable "My Profile" option for TPO*/
         nav_view.menu[0].isVisible = false
+        nav_view.menu[2].isVisible = false
+        if (!mSharedPreferences.contains(Constants.PR_EMAIL))
+            nav_view.menu[1].isVisible = false
+
+
         nav_view.setNavigationItemSelectedListener(this)
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text =
             "Hi ${tpo.firstName}"
-
 
 
         /** Floating Action Button listener*/
@@ -207,17 +216,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun loadCompaniesForTPO() {
+        val roundsOver = if(bottomNavigationView.menu[0].isChecked) 0 else 1
         /**Load TPO data to screen from database*/
         showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().getAllCompaniesDetailsFromDatabase(
             collegeCode,
-            roundsOver = 0,
+            roundsOver,
             this@MainActivity
         )
     }
 
     /** Setup UI for Student */
     private fun setForStudent() {
+
+        nav_view.menu[1].isVisible = false
 
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text =
             "Hi ${mStudent.firstName}"
@@ -231,12 +243,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         loadCompaniesForStudent()
     }
 
-    private fun updateStudentDetails(){
+    private fun updateStudentDetails() {
         showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().loadStudentData(this)
     }
 
-    fun updateStudentDetailsSuccess(student: Student){
+    fun updateStudentDetailsSuccess(student: Student) {
         mStudent = student
         hideProgressDialog()
 
@@ -254,10 +266,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             companiesList.add(companyName)
         }
         showProgressDialog(getString(R.string.please_wait))
+
+        var roundsOver = if(bottomNavigationView.menu[0].isChecked){
+            0
+        } else 1
+
         FirestoreClass().getSpecificCompaniesDetailsFromDatabase(
             companiesList,
             collegeCode,
-            roundsOver = 0,
+            roundsOver,
             this@MainActivity
         )
     }
@@ -281,7 +298,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return super.onOptionsItemSelected(item)
     }
 
-    private fun refresh(){
+    private fun refresh() {
         if (isStudent) {
             updateStudentDetails()
         } else {
@@ -363,9 +380,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun checkFCMToken() {
-        /** Using shared preference in private mode so that other apps cannot access it */
-        mSharedPreferences =
-            this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
 
         /** Variable is used get the value either token is updated in the database or not.*/
         val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
@@ -407,6 +421,42 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(Intent(this, UpdateProfileActivity::class.java))
             }
 
+            R.id.switch_to_pr_account -> {
+                menuItem.isCheckable = false
+                if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
+                    val email = mSharedPreferences.getString(Constants.PR_EMAIL, "default")
+                    val password = mSharedPreferences.getString(Constants.PR_PASSWORD, "default")
+
+                    val intent = Intent(this, SignInActivity::class.java)
+                    intent.putExtra(Constants.PR_EMAIL, email)
+                    intent.putExtra(Constants.PR_PASSWORD, password)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    val intent = Intent(this, SignInActivity::class.java)
+                    intent.putExtra(Constants.IS_PR, true)
+                    startActivity(intent)
+                }
+            }
+
+            R.id.switch_to_student_account -> {
+                menuItem.isCheckable = false
+                if (mSharedPreferences.contains(Constants.STUDENT_EMAIL)) {
+                    val email = mSharedPreferences.getString(Constants.STUDENT_EMAIL, "default")
+                    val password =
+                        mSharedPreferences.getString(Constants.STUDENT_PASSWORD, "default")
+
+                    val intent = Intent(this, SignInActivity::class.java)
+                    intent.putExtra(Constants.STUDENT_EMAIL, email)
+                    intent.putExtra(Constants.STUDENT_PASSWORD, password)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    val intent = Intent(this, IntroActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+
             R.id.nav_sign_out -> {
                 menuItem.isCheckable = false
                 /**Here sign outs the user from firebase in this device.*/
@@ -423,8 +473,45 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     /** clears the Firebase Cloud Messaging token stored in device */
     fun clearSharedPreferences() {
         if (isStudent) {
-            mSharedPreferences.edit().clear().apply()
+            mSharedPreferences.edit().remove(Constants.FCM_TOKEN_UPDATED).apply()
+            mSharedPreferences.edit().remove(Constants.STUDENT_EMAIL).apply()
+
+            if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
+                val email = mSharedPreferences.getString(Constants.PR_EMAIL, "default")
+                val password = mSharedPreferences.getString(Constants.PR_PASSWORD, "default")
+
+                val intent = Intent(this, SignInActivity::class.java)
+                intent.putExtra(Constants.PR_EMAIL, email)
+                intent.putExtra(Constants.PR_PASSWORD, password)
+                startActivity(intent)
+                finish()
+            }
+            else sendToIntroActivity()
+        } else if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
+            mSharedPreferences.edit().remove(Constants.PR_EMAIL).apply()
+
+            if (mSharedPreferences.contains(Constants.STUDENT_EMAIL)) {
+                val email = mSharedPreferences.getString(Constants.STUDENT_EMAIL, "default")
+                val password =
+                    mSharedPreferences.getString(Constants.STUDENT_PASSWORD, "default")
+
+                val intent = Intent(this, SignInActivity::class.java)
+                intent.putExtra(Constants.STUDENT_EMAIL, email)
+                intent.putExtra(Constants.STUDENT_PASSWORD, password)
+                startActivity(intent)
+                finish()
+            }
+            else sendToIntroActivity()
         }
+        else sendToIntroActivity()
+    }
+
+    private fun sendToIntroActivity() {
+        //SEnd the user to Intro activity after signing out
+        val intent = Intent(this, IntroActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
     }
 
     fun updateCollegeSuccess() {

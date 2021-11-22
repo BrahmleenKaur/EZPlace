@@ -1,6 +1,8 @@
 package com.example.ezplace.activities
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
@@ -16,13 +18,42 @@ import kotlinx.android.synthetic.main.activity_sign_in.*
 
 class SignInActivity : BaseActivity() {
 
+    private lateinit var mSharedPreferences: SharedPreferences
+    private var email =""
+    private var password =""
+    private var isPr = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
         fullScreenMode()
 
+        mSharedPreferences =
+            this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
+
         setupActionBar(toolbar_sign_in_activity)
+
+        if(intent.hasExtra(Constants.IS_PR)){
+            isPr = true
+        }
+        else if(intent.hasExtra(Constants.PR_EMAIL)){
+            isPr = true
+            val extras : Bundle = intent.extras!!
+            email = extras.getString(Constants.PR_EMAIL,"default")
+            password = extras.getString(Constants.PR_PASSWORD,"default")
+            // Sign-In using FirebaseAuth
+            showProgressDialog(getString(R.string.please_wait))
+            FirebaseAuthClass().signIn(email, password,this)
+        }
+        else if(intent.hasExtra(Constants.STUDENT_EMAIL)){
+            val extras : Bundle = intent.extras!!
+            email = extras.getString(Constants.STUDENT_EMAIL,"default")
+            password = extras.getString(Constants.STUDENT_PASSWORD,"default")
+            // Sign-In using FirebaseAuth
+            showProgressDialog(getString(R.string.please_wait))
+            FirebaseAuthClass().signIn(email, password,this)
+        }
 
         btn_sign_in.setOnClickListener{
             signInRegisteredUser()
@@ -34,8 +65,8 @@ class SignInActivity : BaseActivity() {
      */
     private fun signInRegisteredUser() {
         // Here we get the text from editText and trim the space
-        val email: String = et_email_sign_in.text.toString().trim { it <= ' ' }
-        val password: String = et_password_sign_in.text.toString().trim { it <= ' ' }
+        email = et_email_sign_in.text.toString().trim { it <= ' ' }
+        password = et_password_sign_in.text.toString().trim { it <= ' ' }
 
         if (validateForm(email, password)) {
             // Show the progress dialog.
@@ -69,6 +100,11 @@ class SignInActivity : BaseActivity() {
      */
     fun signInSuccessByStudent(student: Student) {
         hideProgressDialog()
+
+        /**Add to sharedPreference */
+        mSharedPreferences.edit().putString(Constants.STUDENT_EMAIL,email).apply()
+        mSharedPreferences.edit().putString(Constants.STUDENT_PASSWORD,password).apply()
+
         Toast.makeText(this, "${student.firstName} signed in successfully.", Toast.LENGTH_LONG).show()
         intent = Intent(this, MainActivity::class.java)
         intent.putExtra(Constants.STUDENT_DETAILS, student)
@@ -82,6 +118,13 @@ class SignInActivity : BaseActivity() {
      */
     fun signInSuccessByTPO(tpo: TPO) {
         hideProgressDialog()
+
+        /**Add to sharedPreference */
+        if(isPr){
+            mSharedPreferences.edit().putString(Constants.PR_EMAIL,email).apply()
+            mSharedPreferences.edit().putString(Constants.PR_PASSWORD,password).apply()
+        }
+
         Toast.makeText(this, "${tpo.firstName} signed in successfully.", Toast.LENGTH_LONG).show()
         intent = Intent(this, MainActivity::class.java)
         intent.putExtra(Constants.TPO_DETAILS, tpo)

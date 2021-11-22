@@ -28,8 +28,9 @@ class AddPrActivity : BaseActivity() {
         val lastName: String = et_last_name_add_pr.text.toString().trim { it <= ' ' }
         val email: String = et_email_add_pr.text.toString().trim { it <= ' ' }
         val password: String = et_password_add_pr.text.toString().trim { it <= ' ' }
+        val confirmPassword: String = et_confirm_password_add_pr.text.toString().trim { it <= ' ' }
 
-        if (validateForm(firstName,email, password)) {
+        if (validateForm(firstName,email, password,confirmPassword)) {
             // Show the progress dialog.
             showProgressDialog(resources.getString(R.string.please_wait))
 
@@ -51,7 +52,7 @@ class AddPrActivity : BaseActivity() {
     /**
      * A function to validate the entries of a user.
      */
-    private fun validateForm(firstName : String,email: String, password: String): Boolean {
+    private fun validateForm(firstName : String,email: String, password: String,confirmPassword : String): Boolean {
 
         return when{
             TextUtils.isEmpty(firstName) -> {
@@ -62,8 +63,16 @@ class AddPrActivity : BaseActivity() {
                 showErrorSnackBar(getString(R.string.enter_email))
                 false
             }
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() ->{
+                showErrorSnackBar(getString(R.string.wrong_email))
+                false
+            }
             TextUtils.isEmpty(password) -> {
                 showErrorSnackBar(getString(R.string.enter_password))
+                false
+            }
+            password != confirmPassword ->{
+                showErrorSnackBar(getString(R.string.passwords_not_matching))
                 false
             }
             else -> true
