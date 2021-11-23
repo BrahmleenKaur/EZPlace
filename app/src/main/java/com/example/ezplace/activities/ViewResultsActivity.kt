@@ -32,7 +32,7 @@ class ViewResultsActivity : BaseActivity() {
         else{
             table_view_results.visibility = View.GONE
             tv_top_view_results.visibility = View.VISIBLE
-            tv_top_declare_results.text = getString(R.string.no_students_selected_from_previous_round)
+            tv_top_view_results.text = getString(R.string.no_students_selected_from_previous_round)
         }
     }
 

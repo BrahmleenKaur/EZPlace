@@ -129,6 +129,9 @@
     <string name="swicth_to_student">Switch to Student account</string>
     <string name="switch_to_pr">Switch to PR account</string>
     <string name="is_this_the_last_round">Is this the final round ?</string>
+    <string name="placement_records">Placement records</string>
+    <string name="refresh">Refresh</string>
+    <string name="placed_students">Placed students</string>
 
 
 </resources>

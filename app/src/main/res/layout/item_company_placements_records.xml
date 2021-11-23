@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/item_company_margin"
+    android:layout_marginEnd="@dimen/item_company_margin"
+    android:layout_marginTop="@dimen/item_company_margin"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_item_company_name_placements_records"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/dark_blue"
+        android:text="AMAZON"
+        android:background="@color/greyish_blue"
+        android:gravity="center"
+        android:padding="@dimen/item_company_padding"
+        android:layout_marginTop="@dimen/item_company_tv_margin_top"
+        android:textSize="@dimen/company_name_size_placement_records"/>
+
+</LinearLayout>

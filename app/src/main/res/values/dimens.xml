@@ -104,6 +104,9 @@
     <dimen name="table_margin">10dp</dimen>
     <dimen name="declare_btn_margin_top_bottom">25dp</dimen>
     <dimen name="tv_declare_results_text_size">20sp</dimen>
+    <dimen name="tv_padding_placed_students">5dp</dimen>
+    <dimen name="company_name_size_placement_records">30sp</dimen>
+    <dimen name="tv_text_size_placed_students">15sp</dimen>
 
     <!-- Round details activity -->
 

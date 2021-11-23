@@ -184,6 +184,10 @@ class DeclareResultsActivity : BaseActivity() {
 
     fun companyUpdatedInCollegeDatabaseSuccess(){
         hideProgressDialog()
+        if(cb_declare_results.isChecked){
+            
+        }
+
         finish()
     }
 

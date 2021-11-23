@@ -47,6 +47,9 @@ class RoundDetailsActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         val addItem: MenuItem = menu.findItem(R.id.add)
+        val recordsItem: MenuItem = menu.findItem(R.id.placement_records)
+        recordsItem.isVisible = false
+
         if(isStudent){
             addItem.isVisible = false
         }
@@ -197,10 +200,6 @@ class RoundDetailsActivity : BaseActivity() {
             rv_rounds_list.visibility = View.GONE
             tv_no_rounds_added.visibility = View.VISIBLE
         }
-    }
-
-    fun populateRecyclerView(){
-
     }
 
 }

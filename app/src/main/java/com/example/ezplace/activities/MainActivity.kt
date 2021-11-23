@@ -170,8 +170,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
 
         nav_view.setNavigationItemSelectedListener(this)
-        nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text =
-            "Hi ${tpo.firstName}"
+        val name ="Hi ${tpo.firstName}"
+        nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text = name
 
 
         /** Floating Action Button listener*/
@@ -290,6 +290,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.placement_records -> {
+                val intent = Intent(this,PlacementsRecordsActivity::class.java)
+                intent.putExtra(Constants.COLLEGE_CODE,collegeCode)
+                startActivity(intent)
+                return true
+            }
             R.id.refresh -> {
                 refresh()
                 return true

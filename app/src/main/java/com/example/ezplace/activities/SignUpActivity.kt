@@ -15,6 +15,7 @@ import com.example.ezplace.models.Student
 import com.example.ezplace.models.TPO
 import com.example.ezplace.utils.Constants
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import java.util.*
 
 class SignUpActivity : BaseActivity() {
 
@@ -69,8 +70,16 @@ class SignUpActivity : BaseActivity() {
                 FirebaseAuthClass().signUpStudent(student, password, this)
             } else {
                 val tpo = TPO()
-                tpo.firstName = firstName
-                tpo.lastName = lastName
+                tpo.firstName = firstName.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
+                tpo.lastName = lastName.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.getDefault()
+                    ) else it.toString()
+                }
                 tpo.collegeName = collegeName
                 tpo.email = email
 

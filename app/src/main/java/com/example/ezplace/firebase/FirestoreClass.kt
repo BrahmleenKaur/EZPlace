@@ -492,7 +492,7 @@ class FirestoreClass {
     fun getAllCompaniesDetailsFromDatabase(
         collegeCode: String,
         roundsOver: Int,
-        activity: MainActivity
+        activity: Activity
     ) {
         mFireStore.collection(Constants.COLLEGES)
             .document(collegeCode)
@@ -505,10 +505,24 @@ class FirestoreClass {
                     val companyObject = companyDocument.toObject(Company::class.java)
                     companyObjects.add(companyObject)
                 }
-                activity.populateRecyclerView(companyObjects)
+                when(activity){
+                    is MainActivity ->{
+                        activity.populateRecyclerView(companyObjects)
+                    }
+                    is PlacementsRecordsActivity ->{
+                        activity.populateRecyclerView(companyObjects)
+                    }
+                }
             }
             .addOnFailureListener { e ->
-                activity.hideProgressDialog()
+                when(activity){
+                    is MainActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                    is PlacementsRecordsActivity ->{
+                        activity.hideProgressDialog()
+                    }
+                }
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while fetching companies from database.",
@@ -670,6 +684,9 @@ class FirestoreClass {
                         activity.setUpUI(studentsList)
                     }
                     is DeclareResultsActivity -> {
+                        activity.setUpUI(studentsList)
+                    }
+                    is PlacedStudentsActivity ->{
                         activity.setUpUI(studentsList)
                     }
                 }
