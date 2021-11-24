@@ -8,6 +8,7 @@ import android.webkit.MimeTypeMap
 
 object Constants {
 
+    const val PLACED_COMPANY_NAME: String ="placedCompanyName"
     const val IS_PR: String ="is pr"
     const val STUDENT_EMAIL: String ="student email"
     const val STUDENT_PASSWORD ="student password"
@@ -44,7 +45,7 @@ object Constants {
     const val CGPA: String = "cgpa"
     const val ROLL_NUMBER ="rollNumber"
     const val BACKLOGS_ALLOWED = "backLogsAllowed"
-    const val PLACED_ABOVE_THRESHOLD ="placedAboveThreshold"
+    const val PLACED ="placed"
     const val LAST_ROUND ="lastRound"
     const val NAME="name"
     const val EMAIL ="email"

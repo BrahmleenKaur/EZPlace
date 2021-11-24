@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -18,13 +19,13 @@ import com.example.ezplace.utils.Constants
 import kotlinx.android.synthetic.main.item_round.view.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 open class RoundItemsAdapter(
     private val context: Context,
-    private var roundsList: ArrayList<Round>, private var lastClearedRound: Int,
-    private var company : Company
+    private var roundsList: ArrayList<Round>, private var lastRoundCleared: Int,
+    private var lastRound: Int,
+    private var company: Company
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var onClickListener: OnClickListener? = null
@@ -74,14 +75,19 @@ open class RoundItemsAdapter(
             holder.itemView.tv_item_round_time.text = roundTime
             holder.itemView.tv_item_round_venue.text = roundVenue
 
-            val tagHashMap = HashMap<String,Any>()
+            val tagHashMap = HashMap<String, Any>()
             val size = roundsList.size
 
             // lastClearedRound = -1 means it is tpo, else it is student whose min vale is 0
-            if (lastClearedRound == -1) {
+            if (lastRoundCleared == -1) {
                 if (round.isOver == 1) {
                     holder.itemView.tv_declare_results.text = Constants.VIEW_RESULTS
-                    holder.itemView.tv_declare_results.setBackgroundColor(ContextCompat.getColor(context,R.color.green_dark))
+                    holder.itemView.tv_declare_results.setBackgroundColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.green_dark
+                        )
+                    )
                     holder.itemView.tv_item_round_status.text = Constants.OVER
                     holder.itemView.tv_item_round_status.setTextColor(
                         ContextCompat.getColor(
@@ -98,31 +104,43 @@ open class RoundItemsAdapter(
                             R.color.dark_blue
                         )
                     )
-                    tagHashMap[Constants.SECOND_LAST_ROUND] = roundsList[size-2]
+                    tagHashMap[Constants.SECOND_LAST_ROUND] = roundsList[size - 2]
                 }
             } else {
                 holder.itemView.cv_declare_results.visibility = View.GONE
-                if (position < lastClearedRound)
+                if (position < lastRound - 1) {
                     holder.itemView.tv_item_round_status.text = Constants.CLEARED
-                else {
-                    if (round.isOver == 1) {
-                        holder.itemView.tv_item_round_status.text = Constants.NOT_CLEARED
-                        holder.itemView.tv_item_round_status.setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.red
+                } else {
+                    when (lastRoundCleared) {
+                        /** not cleared */
+                        0 -> {
+                            holder.itemView.tv_item_round_status.text = Constants.NOT_CLEARED
+                            holder.itemView.tv_item_round_status.setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.red
+                                )
                             )
-                        )
-                    } else {
-                        holder.itemView.tv_item_round_status.text = Constants.PENDING
-                        holder.itemView.tv_item_round_status.setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.dark_blue
+                        }
+                        /** cleared */
+                        1 -> {
+                            holder.itemView.tv_item_round_status.text = Constants.CLEARED
+                        }
+                        /** Results pending */
+                        2 -> {
+                            holder.itemView.tv_item_round_status.text = Constants.PENDING
+                            holder.itemView.tv_item_round_status.setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.dark_blue
+                                )
                             )
-                        )
+                        }
+
                     }
                 }
+
+
             }
 
             tagHashMap[Constants.ROUND] = round
@@ -156,10 +174,10 @@ open class RoundItemsAdapter(
     /**
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      */
-    private class MyViewHolder: RecyclerView.ViewHolder, View.OnClickListener{
-        var btnResult =itemView.findViewById(R.id.cv_declare_results) as CardView
-        var btnTextView =itemView.findViewById(R.id.tv_declare_results) as TextView
-        var context: Context =itemView.context
+    private class MyViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
+        var btnResult = itemView.findViewById(R.id.cv_declare_results) as CardView
+        var btnTextView = itemView.findViewById(R.id.tv_declare_results) as TextView
+        var context: Context = itemView.context
 
 
         constructor(itemView: View) : super(itemView) {
@@ -167,21 +185,20 @@ open class RoundItemsAdapter(
         }
 
         override fun onClick(view: View?) {
-            val tagHashMap= itemView.tag as HashMap<String,Any>
+            val tagHashMap = itemView.tag as HashMap<String, Any>
             val round = tagHashMap[Constants.ROUND] as Round
             val company = tagHashMap[Constants.COMPANY] as Company
 
-            if(btnTextView.text == Constants.VIEW_RESULTS){
-                val intent = Intent(context,ViewResultsActivity::class.java)
-                intent.putExtra(Constants.ROUND,round)
+            if (btnTextView.text == Constants.VIEW_RESULTS) {
+                val intent = Intent(context, ViewResultsActivity::class.java)
+                intent.putExtra(Constants.ROUND, round)
                 context.startActivity(intent)
-            }
-            else{
+            } else {
                 val secondLastRound = tagHashMap[Constants.SECOND_LAST_ROUND] as Round
-                val intent = Intent(context,DeclareResultsActivity::class.java)
-                intent.putExtra(Constants.ROUND,round)
-                intent.putExtra(Constants.SECOND_LAST_ROUND,secondLastRound)
-                intent.putExtra(Constants.COMPANY,company)
+                val intent = Intent(context, DeclareResultsActivity::class.java)
+                intent.putExtra(Constants.ROUND, round)
+                intent.putExtra(Constants.SECOND_LAST_ROUND, secondLastRound)
+                intent.putExtra(Constants.COMPANY, company)
                 context.startActivity(intent)
             }
         }

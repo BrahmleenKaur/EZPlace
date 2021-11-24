@@ -25,6 +25,19 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <TextView
+        android:id="@+id/tv_alread_placed_round_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/already_placed"
+        android:layout_margin="@dimen/tv_top_item_margin_round_details"
+        android:paddingLeft="5dp"
+        android:gravity="start"
+        android:visibility="gone"
+        android:textSize="@dimen/tv_declare_results_text_size"
+        android:textColor="@color/black"
+        android:paddingRight="5dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,6 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/recycler_view_margin_top"
+            android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"
             android:paddingBottom="@dimen/recycler_view_padding_bottom"
             android:visibility="gone" />
 
@@ -47,6 +61,19 @@
             android:layout_marginHorizontal="10dp"
             android:text="@string/no_rounds_added"
             android:textColor="@color/secondary_text_color" />
+
+        <TextView
+            android:id="@+id/tv_rounds_over"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_gravity="bottom"
+            android:textAllCaps="true"
+            android:textSize="30sp"
+            android:text="@string/rounds_over"
+            android:textColor="@color/dark_blue" />
+
 
     </LinearLayout>
 
@@ -65,7 +92,7 @@
             android:backgroundTint="@color/dark_blue"
             android:src="@drawable/ic_info"
             app:maxImageSize="30dp"
-            />
+            android:contentDescription="@string/about_company" />
 
     </FrameLayout>
 

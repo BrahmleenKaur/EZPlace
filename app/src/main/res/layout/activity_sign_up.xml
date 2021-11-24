@@ -31,8 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/authentication_screen_content_marginTop"
-        android:layout_marginBottom="@dimen/authentication_screen_marginBottom"
         android:orientation="vertical">
 
         <TextView
@@ -41,6 +39,7 @@
             android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
             android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
             android:gravity="center"
+            android:layout_marginTop="@dimen/sign_up_screen_marginTop"
             android:text="@string/sign_up_description_text"
             android:textColor="@color/secondary_text_color"
             android:textSize="@dimen/authentication_description_text_size" />
@@ -164,6 +163,7 @@
             android:paddingTop="@dimen/btn_paddingTopBottom"
             android:paddingBottom="@dimen/btn_paddingTopBottom"
             android:text="@string/sign_up"
+            android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"
             android:textColor="@android:color/white"
             android:textSize="@dimen/btn_text_size" />
     </LinearLayout>

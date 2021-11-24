@@ -1,7 +1,6 @@
 package com.example.ezplace.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.TableRow
@@ -16,14 +15,12 @@ import com.example.ezplace.models.Round
 import com.example.ezplace.models.Student
 import com.example.ezplace.utils.Constants
 import kotlinx.android.synthetic.main.activity_declare_results.*
-import kotlinx.android.synthetic.main.activity_view_results.*
-import kotlinx.android.synthetic.main.item_round.*
 
 class DeclareResultsActivity : BaseActivity() {
 
-    private lateinit var round : Round
-    private lateinit var company : Company
-    private var collegeCode =""
+    private lateinit var round: Round
+    private lateinit var company: Company
+    private var collegeCode = ""
     var selectedStudentsIds = ArrayList<String>()
     private val notSelectedStudentsIds = ArrayList<String>()
 
@@ -37,14 +34,8 @@ class DeclareResultsActivity : BaseActivity() {
         company = intent.getParcelableExtra<Company>(Constants.COMPANY)!!
         val secondLastRound = intent.getParcelableExtra<Round>(Constants.SECOND_LAST_ROUND)!!
 
-        if(secondLastRound.selectedStudents.size >0){
-            showProgressDialog(getString(R.string.please_wait))
-            FirestoreClass().getStudentsFromIds(secondLastRound.selectedStudents, this)
-        }
-        else{
-            table_declare_results.visibility = View.GONE
-            tv_top_declare_results.text = getString(R.string.no_students_selected_from_previous_round)
-        }
+        showProgressDialog(getString(R.string.please_wait))
+        FirestoreClass().getStudentsFromIds(secondLastRound.selectedStudents, this)
     }
 
     fun setUpUI(selectedStudents: ArrayList<Student>) {
@@ -56,6 +47,7 @@ class DeclareResultsActivity : BaseActivity() {
             selectedStudents.sortedWith(compareBy<Student> { it.rollNumber }.thenBy { it.firstName })
         for (student in sortedStudents) {
             collegeCode = student.collegeCode
+            if (student.placed == 1) continue
 
             val tableRow = TableRow(this)
 
@@ -80,15 +72,14 @@ class DeclareResultsActivity : BaseActivity() {
                 ContextCompat.getDrawable(this, R.drawable.table_cell_background)
 
             tableRow.setOnClickListener {
-                if(tableRow.background.constantState ==
+                if (tableRow.background.constantState ==
                     ContextCompat.getDrawable(this, R.drawable.table_cell_background)?.constantState
-                ){
+                ) {
                     tableRow.background =
                         ContextCompat.getDrawable(this, R.drawable.table_cell_background_green)
                     nameTextView.background =
                         ContextCompat.getDrawable(this, R.drawable.table_cell_background_green)
-                }
-                else{
+                } else {
                     tableRow.background =
                         ContextCompat.getDrawable(this, R.drawable.table_cell_background)
                     nameTextView.background =
@@ -106,20 +97,22 @@ class DeclareResultsActivity : BaseActivity() {
 
     private fun getSelectedStudentsFromUI(students: List<Student>) {
         val selectedStudentsIndices = ArrayList<Int>()
-        val notSelectedStudentsIndices =ArrayList<Int>()
-        var index=0
+        val notSelectedStudentsIndices = ArrayList<Int>()
+        var index = 0
         for (tableRow in table_declare_results.children) {
             /** header row */
-            if(index ==0){
-                index +=1
+            if (index == 0) {
+                index += 1
                 continue
             }
-            if(tableRow.background.constantState ==
-                ContextCompat.getDrawable(this, R.drawable.table_cell_background_green)?.constantState
-            ){
+            if (tableRow.background.constantState ==
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.table_cell_background_green
+                )?.constantState
+            ) {
                 selectedStudentsIndices.add(index)
-            }
-            else{
+            } else {
                 notSelectedStudentsIndices.add(index)
             }
             index += 1
@@ -128,67 +121,93 @@ class DeclareResultsActivity : BaseActivity() {
         /** Notify all the students regarding results
         This will be done in background using Async tasks*/
         for (index in selectedStudentsIndices) {
-            val student = students[index-1]
+            val student = students[index - 1]
             selectedStudentsIds.add(student.id)
-            val message = "Congratulations ${student.firstName} on clearing ${company.name}'s ${round.name} round"
+            var message = ""
+            message = if (cb_declare_results.isChecked)
+                "Hurray !!. You have been placed at ${company.name}."
+            else
+                "Congratulations ${student.firstName} on clearing ${company.name}'s ${round.name} round"
             SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
         }
 
         for (index in notSelectedStudentsIndices) {
-            val student = students[index-1]
+            val student = students[index - 1]
             notSelectedStudentsIds.add(student.id)
             val message = "You have not cleared the ${company.name}'s ${round.name} round"
             SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
         }
 
-        round.selectedStudents = ArrayList(selectedStudentsIds)
-        round.isOver =1
+        val updatedRound = round.copy()
+        updatedRound.selectedStudents = ArrayList(selectedStudentsIds)
+        updatedRound.isOver = 1
 
-        showProgressDialog(getString(R.string.please_wait))
-        FirestoreClass().addRoundInCompany(round, company.name, collegeCode ,this)
+        val updatedRoundsList = ArrayList(company.roundsList)
+        updatedRoundsList.removeLast()
+        updatedRoundsList.add(updatedRound)
+
+        val companyHashmap = HashMap<String, Any>()
+        companyHashmap[Constants.ROUNDS_LIST] = updatedRoundsList
+
+        if (cb_declare_results.isChecked) {
+            companyHashmap[Constants.ROUNDS_OVER] = 1
+        }
+        updateCompanyDatabase(companyHashmap)
     }
 
-    fun companyDatabaseUpdated(){
-        /** Update the selected student's database */
-        val companyLastRoundObject = CompanyNameAndLastRound(company.name, round.number+1)
-        Log.i("size",selectedStudentsIds.size.toString())
-        FirestoreClass().updateCompanyInStudentDatabase(
-            selectedStudentsIds,
-            companyLastRoundObject,
-            this,
-            false
+    private fun updateCompanyDatabase(companyHashmap : HashMap<String,Any>){
+        showProgressDialog(getString(R.string.please_wait))
+        FirestoreClass().updateCompanyInCollegeDatabase(
+            companyHashmap,
+            company.name,
+            collegeCode,
+            this
         )
     }
 
-    fun selectedStudentsDatabaseUpdated(){
+    fun companyDatabaseUpdatedSuccess() {
+
+        /** Update the selected student's database */
+        val companyLastRoundObject = CompanyNameAndLastRound(company.name, round.number, 1)
+        val previousCompanyLastRoundObject = CompanyNameAndLastRound(company.name, round.number, 2)
+
+        var placed = 0
+        if (cb_declare_results.isChecked) {
+            placed = 1
+        }
+        if (placed == 1) {
+            FirestoreClass().updateCompanyStatusInStudentDatabase(
+                index =0,
+                selectedStudentsIds,
+                companyLastRoundObject,
+                previousCompanyLastRoundObject,
+                activity = this,
+                selectedStudentsUpdated = false,
+                updatePlacedField = true,
+                placedCompanyName = company.name
+            )
+        }
+    }
+
+    fun selectedStudentsDatabaseUpdatedSuccess() {
+
         /** Update the not selected student's database */
-        val companyLastRoundObject = CompanyNameAndLastRound(company.name, round.number)
-        FirestoreClass().updateCompanyInStudentDatabase(
+        val companyLastRoundObject = CompanyNameAndLastRound(company.name, round.number, 0)
+        val previousCompanyLastRoundObject = CompanyNameAndLastRound(company.name, round.number, 2)
+
+        FirestoreClass().updateCompanyStatusInStudentDatabase(
+            0,
             notSelectedStudentsIds,
             companyLastRoundObject,
-            this,true
+            previousCompanyLastRoundObject,
+            activity = this,
+            selectedStudentsUpdated = true,
+            updatePlacedField = false
         )
     }
 
-    fun notSelectedStudentsDatabaseUpdated(){
-        if(cb_declare_results.isChecked) {
-            val companyHashMap = HashMap<String,Int>()
-            companyHashMap[Constants.ROUNDS_OVER]=1
-            FirestoreClass().updateCompanyInCollegeDatabase(companyHashMap,company.name,collegeCode,this)
-        }
-        else{
-            hideProgressDialog()
-            finish()
-        }
-    }
-
-    fun companyUpdatedInCollegeDatabaseSuccess(){
+    fun notSelectedStudentsDatabaseUpdatedSuccess() {
         hideProgressDialog()
-        if(cb_declare_results.isChecked){
-            
-        }
-
         finish()
     }
-
 }

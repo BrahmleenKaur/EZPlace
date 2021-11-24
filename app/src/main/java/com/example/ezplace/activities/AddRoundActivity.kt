@@ -13,6 +13,7 @@ import com.example.ezplace.models.Round
 import com.example.ezplace.models.Student
 import com.example.ezplace.utils.Constants
 import kotlinx.android.synthetic.main.activity_add_round.*
+import kotlinx.android.synthetic.main.activity_declare_results.*
 import kotlinx.android.synthetic.main.activity_new_company_details.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -24,6 +25,7 @@ class AddRoundActivity : BaseActivity() {
     lateinit var company : Company
     lateinit var collegeCode : String
     lateinit var newRound : Round
+    private val notEligibleStudentsIds = ArrayList<String>()
 
     private val myCalendar: Calendar = Calendar.getInstance()
 
@@ -87,16 +89,29 @@ class AddRoundActivity : BaseActivity() {
             round.date=roundDate
             round.time=time
             round.venue=venue
+            val isAnyStudentShortlisted = company.roundsList.last().selectedStudents.isNotEmpty()
+            if(!isAnyStudentShortlisted){
+                round.isOver = 1
+            }
 
             newRound=round
 
-            /** Add round details in database */
-            showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().addRoundInCompany(round,company.name, collegeCode, this)
+            val updatedRoundsList = ArrayList(company.roundsList)
+            updatedRoundsList.add(round)
+
+            val companyHashmap = HashMap<String,Any>()
+            companyHashmap[Constants.ROUNDS_LIST] = updatedRoundsList
+            if(!isAnyStudentShortlisted){
+                companyHashmap[Constants.ROUNDS_OVER] =1
+                Toast.makeText(this,"No student is shortlisted for this round, so the rounds are over",Toast.LENGTH_LONG).show()
+            }
+
+            showProgressDialog(getString(R.string.please_wait))
+            FirestoreClass().updateCompanyInCollegeDatabase(companyHashmap,company.name,collegeCode,this)
         }
     }
 
-    fun addRoundInCompanySuccess(){
+    fun updateCompanyDatabaseSuccess(){
         Toast.makeText(this,"New round added successfully",Toast.LENGTH_LONG).show()
 
         var eligibleStudentsIds : ArrayList<String> =company.roundsList.last().selectedStudents
@@ -104,22 +119,50 @@ class AddRoundActivity : BaseActivity() {
     }
 
     fun getStudentsFromIdsSuccess(students: ArrayList<Student>){
-        val message = "${company.name}'s ${newRound.name} round updates"
+        val eligibleStudentsIds = ArrayList<String>()
         for(student in students){
-            SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
+            if(student.placed==0){
+                val message = "${company.name}'s ${newRound.name} round updates"
+                eligibleStudentsIds.add(student.id)
+                SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
+            }
+            else{
+                val message = "As you are already placed, you are not moving further with ${company.name}'s hiring rounds."
+                notEligibleStudentsIds.add(student.id)
+                SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
+            }
         }
 
         /** Update the eligible student's database */
-        var totalRounds = company.roundsList.size
-        val companyLastRoundObject = CompanyNameAndLastRound(company.name, totalRounds+1)
-        FirestoreClass().updateCompanyInStudentDatabase(
-            company.roundsList[totalRounds-1].selectedStudents,
+        val companyLastRoundObject = CompanyNameAndLastRound(company.name, newRound.number,2)
+        val previousCompanyLastRoundObject = CompanyNameAndLastRound(company.name, newRound.number -1,1)
+        FirestoreClass().updateCompanyStatusInStudentDatabase(
+            0,
+            eligibleStudentsIds,
             companyLastRoundObject,
-            this
+            previousCompanyLastRoundObject,
+            this,
+            selectedStudentsUpdated = false,
+            updatePlacedField = false
         )
     }
 
-    fun updateStudentsDatabaseSuccess(){
+    fun updateEligibleStudentsDatabaseSuccess(){
+        /** Update not eligible student's database */
+        val companyLastRoundObject = CompanyNameAndLastRound(company.name, newRound.number,0)
+        val previousCompanyLastRoundObject = CompanyNameAndLastRound(company.name, newRound.number-1,1)
+        FirestoreClass().updateCompanyStatusInStudentDatabase(
+            0,
+            notEligibleStudentsIds,
+            companyLastRoundObject,
+            previousCompanyLastRoundObject,
+            this,
+            selectedStudentsUpdated = true,
+            updatePlacedField = false
+        )
+    }
+
+    fun updateNotEligibleStudentsDatabaseSuccess(){
         hideProgressDialog()
         finish()
     }

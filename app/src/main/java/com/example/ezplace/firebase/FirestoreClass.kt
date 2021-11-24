@@ -225,13 +225,13 @@ class FirestoreClass {
                 .whereEqualTo(Constants.BACKLOGS_ALLOWED, 1)
                 .get()
                 .addOnSuccessListener { companyDocuments ->
-                    var companyNames = ArrayList<String>()
+                    var companies = ArrayList<Company>()
                     for (companyDoc in companyDocuments) {
                         val companyObject = companyDoc.toObject(Company::class.java)
                         if (companyObject.cgpaCutOff >= student.cgpa)
-                            companyNames.add(companyObject.name)
+                            companies.add(companyObject)
                     }
-                    activity.getEligibleCompaniesNamesSuccess(companyNames)
+                    activity.getEligibleCompaniesNamesSuccess(companies)
                 }
                 .addOnFailureListener { e ->
                     activity.hideProgressDialog()
@@ -249,13 +249,13 @@ class FirestoreClass {
                 .whereArrayContains(Constants.BRANCHES_ALLOWED, student.branch)
                 .get()
                 .addOnSuccessListener { companyDocuments ->
-                    var companyNames = ArrayList<String>()
+                    var companies = ArrayList<Company>()
                     for (companyDoc in companyDocuments) {
                         val companyObject = companyDoc.toObject(Company::class.java)
                         if (companyObject.cgpaCutOff <= student.cgpa)
-                            companyNames.add(companyObject.name)
+                            companies.add(companyObject)
                     }
-                    activity.getEligibleCompaniesNamesSuccess(companyNames)
+                    activity.getEligibleCompaniesNamesSuccess(companies)
                 }
                 .addOnFailureListener { e ->
                     activity.hideProgressDialog()
@@ -336,13 +336,13 @@ class FirestoreClass {
         if (company.backLogsAllowed == 0) {
             mFireStore.collection(Constants.STUDENTS)
                 .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
+                .whereEqualTo(Constants.PLACED, 0)
                 .whereIn(
                     Constants.BRANCH,
                     company.branchesAllowed
                 )
                 .whereGreaterThanOrEqualTo(Constants.CGPA, company.cgpaCutOff)
                 .whereEqualTo(Constants.NUMBER_OF_BACKLOGS, company.backLogsAllowed)
-                .whereEqualTo(Constants.PLACED_ABOVE_THRESHOLD, 0)
                 .get()
                 .addOnSuccessListener { studentDocuments ->
                     var eligibleStudents: ArrayList<Student> = ArrayList()
@@ -367,12 +367,12 @@ class FirestoreClass {
         } else {
             mFireStore.collection(Constants.STUDENTS)
                 .whereEqualTo(Constants.COLLEGE_CODE, collegeCode)
+                .whereEqualTo(Constants.PLACED, 0)
                 .whereIn(
                     Constants.BRANCH,
                     company.branchesAllowed
                 )
                 .whereGreaterThanOrEqualTo(Constants.CGPA, company.cgpaCutOff)
-                .whereEqualTo(Constants.PLACED_ABOVE_THRESHOLD, 0)
                 .get()
                 .addOnSuccessListener { studentDocuments ->
                     var eligibleStudents: ArrayList<Student> = ArrayList()
@@ -397,29 +397,86 @@ class FirestoreClass {
         }
     }
 
-    fun updateCompanyInStudentDatabase(
+    fun updateCompanyStatusInStudentDatabase(
+        index: Int,
         studentsList: ArrayList<String>,
         companyLastRoundObject: CompanyNameAndLastRound,
+        previousCompanyLastRoundObject: CompanyNameAndLastRound,
         activity: Activity,
-        selectedStudentsUpdated: Boolean = true
+        selectedStudentsUpdated: Boolean,
+        updatePlacedField: Boolean,
+        placedCompanyName : String =""
     ) {
-        for (id in studentsList) {
+        if (index == studentsList.size) {
+            when (activity) {
+                is NewCompanyDetailsActivity -> {
+                    if (selectedStudentsUpdated) {
+                        activity.notEligibleStudentsDatabaseSuccess()
+                    } else {
+                        activity.updateCompanyInStudentDatabaseSuccess(studentsList)
+                    }
+                }
+                is AddRoundActivity -> {
+                    if (selectedStudentsUpdated) {
+                        activity.updateNotEligibleStudentsDatabaseSuccess()
+                    } else {
+                        activity.updateEligibleStudentsDatabaseSuccess()
+                    }
+                }
+                is DeclareResultsActivity -> {
+                    if (selectedStudentsUpdated) {
+                        activity.notSelectedStudentsDatabaseUpdatedSuccess()
+                    } else {
+                        activity.selectedStudentsDatabaseUpdatedSuccess()
+                    }
+                }
+            }
+            return
+        }
+
+        if (updatePlacedField) {
             mFireStore.collection(Constants.STUDENTS)
-                .document(id)
+                .document(studentsList[index])
                 .update(
-                    Constants.COMPANY_NAME_AND_LAST_ROUND,
-                    FieldValue.arrayUnion(companyLastRoundObject)
+                    mapOf(
+                        Constants.COMPANY_NAME_AND_LAST_ROUND to FieldValue.arrayUnion(
+                            companyLastRoundObject
+                        ),
+                        Constants.PLACED to 1,
+                        Constants.PLACED_COMPANY_NAME to placedCompanyName
+                    )
                 )
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        companyLastRoundObject.lastRound -= 1
                         mFireStore.collection(Constants.STUDENTS)
-                            .document(id)
+                            .document(studentsList[index])
                             .update(
                                 Constants.COMPANY_NAME_AND_LAST_ROUND,
-                                FieldValue.arrayRemove(companyLastRoundObject)
+                                FieldValue.arrayRemove(previousCompanyLastRoundObject)
                             )
+                            .addOnSuccessListener {
+                                updateCompanyStatusInStudentDatabase(
+                                    index + 1,
+                                    studentsList,
+                                    companyLastRoundObject,
+                                    previousCompanyLastRoundObject,
+                                    activity,
+                                    selectedStudentsUpdated,
+                                    updatePlacedField
+                                )
+                            }
                             .addOnFailureListener { e ->
+                                when (activity) {
+                                    is AddRoundActivity -> {
+                                        activity.hideProgressDialog()
+                                    }
+                                    is NewCompanyDetailsActivity -> {
+                                        activity.hideProgressDialog()
+                                    }
+                                    is DeclareResultsActivity -> {
+                                        activity.hideProgressDialog()
+                                    }
+                                }
                                 Log.e(
                                     activity.javaClass.simpleName,
                                     "Error while updating company in student database.",
@@ -429,7 +486,81 @@ class FirestoreClass {
                     }
                 }
                 .addOnFailureListener { e ->
-                    if (activity is AddRoundActivity) activity.hideProgressDialog()
+                    when (activity) {
+                        is AddRoundActivity -> {
+                            activity.hideProgressDialog()
+                        }
+                        is NewCompanyDetailsActivity -> {
+                            activity.hideProgressDialog()
+                        }
+                        is DeclareResultsActivity -> {
+                            activity.hideProgressDialog()
+                        }
+                    }
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while updating company in student database.",
+                        e
+                    )
+                }
+        } else {
+            mFireStore.collection(Constants.STUDENTS)
+                .document(studentsList[index])
+                .update(
+                    Constants.COMPANY_NAME_AND_LAST_ROUND,
+                    FieldValue.arrayUnion(companyLastRoundObject)
+                )
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        mFireStore.collection(Constants.STUDENTS)
+                            .document(studentsList[index])
+                            .update(
+                                Constants.COMPANY_NAME_AND_LAST_ROUND,
+                                FieldValue.arrayRemove(previousCompanyLastRoundObject)
+                            )
+                            .addOnSuccessListener {
+                                updateCompanyStatusInStudentDatabase(
+                                    index + 1,
+                                    studentsList,
+                                    companyLastRoundObject,
+                                    previousCompanyLastRoundObject,
+                                    activity,
+                                    selectedStudentsUpdated,
+                                    updatePlacedField
+                                )
+                            }
+                            .addOnFailureListener { e ->
+                                when (activity) {
+                                    is AddRoundActivity -> {
+                                        activity.hideProgressDialog()
+                                    }
+                                    is NewCompanyDetailsActivity -> {
+                                        activity.hideProgressDialog()
+                                    }
+                                    is DeclareResultsActivity -> {
+                                        activity.hideProgressDialog()
+                                    }
+                                }
+                                Log.e(
+                                    activity.javaClass.simpleName,
+                                    "Error while updating company in student database.",
+                                    e
+                                )
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    when (activity) {
+                        is AddRoundActivity -> {
+                            activity.hideProgressDialog()
+                        }
+                        is NewCompanyDetailsActivity -> {
+                            activity.hideProgressDialog()
+                        }
+                        is DeclareResultsActivity -> {
+                            activity.hideProgressDialog()
+                        }
+                    }
                     Log.e(
                         activity.javaClass.simpleName,
                         "Error while updating company in student database.",
@@ -437,28 +568,12 @@ class FirestoreClass {
                     )
                 }
         }
-        when (activity) {
-            is NewCompanyDetailsActivity -> {
-                activity.updateCompanyInStudentDatabaseSuccess(studentsList)
-            }
-            is AddRoundActivity -> {
-                activity.updateStudentsDatabaseSuccess()
-            }
-            is DeclareResultsActivity -> {
-                if (selectedStudentsUpdated) {
-                    activity.notSelectedStudentsDatabaseUpdated()
-                } else {
-                    activity.selectedStudentsDatabaseUpdated()
-                }
-            }
-        }
 
     }
 
     fun getSpecificCompaniesDetailsFromDatabase(
         companyNames: ArrayList<String>,
         collegeCode: String,
-        roundsOver: Int,
         activity: MainActivity
     ) {
         if (companyNames.size == 0) {
@@ -469,7 +584,6 @@ class FirestoreClass {
             .document(collegeCode)
             .collection(Constants.COMPANIES)
             .whereIn(Constants.NAME, companyNames)
-            .whereEqualTo(Constants.ROUNDS_OVER, roundsOver)
             .get()
             .addOnSuccessListener { companyDocuments ->
                 val companyObjects: ArrayList<Company> = ArrayList()
@@ -505,21 +619,21 @@ class FirestoreClass {
                     val companyObject = companyDocument.toObject(Company::class.java)
                     companyObjects.add(companyObject)
                 }
-                when(activity){
-                    is MainActivity ->{
+                when (activity) {
+                    is MainActivity -> {
                         activity.populateRecyclerView(companyObjects)
                     }
-                    is PlacementsRecordsActivity ->{
+                    is PlacementsRecordsActivity -> {
                         activity.populateRecyclerView(companyObjects)
                     }
                 }
             }
             .addOnFailureListener { e ->
-                when(activity){
-                    is MainActivity ->{
+                when (activity) {
+                    is MainActivity -> {
                         activity.hideProgressDialog()
                     }
-                    is PlacementsRecordsActivity ->{
+                    is PlacementsRecordsActivity -> {
                         activity.hideProgressDialog()
                     }
                 }
@@ -547,78 +661,6 @@ class FirestoreClass {
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while fetching companies from database.",
-                    e
-                )
-            }
-    }
-
-    fun addRoundInCompany(
-        round: Round,
-        companyName: String,
-        collegeCode: String,
-        activity: Activity
-    ) {
-        mFireStore.collection(Constants.COLLEGES)
-            .document(collegeCode)
-            .collection(Constants.COMPANIES)
-            .document(companyName)
-            .update(Constants.ROUNDS_LIST, FieldValue.arrayUnion(round))
-            .addOnSuccessListener {
-                when (activity) {
-                    is AddRoundActivity -> {
-                        activity.addRoundInCompanySuccess()
-                    }
-                    is DeclareResultsActivity -> {
-                        round.selectedStudents.clear()
-                        round.isOver = 0
-                        deleteRoundFromCompany(round, companyName, collegeCode, activity)
-                    }
-                }
-            }
-            .addOnFailureListener { e ->
-                when (activity) {
-                    is AddRoundActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                    is DeclareResultsActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                }
-                Log.e(
-                    activity.javaClass.simpleName,
-                    "Error while adding new round",
-                    e
-                )
-            }
-    }
-
-    private fun deleteRoundFromCompany(
-        round: Round,
-        companyName: String,
-        collegeCode: String,
-        activity: Activity
-    ) {
-        mFireStore.collection(Constants.COLLEGES)
-            .document(collegeCode)
-            .collection(Constants.COMPANIES)
-            .document(companyName)
-            .update(Constants.ROUNDS_LIST, FieldValue.arrayRemove(round))
-            .addOnSuccessListener {
-                when (activity) {
-                    is DeclareResultsActivity -> {
-                        activity.companyDatabaseUpdated()
-                    }
-                }
-            }
-            .addOnFailureListener { e ->
-                when (activity) {
-                    is DeclareResultsActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                }
-                Log.e(
-                    activity.javaClass.simpleName,
-                    "Error while deleting round",
                     e
                 )
             }
@@ -668,6 +710,23 @@ class FirestoreClass {
     }
 
     fun getStudentsFromIds(eligibleStudentsIds: ArrayList<String>, activity: Activity) {
+        if(eligibleStudentsIds.size == 0 ){
+            when (activity) {
+                is AddRoundActivity -> {
+                    activity.getStudentsFromIdsSuccess(ArrayList())
+                }
+                is ViewResultsActivity -> {
+                    activity.setUpUI(ArrayList())
+                }
+                is DeclareResultsActivity -> {
+                    activity.setUpUI(ArrayList())
+                }
+                is PlacedStudentsActivity -> {
+                    activity.setUpUI(ArrayList())
+                }
+            }
+            return
+        }
         mFireStore.collection(Constants.STUDENTS)
             .whereIn(Constants.ID, eligibleStudentsIds)
             .get()
@@ -686,7 +745,7 @@ class FirestoreClass {
                     is DeclareResultsActivity -> {
                         activity.setUpUI(studentsList)
                     }
-                    is PlacedStudentsActivity ->{
+                    is PlacedStudentsActivity -> {
                         activity.setUpUI(studentsList)
                     }
                 }
@@ -702,6 +761,9 @@ class FirestoreClass {
                     is DeclareResultsActivity -> {
                         activity.hideProgressDialog()
                     }
+                    is PlacedStudentsActivity -> {
+                        activity.hideProgressDialog()
+                    }
                 }
                 Log.e(
                     activity.javaClass.simpleName,
@@ -712,7 +774,7 @@ class FirestoreClass {
     }
 
     fun updateCompanyInCollegeDatabase(
-        companyHashMap: HashMap<String, Int>,
+        companyHashMap: HashMap<String, Any>,
         companyName: String,
         collegeCode: String,
         activity: Activity
@@ -723,14 +785,20 @@ class FirestoreClass {
             .document(companyName)
             .set(companyHashMap, SetOptions.merge())
             .addOnSuccessListener {
-                when(activity){
-                    is DeclareResultsActivity ->{
-                        activity.companyUpdatedInCollegeDatabaseSuccess()
+                when (activity) {
+                    is AddRoundActivity -> {
+                        activity.updateCompanyDatabaseSuccess()
+                    }
+                    is DeclareResultsActivity -> {
+                        activity.companyDatabaseUpdatedSuccess()
                     }
                 }
             }
             .addOnFailureListener { e ->
                 when (activity) {
+                    is AddRoundActivity -> {
+                        activity.hideProgressDialog()
+                    }
                     is DeclareResultsActivity -> {
                         activity.hideProgressDialog()
                     }

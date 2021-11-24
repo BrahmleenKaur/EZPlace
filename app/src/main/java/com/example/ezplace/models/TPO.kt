@@ -8,11 +8,9 @@ data class TPO(
     var firstName: String = "",
     var lastName: String = "",
     var email: String ="",
-    var collegeName : String ="",
     var collegeCode: String=""
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
@@ -25,7 +23,6 @@ data class TPO(
         parcel.writeString(firstName)
         parcel.writeString(lastName)
         parcel.writeString(email)
-        parcel.writeString(collegeName)
         parcel.writeString(collegeCode)
     }
 

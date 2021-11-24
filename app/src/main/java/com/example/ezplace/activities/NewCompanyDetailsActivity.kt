@@ -125,8 +125,12 @@ class NewCompanyDetailsActivity : BaseActivity() {
             } catch (e: ParseException) {
                 e.printStackTrace()
             }
+            var name=""
+            for(character in companyName){
+                name += character.uppercaseChar()
+            }
             var company = Company(
-                companyName, cgpaCutOff,
+                name, cgpaCutOff,
                 backLogsAllowed, branchesAllowed, ctcDetails,
                 companyLocation, deadlineLong, jobProfile,
                 ArrayList(), 0
@@ -155,11 +159,16 @@ class NewCompanyDetailsActivity : BaseActivity() {
         }
 
         /** Update the eligible student's database */
-        val companyLastRoundObject = CompanyNameAndLastRound(companyName, 2)
-        FirestoreClass().updateCompanyInStudentDatabase(
+        val companyLastRoundObject = CompanyNameAndLastRound(companyName, 1,1)
+        val previousCompanyLastRoundObject = CompanyNameAndLastRound(company.name, -1,2)
+        FirestoreClass().updateCompanyStatusInStudentDatabase(
+            0,
             eligibleStudentsIds,
             companyLastRoundObject,
-            this
+            previousCompanyLastRoundObject,
+            this,
+            selectedStudentsUpdated = false,
+            updatePlacedField = false
         )
     }
 
@@ -189,14 +198,36 @@ class NewCompanyDetailsActivity : BaseActivity() {
     }
 
     fun getAllStudentsSuccess(students : ArrayList<Student>){
+        Log.i("tag 4","done")
         hideProgressDialog()
+
+        val notEligibleStudentIds = ArrayList<String>()
 
         for(student in students){
             val message = "${company.name}'s Screening round not cleared"
             if(!(eligibleStudentsIds.contains(student.id))){
+                notEligibleStudentIds.add(student.id)
                 SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
             }
         }
+
+        /** Update not eligible student's database */
+        val companyLastRoundObject = CompanyNameAndLastRound(company.name, 1,0)
+        val previousCompanyLastRoundObject = CompanyNameAndLastRound(company.name, -1,2)
+        FirestoreClass().updateCompanyStatusInStudentDatabase(
+            0,
+            notEligibleStudentIds,
+            companyLastRoundObject,
+            previousCompanyLastRoundObject,
+            this,
+            selectedStudentsUpdated = true,
+            updatePlacedField = false
+        )
+    }
+
+    fun notEligibleStudentsDatabaseSuccess(){
+        Log.i("tag 5","done")
+        hideProgressDialog()
         finish()
     }
 
@@ -217,6 +248,14 @@ class NewCompanyDetailsActivity : BaseActivity() {
             }
             TextUtils.isEmpty(cgpaCutOff) -> {
                 showErrorSnackBar(getString(R.string.enter_cgpa_cut_off))
+                false
+            }
+            cgpaCutOff.toFloat() < 0 -> {
+                showErrorSnackBar(getString(R.string.valid_cgpa))
+                false
+            }
+            cgpaCutOff.toFloat() > 10 -> {
+                showErrorSnackBar(getString(R.string.valid_cgpa))
                 false
             }
             rg_backlogs.checkedRadioButtonId == -1 -> {

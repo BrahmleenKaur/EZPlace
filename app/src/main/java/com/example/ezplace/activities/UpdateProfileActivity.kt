@@ -10,6 +10,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import com.example.ezplace.R
 import com.example.ezplace.firebase.FirestoreClass
+import com.example.ezplace.models.Company
 import com.example.ezplace.models.CompanyNameAndLastRound
 import com.example.ezplace.models.Student
 import com.example.ezplace.utils.Constants
@@ -211,23 +212,48 @@ class UpdateProfileActivity : BaseActivity() {
         }
     }
 
-    fun getEligibleCompaniesNamesSuccess(companyNames: ArrayList<String>) {
-        hideProgressDialog()
+    fun getEligibleCompaniesNamesSuccess(companies: ArrayList<Company>) {
 
-        //TODO UPDATE COMPANY DATA (put student in round 0)
+        val companyHashMap = HashMap<String, Any>()
+        for (company in companies) {
+            company.roundsList[0].selectedStudents.add(mStudentDetails.id)
+            companyHashMap[Constants.ROUNDS_LIST] = company.roundsList
+            FirestoreClass().updateCompanyInCollegeDatabase(
+                companyHashMap,
+                company.name,
+                mStudentDetails.collegeCode,
+                this
+            )
+        }
 
         var companyNamesAndLastRounds = ArrayList<CompanyNameAndLastRound>()
-        for (companyName in companyNames) {
+        for (company in companies) {
             var companyNameAndLastRoundObject = CompanyNameAndLastRound()
-            companyNameAndLastRoundObject.companyName = companyName
+            companyNameAndLastRoundObject.companyName = company.name
             companyNameAndLastRoundObject.lastRound = 1
+            companyNameAndLastRoundObject.lastRoundCleared = 1
             companyNamesAndLastRounds.add(companyNameAndLastRoundObject)
         }
         userHashMap[Constants.COMPANY_NAME_AND_LAST_ROUND] = companyNamesAndLastRounds
         mStudentDetails.companiesListAndLastRound = companyNamesAndLastRounds
 
-        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateStudentProfileData(this@UpdateProfileActivity, userHashMap)
+    }
+
+    /**
+     * A function to notify the user profile is updated successfully.
+     */
+    fun profileUpdateSuccess() {
+        hideProgressDialog()
+        setResult(Activity.RESULT_OK)
+        Toast.makeText(this, "Profile updated successfully.", Toast.LENGTH_LONG).show()
+
+        /** Send the student to Main activity */
+        intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(Constants.STUDENT_DETAILS, mStudentDetails)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        this.finish()
     }
 
     /** Function to validate input given by user */
@@ -272,22 +298,6 @@ class UpdateProfileActivity : BaseActivity() {
                 true
             }
         }
-    }
-
-    /**
-     * A function to notify the user profile is updated successfully.
-     */
-    fun profileUpdateSuccess() {
-        hideProgressDialog()
-        setResult(Activity.RESULT_OK)
-        Toast.makeText(this, "Profile updated successfully.", Toast.LENGTH_LONG).show()
-
-        /** Send the student to Main activity */
-        intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(Constants.STUDENT_DETAILS, mStudentDetails)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        this.finish()
     }
 
 }

@@ -11,14 +11,8 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.ezplace.R
-import com.example.ezplace.activities.MainActivity
 import com.example.ezplace.activities.SignInActivity
-import com.example.ezplace.activities.SplashActivity
-import com.example.ezplace.firebase.FirebaseAuthClass
-import com.example.ezplace.firebase.FirestoreClass
 import com.example.ezplace.utils.Constants
-import com.example.ezplace.utils.Constants.FCM_KEY_TITLE
-import com.google.common.collect.ContiguousSet
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -28,7 +22,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val mSharedPreferences =
             this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
-        if(!mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)) return
+        if (!mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)) return
         super.onMessageReceived(remoteMessage)
 
         remoteMessage.data.isNotEmpty().let {
@@ -60,15 +54,21 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     /** Sends notification with given title and message */
     private fun sendNotification(title: String, message: String) {
-        val intent :Intent
-        if (FirebaseAuthClass().getCurrentUserID().isNotEmpty()){
-            intent = Intent(this, SplashActivity::class.java)
-        }
-        else{
-            intent = Intent(this, SignInActivity::class.java)
+        val mSharedPreferences: SharedPreferences =
+            this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
+        var intent: Intent = Intent(this, SignInActivity::class.java)
+
+        if (mSharedPreferences.contains(Constants.STUDENT_EMAIL)) {
+            val email = mSharedPreferences.getString(Constants.STUDENT_EMAIL, "default")
+            val password =
+                mSharedPreferences.getString(Constants.STUDENT_PASSWORD, "default")
+
+            intent.putExtra(Constants.STUDENT_EMAIL, email)
+            intent.putExtra(Constants.STUDENT_PASSWORD, password)
         }
 
-        intent.flags = Intent. FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
 
         val pendingIntent = PendingIntent.getActivity(
             this,

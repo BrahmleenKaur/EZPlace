@@ -60,7 +60,7 @@
     <string name="new_company">New Company</string>
     <string name="company_name">Company Name</string>
     <string name="cgpa_cut_off">CGPA Cut Off</string>
-    <string name="branches_allowed">Branches Allowed</string>
+    <string name="branches_allowed">Branches Allowed :</string>
     <string name="ctc_details">CTC Details :</string>
     <string name="job_profile">Job profile</string>
     <string name="location">Location</string>
@@ -132,6 +132,9 @@
     <string name="placement_records">Placement records</string>
     <string name="refresh">Refresh</string>
     <string name="placed_students">Placed students</string>
+    <string name="already_placed">As you are already placed, you are not moving further in this company\'s process.</string>
+    <string name="you_have_been_placed_here">You have been placed here.</string>
+    <string name="rounds_over">rounds over</string>
 
 
 </resources>

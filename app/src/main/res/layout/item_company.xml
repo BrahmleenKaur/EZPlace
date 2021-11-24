@@ -50,23 +50,6 @@
                 android:padding="@dimen/item_company_padding"
                 android:layout_marginTop="@dimen/item_company_tv_margin_top">
 
-                <TextView
-                    android:id="@+id/tv_item_company_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Date"
-                    android:textSize="@dimen/item_company_date_and_time_text_size" />
-
-                <TextView
-                    android:id="@+id/tv_item_company_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:text="Time"
-                    android:textSize="@dimen/item_company_date_and_time_text_size" />
-
             </LinearLayout>
 
 

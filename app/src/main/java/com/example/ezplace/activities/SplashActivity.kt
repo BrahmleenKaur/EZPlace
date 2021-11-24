@@ -56,7 +56,7 @@ class SplashActivity : BaseActivity() {
 
     /** TPO is auto signed-in successfully */
     fun signInSuccessByTPO(loggedInTPO: TPO) {
-        Toast.makeText(this, "${loggedInTPO.email} signed in successfully.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "${loggedInTPO.firstName} signed in successfully.", Toast.LENGTH_SHORT).show()
 
         /** Send TPO to Main activity */
         intent = Intent(this, MainActivity::class.java)

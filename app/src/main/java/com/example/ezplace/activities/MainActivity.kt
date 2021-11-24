@@ -4,11 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
 import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +20,7 @@ import com.example.ezplace.R
 import com.example.ezplace.adapters.CompanyItemsAdapter
 import com.example.ezplace.firebase.FirestoreClass
 import com.example.ezplace.models.Company
+import com.example.ezplace.models.CompanyNameAndLastRound
 import com.example.ezplace.models.Student
 import com.example.ezplace.models.TPO
 import com.example.ezplace.utils.Constants
@@ -29,6 +34,8 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
     /** Stores if the Floating Action Button is open or closed */
     private var isFABOpen: Boolean = false
@@ -47,10 +54,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     /**The college code to which the student or tpo belongs*/
     lateinit var collegeCode: String
 
-    /** A hashmap to store the last round till
-    which the student has made progress for each company*/
-    private var companyLastRoundHashMap: HashMap<String, Int> = HashMap()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -58,6 +61,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         /** Using shared preference in private mode so that other apps cannot access it */
         mSharedPreferences =
             this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
+
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                refresh()
+            }
 
         setUpNavigationView()
         handleIntent(intent)
@@ -69,8 +77,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             /**Create array of company names to fetch data from database*/
             var companiesList: ArrayList<String> = ArrayList()
             if (isStudent) {
-                for ((companyName, lastRound) in mStudent.companiesListAndLastRound) {
-                    companyLastRoundHashMap[companyName] = lastRound
+                for ((companyName) in mStudent.companiesListAndLastRound) {
                     companiesList.add(companyName)
                 }
             }
@@ -81,7 +88,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     if (isStudent) {
                         FirestoreClass().getSpecificCompaniesDetailsFromDatabase(
                             companyNames = companiesList,
-                            collegeCode = collegeCode, roundsOver = 0, this@MainActivity
+                            collegeCode = collegeCode, this@MainActivity
                         )
                     } else {
                         FirestoreClass().getAllCompaniesDetailsFromDatabase(
@@ -98,7 +105,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     if (isStudent) {
                         FirestoreClass().getSpecificCompaniesDetailsFromDatabase(
                             companyNames = companiesList,
-                            collegeCode = collegeCode, roundsOver = 1, this@MainActivity
+                            collegeCode = collegeCode, this@MainActivity
                         )
                     } else {
                         FirestoreClass().getAllCompaniesDetailsFromDatabase(
@@ -135,7 +142,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            drawer_layout.openDrawer(GravityCompat.START)
+            drawer_layout.
+            openDrawer(GravityCompat.START)
         }
     }
 
@@ -170,7 +178,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
 
         nav_view.setNavigationItemSelectedListener(this)
-        val name ="Hi ${tpo.firstName}"
+        val name = "Hi ${tpo.firstName}"
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text = name
 
 
@@ -186,7 +194,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab_add_new_company.setOnClickListener {
             val intent: Intent = Intent(this, NewCompanyDetailsActivity::class.java)
             intent.putExtra(Constants.COLLEGE_CODE, collegeCode)
-            startActivity(intent)
+            resultLauncher.launch(intent)
             closeFABMenu()
         }
 
@@ -216,7 +224,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun loadCompaniesForTPO() {
-        val roundsOver = if(bottomNavigationView.menu[0].isChecked) 0 else 1
+        Log.i("tag main 2","done")
+        val roundsOver = if (bottomNavigationView.menu[0].isChecked) 0 else 1
         /**Load TPO data to screen from database*/
         showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().getAllCompaniesDetailsFromDatabase(
@@ -240,6 +249,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab_add_new_pr.visibility = View.GONE
         fab_enable_or_disable_update_profile.visibility = View.GONE
 
+        if(mStudent.placed ==1){
+            tv_placed_company_name.visibility = View.VISIBLE
+            val placedMessage = " You have been placed at ${mStudent.placedCompanyName}."
+            tv_placed_company_name.text = placedMessage
+        }
+
         loadCompaniesForStudent()
     }
 
@@ -262,19 +277,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         var companiesList: ArrayList<String> = ArrayList()
 
         for ((companyName, lastRound) in mStudent.companiesListAndLastRound) {
-            companyLastRoundHashMap[companyName] = lastRound
             companiesList.add(companyName)
         }
         showProgressDialog(getString(R.string.please_wait))
 
-        var roundsOver = if(bottomNavigationView.menu[0].isChecked){
-            0
-        } else 1
-
         FirestoreClass().getSpecificCompaniesDetailsFromDatabase(
             companiesList,
             collegeCode,
-            roundsOver,
             this@MainActivity
         )
     }
@@ -291,8 +300,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.placement_records -> {
-                val intent = Intent(this,PlacementsRecordsActivity::class.java)
-                intent.putExtra(Constants.COLLEGE_CODE,collegeCode)
+                val intent = Intent(this, PlacementsRecordsActivity::class.java)
+                intent.putExtra(Constants.COLLEGE_CODE, collegeCode)
                 startActivity(intent)
                 return true
             }
@@ -305,6 +314,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun refresh() {
+        Log.i("tag main 1","done")
         if (isStudent) {
             updateStudentDetails()
         } else {
@@ -348,9 +358,47 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     /** Shows items in recycler view */
     fun populateRecyclerView(companiesList: ArrayList<Company>) {
+        Log.i("tag main 3","done")
         hideProgressDialog()
 
-        if (companiesList.size > 0) {
+        val updatedCompaniesList = ArrayList<Company>()
+        if (isStudent) {
+            for (company in companiesList) {
+                val clearedCompaniesObject =
+                    CompanyNameAndLastRound(company.name, company.roundsList.last().number, 1)
+                val pendingResultsCompaniesObject =
+                    CompanyNameAndLastRound(company.name, company.roundsList.last().number, 2)
+                val isClearedCompany = mStudent.companiesListAndLastRound.contains(
+                    clearedCompaniesObject
+                )
+                val isPendingResultsCompany = mStudent.companiesListAndLastRound.contains(
+                    pendingResultsCompaniesObject
+                )
+                val roundsOver = company.roundsOver == 1
+                if (bottomNavigationView.menu[0].isChecked) {
+
+                    if (!roundsOver && (isClearedCompany || isPendingResultsCompany)) {
+                        updatedCompaniesList.add(company)
+                    }
+                } else {
+                    if (roundsOver || !(isClearedCompany || isPendingResultsCompany)) {
+                        updatedCompaniesList.add(company)
+                    }
+                }
+            }
+        } else {
+            for (company in companiesList) {
+                val roundsOver = company.roundsOver == 1
+                if (bottomNavigationView.menu[0].isChecked) {
+                    if (!roundsOver) updatedCompaniesList.add(company)
+                }
+                else{
+                    if (roundsOver) updatedCompaniesList.add(company)
+                }
+            }
+        }
+
+        if (updatedCompaniesList.size > 0) {
 
             /** Setting up recycler view */
             rv_companies_list.visibility = View.VISIBLE
@@ -359,7 +407,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             rv_companies_list.layoutManager = LinearLayoutManager(this@MainActivity)
             rv_companies_list.setHasFixedSize(true)
 
-            val adapter = CompanyItemsAdapter(this, companiesList)
+            val adapter = CompanyItemsAdapter(this, updatedCompaniesList)
             rv_companies_list.adapter = adapter
 
             /** On click listener for each item of recycler view */
@@ -370,8 +418,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         intent.putExtra(Constants.STUDENT_DETAILS, mStudent)
                     intent.putExtra(Constants.COMPANY_DETAIL, model)
                     intent.putExtra(Constants.COLLEGE_CODE, collegeCode)
-                    startActivity(intent)
-                    refresh()
+                    resultLauncher.launch(intent)
                 }
             })
         } else {
@@ -491,8 +538,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 intent.putExtra(Constants.PR_PASSWORD, password)
                 startActivity(intent)
                 finish()
-            }
-            else sendToIntroActivity()
+            } else sendToIntroActivity()
         } else if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
             mSharedPreferences.edit().remove(Constants.PR_EMAIL).apply()
 
@@ -506,10 +552,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 intent.putExtra(Constants.STUDENT_PASSWORD, password)
                 startActivity(intent)
                 finish()
-            }
-            else sendToIntroActivity()
-        }
-        else sendToIntroActivity()
+            } else sendToIntroActivity()
+        } else sendToIntroActivity()
     }
 
     private fun sendToIntroActivity() {

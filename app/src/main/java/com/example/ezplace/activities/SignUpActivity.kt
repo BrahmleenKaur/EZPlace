@@ -80,7 +80,7 @@ class SignUpActivity : BaseActivity() {
                         Locale.getDefault()
                     ) else it.toString()
                 }
-                tpo.collegeName = collegeName
+                tpo.collegeCode = collegeName
                 tpo.email = email
 
                 val college = College()

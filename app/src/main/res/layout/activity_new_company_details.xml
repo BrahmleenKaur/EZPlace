@@ -130,7 +130,6 @@
                         android:id="@+id/et_job_profile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
                         android:hint="@string/job_profile"
                         android:textSize="@dimen/et_text_size" />
 

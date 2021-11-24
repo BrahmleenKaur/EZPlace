@@ -43,7 +43,6 @@ class AddPrActivity : BaseActivity() {
             PR.lastName = lastName
             PR.email = email
             PR.collegeCode = collegeCode
-            PR.collegeName = collegeCode
             // Sign-In using FirebaseAuth
             FirebaseAuthClass().signUpTPO(PR,password,this)
         }

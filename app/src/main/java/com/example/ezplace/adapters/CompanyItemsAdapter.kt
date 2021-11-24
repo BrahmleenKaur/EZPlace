@@ -49,26 +49,10 @@ open class CompanyItemsAdapter(private val context: Context,
         val company = companiesList[position]
 
         if (holder is MyViewHolder) {
-            val lastRound : Int = company.roundsList.size
-            var title = ""
-            for(character in company.name){
-                title += character.uppercaseChar()
-            }
-            title += " - Round $lastRound"
+            var title=company.name
 
             holder.itemView.tv_item_company_name.text = title
             holder.itemView.tv_item_company_job_profile.text = company.jobProfile
-
-            if(lastRound >=1){
-                val dateString: String =
-                    SimpleDateFormat("MM/dd/yyyy").format(Date(company.roundsList[lastRound-1].date))
-                holder.itemView.tv_item_company_date.text = dateString
-                holder.itemView.tv_item_company_time.text = company.roundsList[lastRound-1].time
-            }
-            else{
-                holder.itemView.tv_item_company_date.text = "DATE"
-                holder.itemView.tv_item_company_time.text = "TIME"
-            }
 
             holder.itemView.setOnClickListener {
 
