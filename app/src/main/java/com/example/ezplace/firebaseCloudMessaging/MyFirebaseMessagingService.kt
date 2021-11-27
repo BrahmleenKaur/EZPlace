@@ -28,8 +28,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.data.isNotEmpty().let {
             val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
             val message = remoteMessage.data[Constants.FCM_KEY_MESSAGE]!!
+            val detailedMessage = remoteMessage.data[Constants.FCM_KEY_DETAILED_MESSAGE]!!
 
-            sendNotification(title, message)
+            sendNotification(title, message, detailedMessage)
         }
 
         remoteMessage.notification.let {
@@ -53,10 +54,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     /** Sends notification with given title and message */
-    private fun sendNotification(title: String, message: String) {
+    private fun sendNotification(title: String, message: String,detailedMessage : String) {
         val mSharedPreferences: SharedPreferences =
             this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
-        var intent: Intent = Intent(this, SignInActivity::class.java)
+        val intent: Intent = Intent(this, SignInActivity::class.java)
 
         if (mSharedPreferences.contains(Constants.STUDENT_EMAIL)) {
             val email = mSharedPreferences.getString(Constants.STUDENT_EMAIL, "default")
@@ -87,6 +88,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .setSound(defaultSoundURI)
             .setContentIntent(pendingIntent)
+            .setGroup(Constants.GROUP_KEY)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(detailedMessage))
 
         val notificationManager = getSystemService(
             Context.NOTIFICATION_SERVICE

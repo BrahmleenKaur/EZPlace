@@ -27,7 +27,7 @@
     <dimen name="authentication_screen_til_marginStartEnd">16dp</dimen>
     <dimen name="et_text_size">16sp</dimen>
     <dimen name="authentication_screen_til_marginTop">20dp</dimen>
-    <dimen name="authentication_screen_marginTop">60dp</dimen>
+    <dimen name="authentication_screen_marginTop">40dp</dimen>
     <dimen name="authentication_screen_marginBottom">60dp</dimen>
     <dimen name="linear_layout_content_padding">16dp</dimen>
     <dimen name="sign_up_screen_btn_marginTop">100dp</dimen>
@@ -109,7 +109,8 @@
     <dimen name="tv_text_size_placed_students">15sp</dimen>
     <dimen name="tv_top_item_margin_round_details">10dp</dimen>
     <dimen name="sign_up_screen_marginTop">25dp</dimen>
-
-    <!-- Round details activity -->
+    <dimen name="rv_rounds_margin_bottom">5dp</dimen>
+    <dimen name="tv_rounds_over_margin_bottom">30dp</dimen>
+    <dimen name="important_fields_text_size">20sp</dimen>
 
 </resources>

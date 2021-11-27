@@ -12,11 +12,10 @@ class IntroActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
-
         fullScreenMode()
         customFont(tv_app_name_intro)
 
-        // Setting up listeners for buttons
+        /** Setting up listeners for buttons */
 
         btn_sign_up_tpo_intro.setOnClickListener {
             introToSignUpIntent(false)
@@ -33,7 +32,7 @@ class IntroActivity : BaseActivity() {
 
     private fun introToSignUpIntent(isStudent: Boolean) {
         intent = Intent(this, SignUpActivity::class.java)
-        // Passing the boolean variable "isStudent" to next activity
+        /** Passing the boolean variable "isStudent" to next activity **/
         intent.putExtra(Constants.IS_STUDENT, isStudent)
         startActivity(intent)
     }

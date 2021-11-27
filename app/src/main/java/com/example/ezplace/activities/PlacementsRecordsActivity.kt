@@ -20,16 +20,13 @@ class PlacementsRecordsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_placements_records)
-
         setupActionBar(toolbar_placements_records)
 
+        /** get college code from intent */
         val extras : Bundle?= intent.extras
         collegeCode = extras!!.getString(Constants.COLLEGE_CODE,"college code")
 
-        setUpUI()
-    }
-
-    private fun setUpUI(){
+        /** Fetch company details from database */
         showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().getAllCompaniesDetailsFromDatabase(collegeCode, roundsOver = 1,this)
     }
@@ -37,14 +34,7 @@ class PlacementsRecordsActivity : BaseActivity() {
     fun populateRecyclerView(companiesList : ArrayList<Company>){
         hideProgressDialog()
 
-        for(company in companiesList){
-            if(company.roundsList.isEmpty() || company.roundsList.last().selectedStudents.isEmpty()){
-                companiesList.remove(company)
-            }
-        }
-
         if (companiesList.size > 0) {
-
             /** Setting up recycler view */
             rv_companies_list_placement_records.visibility = View.VISIBLE
             tv_no_companies_available_placement_records.visibility = View.GONE

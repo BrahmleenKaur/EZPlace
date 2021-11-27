@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".activities.SignUpActivity"
-    app:layout_constraintCircleRadius="10dp">
+    app:layout_constraintCircleRadius="10dp"
+    tools:context=".activities.SignUpActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_sign_up"
@@ -36,13 +36,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
-            android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
+            android:layout_margin="@dimen/table_margin"
             android:gravity="center"
-            android:layout_marginTop="@dimen/sign_up_screen_marginTop"
-            android:text="@string/sign_up_description_text"
-            android:textColor="@color/secondary_text_color"
-            android:textSize="@dimen/authentication_description_text_size" />
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/important_fields"
+            android:textColor="@color/black"
+            android:textSize="@dimen/important_fields_text_size" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -79,7 +79,7 @@
                         android:id="@+id/et_last_name_sign_up"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/last_name"
+                        android:hint="@string/last_name_optional"
                         android:inputType="text"
                         android:textSize="@dimen/et_text_size" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -148,22 +148,22 @@
 
         <View
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_button_rounded_blue"
-            android:foreground="?attr/selectableItemBackground"
             android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
             android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
+            android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"
+            android:background="@drawable/shape_button_rounded_blue"
+            android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
             android:paddingTop="@dimen/btn_paddingTopBottom"
             android:paddingBottom="@dimen/btn_paddingTopBottom"
             android:text="@string/sign_up"
-            android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"
             android:textColor="@android:color/white"
             android:textSize="@dimen/btn_text_size" />
     </LinearLayout>

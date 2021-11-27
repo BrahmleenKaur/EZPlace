@@ -130,6 +130,44 @@ class FirestoreClass {
             }
     }
 
+    /** the email is searched in the tpo database
+     * if found, he/she is signed in, else the user
+     * is a student, so will be sent to loadStudentData function */
+    fun loadStudentOrTPOData(activity: Activity) {
+        mFireStore.collection(Constants.TPO)
+            // The document id to get the Fields of user.
+            .document(FirebaseAuthClass().getCurrentUserID())
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val loggedInTPO: TPO = document.toObject(TPO::class.java)!!
+                    when (activity) {
+                        is SplashActivity -> {
+                            activity.signInSuccessByTPO(loggedInTPO)
+                        }
+                        is SignInActivity -> {
+                            activity.signInSuccessByTPO(loggedInTPO)
+                        }
+                    }
+                } else {
+                    loadStudentData(activity)
+                }
+            }
+            .addOnFailureListener { e ->
+                // Here call a function of base activity for transferring the result to it.
+                when (activity) {
+                    is SignInActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                }
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while getting loggedIn user or admin details",
+                    e
+                )
+            }
+    }
+
     fun loadStudentData(activity: Activity) {
         // Here we pass the collection name from which we wants the data.
         mFireStore.collection(Constants.STUDENTS)
@@ -180,41 +218,8 @@ class FirestoreClass {
             }
     }
 
-    fun loadStudentOrTPOData(activity: Activity) {
-        mFireStore.collection(Constants.TPO)
-            // The document id to get the Fields of user.
-            .document(FirebaseAuthClass().getCurrentUserID())
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val loggedInTPO: TPO = document.toObject(TPO::class.java)!!
-                    when (activity) {
-                        is SplashActivity -> {
-                            activity.signInSuccessByTPO(loggedInTPO)
-                        }
-                        is SignInActivity -> {
-                            activity.signInSuccessByTPO(loggedInTPO)
-                        }
-                    }
-                } else {
-                    loadStudentData(activity)
-                }
-            }
-            .addOnFailureListener { e ->
-                // Here call a function of base activity for transferring the result to it.
-                when (activity) {
-                    is SignInActivity -> {
-                        activity.hideProgressDialog()
-                    }
-                }
-                Log.e(
-                    activity.javaClass.simpleName,
-                    "Error while getting loggedIn user or admin details",
-                    e
-                )
-            }
-    }
-
+    /** fetch companies in which student is eligible.
+     * Used in late registration */
     fun getEligibleCompaniesNamesForOneStudent(student: Student, activity: UpdateProfileActivity) {
         if (student.numberOfBacklogs > 0) {
             mFireStore.collection(Constants.COLLEGES)
@@ -225,7 +230,7 @@ class FirestoreClass {
                 .whereEqualTo(Constants.BACKLOGS_ALLOWED, 1)
                 .get()
                 .addOnSuccessListener { companyDocuments ->
-                    var companies = ArrayList<Company>()
+                    val companies = ArrayList<Company>()
                     for (companyDoc in companyDocuments) {
                         val companyObject = companyDoc.toObject(Company::class.java)
                         if (companyObject.cgpaCutOff >= student.cgpa)
@@ -249,7 +254,7 @@ class FirestoreClass {
                 .whereArrayContains(Constants.BRANCHES_ALLOWED, student.branch)
                 .get()
                 .addOnSuccessListener { companyDocuments ->
-                    var companies = ArrayList<Company>()
+                    val companies = ArrayList<Company>()
                     for (companyDoc in companyDocuments) {
                         val companyObject = companyDoc.toObject(Company::class.java)
                         if (companyObject.cgpaCutOff <= student.cgpa)
@@ -307,7 +312,7 @@ class FirestoreClass {
         collegeCode: String,
         activity: NewCompanyDetailsActivity
     ) {
-        var companyHashMap = HashMap<String, Company>()
+        val companyHashMap = HashMap<String, Company>()
         companyHashMap[company.name] = company
 
         mFireStore.collection(Constants.COLLEGES)
@@ -328,6 +333,7 @@ class FirestoreClass {
             }
     }
 
+    /** Fetch students who meet the company's criteria */
     fun getEligibleStudents(
         company: Company,
         collegeCode: String,
@@ -345,10 +351,10 @@ class FirestoreClass {
                 .whereEqualTo(Constants.NUMBER_OF_BACKLOGS, company.backLogsAllowed)
                 .get()
                 .addOnSuccessListener { studentDocuments ->
-                    var eligibleStudents: ArrayList<Student> = ArrayList()
+                    val eligibleStudents: ArrayList<Student> = ArrayList()
                     for (student in studentDocuments) {
                         // Convert all the document snapshot to the Student object using the data model class.
-                        val studentObject = student.toObject(Student::class.java)!!
+                        val studentObject = student.toObject(Student::class.java)
                         eligibleStudents.add(studentObject)
                     }
                     activity.getEligibleStudentsSuccess(
@@ -375,10 +381,10 @@ class FirestoreClass {
                 .whereGreaterThanOrEqualTo(Constants.CGPA, company.cgpaCutOff)
                 .get()
                 .addOnSuccessListener { studentDocuments ->
-                    var eligibleStudents: ArrayList<Student> = ArrayList()
+                    val eligibleStudents: ArrayList<Student> = ArrayList()
                     for (student in studentDocuments) {
                         // Convert all the document snapshot to the Student object using the data model class.
-                        val studentObject = student.toObject(Student::class.java)!!
+                        val studentObject = student.toObject(Student::class.java)
                         eligibleStudents.add(studentObject)
                     }
                     activity.getEligibleStudentsSuccess(
@@ -397,6 +403,12 @@ class FirestoreClass {
         }
     }
 
+    /** the company status is changes in all the students documents
+     * This is done using recursion, because firestore queries are slower
+     * than for loops, so inconsistency may occur
+     * Therefore, the next function call is made in
+     * the onSuccessListener
+     */
     fun updateCompanyStatusInStudentDatabase(
         index: Int,
         studentsList: ArrayList<String>,
@@ -434,7 +446,12 @@ class FirestoreClass {
             return
         }
 
+        /** update "placed" field or not
+         * This is done to make sure, a student who is already placed
+         * his data does not get overwritten */
         if (updatePlacedField) {
+            /** to update an element in an array, first add new element, then
+             * remove previous element */
             mFireStore.collection(Constants.STUDENTS)
                 .document(studentsList[index])
                 .update(
@@ -645,12 +662,11 @@ class FirestoreClass {
             }
     }
 
-    /** Get college names from the database */
     fun getCollegeNames(activity: UpdateProfileActivity) {
         mFireStore.collection(Constants.COLLEGES)
             .get()
             .addOnSuccessListener { collegeDocuments ->
-                var collegeNames = ArrayList<String>()
+                val collegeNames = ArrayList<String>()
                 for (document in collegeDocuments) {
                     collegeNames.add(document.id)
                 }

@@ -21,15 +21,17 @@ class SignUpActivity : BaseActivity() {
 
     private var isStudent: Boolean = true
     private lateinit var mSharedPreferences: SharedPreferences
-    var email =""
-    var password =""
+    var email = ""
+    var password = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+        fullScreenMode()
+        setupActionBar(toolbar_sign_up)
 
         /** Initialize "isStudent" */
-        var extras: Bundle? = intent.extras
+        val extras: Bundle? = intent.extras
         isStudent = extras!!.getBoolean(Constants.IS_STUDENT)
 
         mSharedPreferences =
@@ -38,9 +40,6 @@ class SignUpActivity : BaseActivity() {
         /** disables collegeName text view for student in layout */
         if (isStudent) til_college_name_sign_up.visibility = View.GONE
         else til_college_name_sign_up.visibility = View.VISIBLE
-
-        fullScreenMode()
-        setupActionBar(toolbar_sign_up)
 
         btn_sign_up.setOnClickListener {
             registerUser()
@@ -52,17 +51,23 @@ class SignUpActivity : BaseActivity() {
         /** Here we get the text from editText and trim the space */
         val firstName: String = et_first_name_sign_up.text.toString().trim { it <= ' ' }
         val lastName: String = et_last_name_sign_up.text.toString().trim { it <= ' ' }
-        email= et_email_sign_up.text.toString().trim { it <= ' ' }
-        password= et_password_sign_up.text.toString().trim { it <= ' ' }
+        email = et_email_sign_up.text.toString().trim { it <= ' ' }
+        password = et_password_sign_up.text.toString().trim { it <= ' ' }
         val confirmPassword: String = et_confirm_password_sign_up.text.toString().trim { it <= ' ' }
         val collegeName: String = et_college_name_sign_up.text.toString().trim { it <= ' ' }
 
-        if (validateForm(firstName, email, password, confirmPassword)) {
-
+        if (validateForm(
+                firstName = firstName,
+                email = email,
+                password = password,
+                confirmPassword = confirmPassword,
+                collegeName
+            )
+        ) {
             if (isStudent) {
                 val student = Student()
-                student.firstName = firstName
-                student.lastName = lastName
+                student.firstName = firstName.capitalize(Locale.getDefault())
+                student.lastName = lastName.capitalize(Locale.getDefault())
                 student.email = email
 
                 // Show the progress dialog.
@@ -70,30 +75,20 @@ class SignUpActivity : BaseActivity() {
                 FirebaseAuthClass().signUpStudent(student, password, this)
             } else {
                 val tpo = TPO()
-                tpo.firstName = firstName.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
-                tpo.lastName = lastName.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
-                }
+                tpo.firstName = firstName.capitalize(Locale.getDefault())
+                tpo.lastName = lastName.capitalize(Locale.getDefault())
                 tpo.collegeCode = collegeName
                 tpo.email = email
 
                 val college = College()
                 college.collegeName = collegeName
 
-                // Show the progress dialog.
+                /** First the college will be registered,
+                 * then the TPO */
                 showProgressDialog(resources.getString(R.string.please_wait))
                 FirestoreClass().registerCollege(college, tpo, password, this)
             }
-
-
         }
-
     }
 
     /**
@@ -103,7 +98,8 @@ class SignUpActivity : BaseActivity() {
         firstName: String,
         email: String,
         password: String,
-        confirmPassword: String
+        confirmPassword: String,
+        collegeName : String
     ): Boolean {
         return when {
             TextUtils.isEmpty(firstName) -> {
@@ -126,6 +122,13 @@ class SignUpActivity : BaseActivity() {
                 showErrorSnackBar(getString(R.string.passwords_not_matching))
                 false
             }
+            TextUtils.isEmpty(collegeName) ->{
+                if(isStudent) true
+                else{
+                    showErrorSnackBar(getString(R.string.enter_college_name))
+                    false
+                }
+            }
             else -> {
                 true
             }
@@ -141,8 +144,8 @@ class SignUpActivity : BaseActivity() {
         hideProgressDialog()
 
         /**Add to sharedPreference */
-        mSharedPreferences.edit().putString(Constants.STUDENT_EMAIL,email).apply()
-        mSharedPreferences.edit().putString(Constants.STUDENT_PASSWORD,password).apply()
+        mSharedPreferences.edit().putString(Constants.STUDENT_EMAIL, email).apply()
+        mSharedPreferences.edit().putString(Constants.STUDENT_PASSWORD, password).apply()
 
         //adding toast
         Toast.makeText(

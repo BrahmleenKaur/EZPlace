@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,20 +24,29 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-
     <TextView
-        android:id="@+id/tv_placed_students"
+        android:id="@+id/tv_congratulations_placed_students"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/about_company_tv_margin_top"
         android:gravity="start"
-        android:textStyle="bold"
-        android:textSize="@dimen/tv_text_size_placed_students"
         android:padding="@dimen/tv_padding_placed_students"
-        android:layout_margin="@dimen/about_company_tv_margin_top"/>
+        android:textSize="@dimen/tv_text_size_placed_students"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_no_student_cleared_placed_students"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="200dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textColor="@color/secondary_text_color" />
 
     <ListView
         android:id="@+id/list_view_placed_students"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

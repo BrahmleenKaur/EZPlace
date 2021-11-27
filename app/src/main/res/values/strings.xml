@@ -22,10 +22,8 @@
     <string name="enter_college_name">Please enter your college name.</string>
     <string name="sign_up">Sign Up</string>
 
-
     <!-- Progress Dialog-->
     <string name="please_wait">Please Wait&#8230;</string>
-
 
     <!-- SignInActivity -->
     <string name="sign_in_description_text">Enter your email id and password to sign in.</string>
@@ -102,6 +100,8 @@
     <string name="disable_update_profile_button">Update profile button for all the students will be disabled.</string>
     <string name="enable_update_profile_button">Update profile button for all the students will be enabled.</string>
     <string name="enable_update_profile_button_fab">Enable  update profile button</string>
+
+    <!--    Add Round activity -->
     <string name="rounds_details">Round details</string>
     <string name="about_company">About company</string>
     <string name="add_round">Add new round</string>
@@ -113,6 +113,8 @@
     <string name="enter_round_date">Please enter round date</string>
     <string name="enter_round_time">Please enter round time</string>
     <string name="enter_round_venue">Please enter venue of round</string>
+
+    <!-- Declare results activity -->
     <string name="cleared">Cleared</string>
     <string name="declare_results">Declare results</string>
     <string name="view_results">View results</string>
@@ -121,7 +123,8 @@
     <string name="roll_number">ROLL NUMBER</string>
     <string name="name">NAME</string>
     <string name="declare_results_text_view">Tap a row to select it.</string>
-    <string name="no_students_selected_from_previous_round">No student cleared the last round</string>
+    <string name="no_students_selected_from_previous_round">No student cleared this round</string>
+
     <string name="valid_cgpa">CGPA should be between 1 and 10</string>
     <string name="passwords_not_matching">Passwords do not match</string>
     <string name="confirm_password">Confirm password</string>
@@ -132,9 +135,12 @@
     <string name="placement_records">Placement records</string>
     <string name="refresh">Refresh</string>
     <string name="placed_students">Placed students</string>
-    <string name="already_placed">As you are already placed, you are not moving further in this company\'s process.</string>
+    <string name="already_placed">As you are already placed, you have not moved further in this company\'s process.</string>
     <string name="you_have_been_placed_here">You have been placed here.</string>
     <string name="rounds_over">rounds over</string>
-
+    <string name="important_fields">All fields other than marked as optional are mandatory.</string>
+    <string name="last_name_optional">Last name (optional)</string>
+    <string name="location_optional">Location (optional)</string>
+    <string name="click_to_see_fab">Click to see different options.</string>
 
 </resources>

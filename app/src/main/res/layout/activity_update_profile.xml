@@ -43,9 +43,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
-                android:layout_marginBottom="@dimen/my_profile_screen_content_marginTopBottom"
                 android:layout_marginTop="@dimen/my_profile_screen_content_marginTopBottom"
                 android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
+                android:layout_marginBottom="@dimen/my_profile_screen_content_marginTopBottom"
                 android:background="@color/white">
 
                 <LinearLayout
@@ -54,6 +54,17 @@
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     android:padding="@dimen/my_profile_screen_content_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/table_margin"
+                        android:gravity="center"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="@string/important_fields"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/important_fields_text_size" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -78,7 +89,7 @@
                             android:id="@+id/et_last_name_update_profile"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/last_name"
+                            android:hint="@string/last_name_optional"
                             android:textSize="@dimen/et_text_size" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -103,9 +114,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/my_profile_name_til_marginTop"
                         android:background="@android:drawable/btn_dropdown"
-                        android:dropDownSelector="@color/light_blue"
                         android:dropDownWidth="match_parent"
-                        android:spinnerMode="dropdown"/>
+                        android:dropDownSelector="@color/light_blue"
+                        android:spinnerMode="dropdown" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -157,12 +168,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
                         android:layout_marginTop="@dimen/my_profile_btn_update_marginTop"
+                        android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
                         android:background="@drawable/shape_button_rounded_blue"
                         android:foreground="?attr/selectableItemBackground"
                         android:gravity="center"
-                        android:layout_marginStart="@dimen/my_profile_screen_content_marginStartEnd"
-                        android:layout_marginEnd="@dimen/my_profile_screen_content_marginStartEnd"
                         android:paddingTop="@dimen/btn_paddingTopBottom"
                         android:paddingBottom="@dimen/btn_paddingTopBottom"
                         android:text="@string/update"

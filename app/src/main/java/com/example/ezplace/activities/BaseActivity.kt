@@ -2,7 +2,6 @@ package com.example.ezplace.activities
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.Intent
 import android.graphics.Typeface
 import android.os.AsyncTask
 import android.os.Build
@@ -18,6 +17,7 @@ import com.example.ezplace.firebase.FirestoreClass
 import com.example.ezplace.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_add_round.*
+import kotlinx.android.synthetic.main.activity_new_company_details.*
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.activity_update_profile.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -101,7 +101,6 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun showAlertDialog(activity: Activity, text: String) {
-
         AlertDialog.Builder(this)
             .setMessage(text)
             .setTitle(getString(R.string.are_you_sure))
@@ -109,31 +108,34 @@ open class BaseActivity : AppCompatActivity() {
                 getString(R.string.yes)
             ) { _, _ ->
                 when (activity) {
-
                     is MainActivity -> {
 
-                        if(text == getString(R.string.sign_out_alert_text)){
+                        if (text == getString(R.string.sign_out_alert_text)) {
                             //Sign-out user
                             if (FirebaseAuthClass().getCurrentUserID().isNotEmpty())
                                 FirebaseAuthClass().signOut()
 
+                            /** clear the information stored in device */
                             activity.clearSharedPreferences()
-                        }
-                        else {
-                            val collegeHashmap = HashMap<String,Int>()
-                            if(text == getString(R.string.disable_update_profile_button)){
+                        } else {
+                            val collegeHashmap = HashMap<String, Int>()
+                            if (text == getString(R.string.disable_update_profile_button)) {
                                 collegeHashmap[Constants.IS_UPDATE_BUTTON_ENABLED] = 0
                                 fab_enable_or_disable_update_profile.setImageResource(R.drawable.ic_unlock)
-                                tv_enable_or_disable_update_profile.text = getString(R.string.enable_update_profile_button_fab)
-                            }
-                            else{
+                                tv_enable_or_disable_update_profile.text =
+                                    getString(R.string.enable_update_profile_button_fab)
+                            } else {
                                 collegeHashmap[Constants.IS_UPDATE_BUTTON_ENABLED] = 1
                                 fab_enable_or_disable_update_profile.setImageResource(R.drawable.ic_lock)
                                 tv_enable_or_disable_update_profile.text =
                                     getString(R.string.disable_update_profile_button_fab)
                             }
                             showProgressDialog(getString(R.string.please_wait))
-                            FirestoreClass().updateCollege(activity.collegeCode,collegeHashmap,activity)
+                            FirestoreClass().updateCollege(
+                                activity.collegeCode,
+                                collegeHashmap,
+                                activity
+                            )
                         }
                     }
                 }
@@ -156,8 +158,9 @@ open class BaseActivity : AppCompatActivity() {
 
     /** Async Task to send notification to eligible students */
     inner class SendNotificationToEligibleStudentsAsyncTask(
+        private val title : String,
         val message: String,
-        val token: String
+        private val token: String
     ) : AsyncTask<Any, Void, String>() {
 
         override fun doInBackground(vararg p0: Any?): String {
@@ -231,11 +234,15 @@ open class BaseActivity : AppCompatActivity() {
                 // Create a data object
                 val dataObject = JSONObject()
                 // pass the title as per requirement
-                dataObject.put(Constants.FCM_KEY_TITLE, message)
+                dataObject.put(Constants.FCM_KEY_TITLE, title)
                 // Here you can pass the message as per requirement
                 dataObject.put(
                     Constants.FCM_KEY_MESSAGE,
                     getString(R.string.tap_to_view_more)
+                )
+                dataObject.put(
+                    Constants.FCM_KEY_DETAILED_MESSAGE,
+                    message
                 )
 
                 // Here add the data object and the user's token in the jsonRequest object.
@@ -314,5 +321,4 @@ open class BaseActivity : AppCompatActivity() {
         }
 
     }
-
 }

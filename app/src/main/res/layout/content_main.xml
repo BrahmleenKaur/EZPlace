@@ -10,22 +10,22 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.MainActivity">
 
-    <TextView
-        android:id="@+id/tv_placed_company_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_margin="10dp"
-        android:visibility="gone"
-        android:layout_marginBottom="10dp"
-        android:textSize="@dimen/tv_declare_results_text_size"
-        android:textStyle="bold|italic"
-        android:textColor="@color/green_dark" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_placed_company_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/green_dark"
+            android:textSize="@dimen/tv_declare_results_text_size"
+            android:textStyle="bold|italic"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_companies_list"
@@ -39,9 +39,9 @@
             android:id="@+id/tv_no_companies_available"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="200dp"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="200dp"
+            android:gravity="center_horizontal"
             android:text="@string/no_companies_available"
             android:textColor="@color/secondary_text_color" />
 
@@ -51,10 +51,10 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:background="@color/grey"
         android:layout_gravity="bottom"
-        app:itemTextColor="@color/custom_bottom_navigation_color"
+        android:background="@color/grey"
         app:itemIconTint="@color/custom_bottom_navigation_color"
-        app:menu="@menu/bottom_nav_menu"/>
+        app:itemTextColor="@color/custom_bottom_navigation_color"
+        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

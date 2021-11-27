@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.GravityCompat
@@ -35,6 +33,9 @@ import kotlin.collections.HashMap
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    /** It is used for doing something after an activity
+     * (which is called from this activity) is finished
+     * It is used to auto refresh the page */
     lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
     /** Stores if the Floating Action Button is open or closed */
@@ -48,7 +49,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mTPO: TPO
 
     /** A SharedPreference object points to a file containing key-value pairs */
-    /** Here it is used to store Firebase Cloud Messaging Token in the device */
+    /** Here it is used to store Firebase Cloud Messaging Token and student's
+     * and pr's login credentials in the device */
     private lateinit var mSharedPreferences: SharedPreferences
 
     /**The college code to which the student or tpo belongs*/
@@ -62,6 +64,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mSharedPreferences =
             this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
 
+        /** refresh when an activity returns in main activity */
         resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 refresh()
@@ -75,7 +78,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         /** Set OnClick listeners for bottom navigation view options */
         bottomNavigationView.setOnItemSelectedListener {
             /**Create array of company names to fetch data from database*/
-            var companiesList: ArrayList<String> = ArrayList()
+            val companiesList: ArrayList<String> = ArrayList()
             if (isStudent) {
                 for ((companyName) in mStudent.companiesListAndLastRound) {
                     companiesList.add(companyName)
@@ -142,8 +145,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            drawer_layout.
-            openDrawer(GravityCompat.START)
+            drawer_layout.openDrawer(GravityCompat.START)
         }
     }
 
@@ -224,9 +226,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun loadCompaniesForTPO() {
-        Log.i("tag main 2","done")
         val roundsOver = if (bottomNavigationView.menu[0].isChecked) 0 else 1
-        /**Load TPO data to screen from database*/
+        /**Load all companies details from database*/
         showProgressDialog(getString(R.string.please_wait))
         FirestoreClass().getAllCompaniesDetailsFromDatabase(
             collegeCode,
@@ -240,8 +241,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         nav_view.menu[1].isVisible = false
 
-        nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text =
-            "Hi ${mStudent.firstName}"
+        val welcomeText = "Hi ${mStudent.firstName}"
+        nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username).text =welcomeText
 
         /**Floating Action Button is only visible to TPO*/
         fab.visibility = View.GONE
@@ -249,7 +250,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab_add_new_pr.visibility = View.GONE
         fab_enable_or_disable_update_profile.visibility = View.GONE
 
-        if(mStudent.placed ==1){
+        /** show where student is placed */
+        if (mStudent.placed == 1) {
             tv_placed_company_name.visibility = View.VISIBLE
             val placedMessage = " You have been placed at ${mStudent.placedCompanyName}."
             tv_placed_company_name.text = placedMessage
@@ -258,23 +260,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         loadCompaniesForStudent()
     }
 
-    private fun updateStudentDetails() {
-        showProgressDialog(getString(R.string.please_wait))
-        FirestoreClass().loadStudentData(this)
-    }
-
-    fun updateStudentDetailsSuccess(student: Student) {
-        mStudent = student
-        hideProgressDialog()
-
-        loadCompaniesForStudent()
-    }
-
     private fun loadCompaniesForStudent() {
 
-        /** To load student's data to screen */
-        // Create array of companyNames to fetch data from database
-        var companiesList: ArrayList<String> = ArrayList()
+        /** Create array of companyNames to fetch data from database */
+        val companiesList: ArrayList<String> = ArrayList()
 
         for ((companyName, lastRound) in mStudent.companiesListAndLastRound) {
             companiesList.add(companyName)
@@ -288,6 +277,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         )
     }
 
+    /** setup toolbar menu */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
 
@@ -297,6 +287,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
+    /** functions of menu items on toolbar */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.placement_records -> {
@@ -314,12 +305,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun refresh() {
-        Log.i("tag main 1","done")
         if (isStudent) {
             updateStudentDetails()
         } else {
             loadCompaniesForTPO()
         }
+    }
+
+    private fun updateStudentDetails() {
+        showProgressDialog(getString(R.string.please_wait))
+        FirestoreClass().loadStudentData(this)
+    }
+
+    fun updateStudentDetailsSuccess(student: Student) {
+        mStudent = student
+        hideProgressDialog()
+        loadCompaniesForStudent()
     }
 
 
@@ -330,6 +331,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab.setImageResource(R.drawable.ic_wrong)
         fab.scaleType = ImageView.ScaleType.FIT_XY
 
+        /** for animation */
         ll_add_new_company.animate().translationY(-resources.getDimension(R.dimen.standard_55))
         ll_add_new_pr.animate().translationY(-resources.getDimension(R.dimen.standard_105))
         ll_enable_or_disable_update_profile.animate()
@@ -347,6 +349,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab.setImageResource(R.drawable.ic_add)
         fab.scaleType = ImageView.ScaleType.FIT_XY
 
+        /** for animation */
         ll_add_new_company.animate().translationY(0F)
         ll_add_new_pr.animate().translationY(0F)
         ll_enable_or_disable_update_profile.animate().translationY(0F)
@@ -358,16 +361,26 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     /** Shows items in recycler view */
     fun populateRecyclerView(companiesList: ArrayList<Company>) {
-        Log.i("tag main 3","done")
         hideProgressDialog()
 
         val updatedCompaniesList = ArrayList<Company>()
         if (isStudent) {
+            /** for student, those companies whose round is
+             * not cleared by him/her will be shown in previous */
             for (company in companiesList) {
                 val clearedCompaniesObject =
-                    CompanyNameAndLastRound(company.name, company.roundsList.last().number, 1)
+                    CompanyNameAndLastRound(
+                        company.name,
+                        lastRound = company.roundsList.last().number,
+                        lastRoundCleared = 1
+                    )
                 val pendingResultsCompaniesObject =
-                    CompanyNameAndLastRound(company.name, company.roundsList.last().number, 2)
+                    CompanyNameAndLastRound(
+                        company.name,
+                        lastRound = company.roundsList.last().number,
+                        lastRoundCleared = 2
+                    )
+
                 val isClearedCompany = mStudent.companiesListAndLastRound.contains(
                     clearedCompaniesObject
                 )
@@ -375,8 +388,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     pendingResultsCompaniesObject
                 )
                 val roundsOver = company.roundsOver == 1
-                if (bottomNavigationView.menu[0].isChecked) {
 
+                /** menu[0] is ongoing, menu[1] is previous */
+                if (bottomNavigationView.menu[0].isChecked) {
                     if (!roundsOver && (isClearedCompany || isPendingResultsCompany)) {
                         updatedCompaniesList.add(company)
                     }
@@ -391,15 +405,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 val roundsOver = company.roundsOver == 1
                 if (bottomNavigationView.menu[0].isChecked) {
                     if (!roundsOver) updatedCompaniesList.add(company)
-                }
-                else{
+                } else {
                     if (roundsOver) updatedCompaniesList.add(company)
                 }
             }
         }
 
         if (updatedCompaniesList.size > 0) {
-
             /** Setting up recycler view */
             rv_companies_list.visibility = View.VISIBLE
             tv_no_companies_available.visibility = View.GONE
@@ -412,11 +424,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             /** On click listener for each item of recycler view */
             adapter.setOnClickListener(object : CompanyItemsAdapter.OnClickListener {
-                override fun onClick(position: Int, model: Company) {
+                override fun onClick(position: Int, company: Company) {
                     val intent = Intent(this@MainActivity, RoundDetailsActivity::class.java)
                     if (isStudent)
                         intent.putExtra(Constants.STUDENT_DETAILS, mStudent)
-                    intent.putExtra(Constants.COMPANY_DETAIL, model)
+                    intent.putExtra(Constants.COMPANY_DETAIL, company)
                     intent.putExtra(Constants.COLLEGE_CODE, collegeCode)
                     resultLauncher.launch(intent)
                 }
@@ -433,7 +445,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun checkFCMToken() {
-
         /** Variable is used get the value either token is updated in the database or not.*/
         val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
 
@@ -476,6 +487,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             R.id.switch_to_pr_account -> {
                 menuItem.isCheckable = false
+                /** If the PR email, password are stored in device then
+                 * sign in him/her directly, else send to sign in page*/
                 if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
                     val email = mSharedPreferences.getString(Constants.PR_EMAIL, "default")
                     val password = mSharedPreferences.getString(Constants.PR_PASSWORD, "default")
@@ -494,6 +507,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             R.id.switch_to_student_account -> {
                 menuItem.isCheckable = false
+                /** If the student email, password are stored in device then
+                 * sign in him/her directly, else send to intro page*/
                 if (mSharedPreferences.contains(Constants.STUDENT_EMAIL)) {
                     val email = mSharedPreferences.getString(Constants.STUDENT_EMAIL, "default")
                     val password =
@@ -512,23 +527,26 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             R.id.nav_sign_out -> {
                 menuItem.isCheckable = false
-                /**Here sign outs the user from firebase in this device.*/
+                /**An alert dialog is shown*/
                 showAlertDialog(this, getString(R.string.sign_out_alert_text))
             }
         }
 
         /** Close the drawer*/
         drawer_layout.closeDrawer(GravityCompat.START)
-
         return true
     }
 
     /** clears the Firebase Cloud Messaging token stored in device */
     fun clearSharedPreferences() {
         if (isStudent) {
+            /** remove fcm token and email*/
             mSharedPreferences.edit().remove(Constants.FCM_TOKEN_UPDATED).apply()
             mSharedPreferences.edit().remove(Constants.STUDENT_EMAIL).apply()
+            mSharedPreferences.edit().remove(Constants.STUDENT_PASSWORD).apply()
 
+            /** if student is signed in with PR account also, then sign
+             *in with PR credentials, else send to intro activity*/
             if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
                 val email = mSharedPreferences.getString(Constants.PR_EMAIL, "default")
                 val password = mSharedPreferences.getString(Constants.PR_PASSWORD, "default")
@@ -539,9 +557,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(intent)
                 finish()
             } else sendToIntroActivity()
-        } else if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
+        }
+        /** the user is a PR */
+        else if (mSharedPreferences.contains(Constants.PR_EMAIL)) {
             mSharedPreferences.edit().remove(Constants.PR_EMAIL).apply()
-
+            mSharedPreferences.edit().remove(Constants.PR_PASSWORD).apply()
+            /** if PR is signed in with student account also, then sign
+             * in with student credentials, else send to intro activity*/
             if (mSharedPreferences.contains(Constants.STUDENT_EMAIL)) {
                 val email = mSharedPreferences.getString(Constants.STUDENT_EMAIL, "default")
                 val password =
@@ -553,17 +575,23 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 startActivity(intent)
                 finish()
             } else sendToIntroActivity()
-        } else sendToIntroActivity()
+        }
+        /** the user is TPO*/
+        else sendToIntroActivity()
     }
 
     private fun sendToIntroActivity() {
-        //SEnd the user to Intro activity after signing out
         val intent = Intent(this, IntroActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }
 
+    /** This is called from firestore class
+     * after updating college detalils.
+     * It is used while enabling or
+     * disabling update profile button.
+     */
     fun updateCollegeSuccess() {
         hideProgressDialog()
     }

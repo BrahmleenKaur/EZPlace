@@ -8,6 +8,7 @@ import android.webkit.MimeTypeMap
 
 object Constants {
 
+    const val GROUP_KEY: String = "EZ_Place_Group_key"
     const val PLACED_COMPANY_NAME: String ="placedCompanyName"
     const val IS_PR: String ="is pr"
     const val STUDENT_EMAIL: String ="student email"
@@ -16,7 +17,6 @@ object Constants {
     const val PR_PASSWORD ="tpo password"
     const val COMPANY: String ="Company"
     const val SECOND_LAST_ROUND: String = "Second last round"
-    const val ROUND_ARRAY = "Round array"
     const val ROUND: String ="round"
     const val SCREENING_ROUND: String= "Screening round"
     const val OVER = "OVER"
@@ -40,22 +40,18 @@ object Constants {
     const val FIRST_NAME: String = "firstName"
     const val LAST_NAME: String = "lastName"
     const val COLLEGE_CODE: String = "collegeCode"
-    const val COLLEGE_NAME = "collegeName"
     const val BRANCH: String = "branch"
     const val CGPA: String = "cgpa"
     const val ROLL_NUMBER ="rollNumber"
     const val BACKLOGS_ALLOWED = "backLogsAllowed"
     const val PLACED ="placed"
-    const val LAST_ROUND ="lastRound"
     const val NAME="name"
-    const val EMAIL ="email"
     const val COMPANY_NAME_AND_LAST_ROUND = "companiesListAndLastRound"
     const val NUMBER_OF_BACKLOGS = "numberOfBacklogs"
     const val ROUNDS_OVER = "roundsOver"
     const val SELECT_COLLEGE_NAME = "Select college name"
     const val IS_UPDATE_BUTTON_ENABLED: String="updateProfileButtonEnabled"
     const val BRANCHES_ALLOWED = "branchesAllowed"
-    const val CGPA_CUT_OFF="cgpaCutOff"
     const val DEADLINE_TO_APPLY="deadlineToApply"
 
     const val STUDENT_DETAILS: String = "studentDetails"
@@ -75,6 +71,7 @@ object Constants {
     const val FCM_KEY_MESSAGE: String = "message"
     const val FCM_KEY_DATA: String = "data"
     const val FCM_KEY_TO: String = "to"
+    const val FCM_KEY_DETAILED_MESSAGE : String = "detailed_message"
     const val POST: String = "POST"
 
     // Branches list

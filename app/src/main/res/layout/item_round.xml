@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/item_company_margin"
-    android:layout_marginEnd="@dimen/item_company_margin"
     android:layout_marginTop="@dimen/item_company_margin"
+    android:layout_marginEnd="@dimen/item_company_margin"
     android:background="?attr/selectableItemBackground"
     android:orientation="vertical">
 
@@ -18,9 +18,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/item_company_content_margin"
             android:orientation="vertical"
-            android:padding="@dimen/item_company_ll_padding"
-            android:layout_margin="@dimen/item_company_content_margin">
+            android:padding="@dimen/item_company_ll_padding">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,27 +34,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="@color/black"
-                    android:text="Aptitude round"
-                    android:textSize="@dimen/item_company_title_size"/>
+                    android:textSize="@dimen/item_company_title_size" />
 
                 <TextView
                     android:id="@+id/tv_item_round_status"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/green_dark"
-                    android:textAllCaps="true"
-                    android:text="cleared"
                     android:gravity="end"
                     android:padding="@dimen/item_company_padding"
-                    android:textSize="@dimen/item_company_title_size"/>
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/ib_edit_round"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:backgroundTint="@color/greyish_blue"-->
-<!--                    android:src="@drawable/ic_edit"/>-->
+                    android:textAllCaps="true"
+                    android:textColor="@color/green_dark"
+                    android:textSize="@dimen/item_company_title_size" />
 
             </LinearLayout>
 
@@ -63,25 +54,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Online"
-                android:padding="@dimen/item_company_padding"
                 android:layout_marginTop="@dimen/item_company_tv_margin_top"
+                android:padding="@dimen/item_company_padding"
                 android:textSize="@dimen/item_company_job_profile_text_size"
                 android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/item_company_tv_margin_top"
                 android:orientation="horizontal"
-                android:padding="@dimen/item_company_padding"
-                android:layout_marginTop="@dimen/item_company_tv_margin_top">
+                android:padding="@dimen/item_company_padding">
 
                 <TextView
                     android:id="@+id/tv_item_round_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Date"
                     android:textSize="@dimen/item_company_date_and_time_text_size" />
 
                 <TextView
@@ -90,7 +79,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="Time"
                     android:textSize="@dimen/item_company_date_and_time_text_size" />
             </LinearLayout>
 
@@ -98,8 +86,8 @@
                 android:id="@+id/cv_declare_results"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/dark_blue"
                 android:layout_marginTop="@dimen/item_company_tv_margin_top"
+                android:backgroundTint="@color/dark_blue"
                 android:foreground="?attr/selectableItemBackground"
                 android:gravity="center"
                 app:cardCornerRadius="@dimen/card_view_corner_radius">
@@ -110,9 +98,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="@dimen/item_round_btn_padding"
-                    android:textColor="@color/white"
                     android:text="@string/declare_results"
-                    android:textSize="@dimen/item_round_btn_text_size"/>
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/item_round_btn_text_size" />
             </androidx.cardview.widget.CardView>
 
 

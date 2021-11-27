@@ -30,7 +30,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class NewCompanyDetailsActivity : BaseActivity() {
 
     lateinit var collegeCode: String
@@ -41,8 +40,7 @@ class NewCompanyDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.ezplace.R.layout.activity_new_company_details)
-
+        setContentView(R.layout.activity_new_company_details)
         setupActionBar(toolbar_new_company)
 
         /** Initialize college Code passed from previous activity i.e. Main activity */
@@ -51,6 +49,7 @@ class NewCompanyDetailsActivity : BaseActivity() {
 
         addBranchesCheckboxesInLayout()
 
+        /** for date picker dialog */
         val date =
             OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                 myCalendar.set(Calendar.YEAR, year)
@@ -59,8 +58,10 @@ class NewCompanyDetailsActivity : BaseActivity() {
                 et_deadline_to_apply.setText(dateLongToString(myCalendar))
             }
 
+        /** when user clicks on editText view,
+         * then datepicker dialog should open */
         et_deadline_to_apply.setOnClickListener {
-            var myDatePicker = DatePickerDialog(
+            val myDatePicker = DatePickerDialog(
                 this@NewCompanyDetailsActivity, date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)
@@ -96,12 +97,12 @@ class NewCompanyDetailsActivity : BaseActivity() {
         val deadlineToApply: String = et_deadline_to_apply.text.toString().trim { it <= ' ' }
         val backLogsAllowed: Int = if (rb_backlogs_allowed.isSelected) 1 else 0
 
-        var branchesAllowed: ArrayList<String> = ArrayList<String>()
+        val branchesAllowed: ArrayList<String> = ArrayList<String>()
 
+        /** create list of branches which are checked by user */
         for (i in 0 until ll_check_boxes.childCount) {
             val checkBox: CheckBox = ll_check_boxes.getChildAt(i) as CheckBox
             if (checkBox.isChecked) {
-                Log.i("branch", checkBox.text.toString())
                 branchesAllowed.add(checkBox.text.toString())
             }
         }
@@ -112,7 +113,6 @@ class NewCompanyDetailsActivity : BaseActivity() {
                 branchesAllowed,
                 ctcDetails,
                 jobProfile,
-                companyLocation,
                 deadlineToApply
             )
         ) {
@@ -125,11 +125,14 @@ class NewCompanyDetailsActivity : BaseActivity() {
             } catch (e: ParseException) {
                 e.printStackTrace()
             }
+            /** convert company name to upper case */
             var name=""
             for(character in companyName){
-                name += character.uppercaseChar()
+                name += character.toUpperCase()
             }
-            var company = Company(
+
+            /** create company object */
+            val company = Company(
                 name, cgpaCutOff,
                 backLogsAllowed, branchesAllowed, ctcDetails,
                 companyLocation, deadlineLong, jobProfile,
@@ -154,8 +157,9 @@ class NewCompanyDetailsActivity : BaseActivity() {
             val token = student.fcmToken
             val id = student.id
             eligibleStudentsIds.add(id)
-            val message = "$companyName hiring"
-            SendNotificationToEligibleStudentsAsyncTask(message, token).execute()
+            val title = "$companyName hiring"
+            val message = "$companyName's details have been added."
+            SendNotificationToEligibleStudentsAsyncTask(title,message, token).execute()
         }
 
         /** Update the eligible student's database */
@@ -178,13 +182,18 @@ class NewCompanyDetailsActivity : BaseActivity() {
         round.name = Constants.SCREENING_ROUND
         round.number =1
         round.date =System.currentTimeMillis()
-        round.time=SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date());
+        round.time=SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
         round.venue = "online"
         round.isOver=1
         round.selectedStudents=studentIds
 
-        company.roundsList.add(round)
+        /** is no student is shortlisted in the screening
+         * round, then process is over */
+        if(studentIds.isEmpty()){
+            company.roundsOver=1
+        }
 
+        company.roundsList.add(round)
         FirestoreClass().addCompanyInCollege(company, collegeCode, this)
     }
 
@@ -198,16 +207,17 @@ class NewCompanyDetailsActivity : BaseActivity() {
     }
 
     fun getAllStudentsSuccess(students : ArrayList<Student>){
-        Log.i("tag 4","done")
         hideProgressDialog()
 
         val notEligibleStudentIds = ArrayList<String>()
-
         for(student in students){
-            val message = "${company.name}'s Screening round not cleared"
+            val title = "Screening round not cleared"
+            val message = "You have not cleared the screening round of ${company.name}"
+            /** if student is not in eligible students,
+             * then he/she has not cleared the screening round */
             if(!(eligibleStudentsIds.contains(student.id))){
                 notEligibleStudentIds.add(student.id)
-                SendNotificationToEligibleStudentsAsyncTask(message, student.fcmToken).execute()
+                SendNotificationToEligibleStudentsAsyncTask(title,message, student.fcmToken).execute()
             }
         }
 
@@ -226,7 +236,6 @@ class NewCompanyDetailsActivity : BaseActivity() {
     }
 
     fun notEligibleStudentsDatabaseSuccess(){
-        Log.i("tag 5","done")
         hideProgressDialog()
         finish()
     }
@@ -238,7 +247,6 @@ class NewCompanyDetailsActivity : BaseActivity() {
         branchesAllowed: ArrayList<String>,
         ctcDetails: String,
         jobProfile: String,
-        companyLocation: String,
         deadlineToApply: String
     ): Boolean {
         return when {
@@ -272,10 +280,6 @@ class NewCompanyDetailsActivity : BaseActivity() {
             }
             TextUtils.isEmpty(jobProfile) -> {
                 showErrorSnackBar(getString(R.string.enter_job_profile))
-                false
-            }
-            TextUtils.isEmpty(companyLocation) -> {
-                showErrorSnackBar(getString(R.string.enter_company_location))
                 false
             }
             TextUtils.isEmpty(deadlineToApply) -> {

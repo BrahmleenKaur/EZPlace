@@ -19,25 +19,29 @@
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/drawable/table_cell_background_green.xml" value="0.1890625" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/drawable/table_cell_background_header.xml" value="0.1890625" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/drawable/white_border_shape_button_rounded.xml" value="0.26615384615384613" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout-v23/activity_declare_results.xml" value="0.1" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout-v23/activity_round_details.xml" value="0.19375" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout-v23/item_round.xml" value="0.2265625" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout-v23/text_view_table_view_results.xml" value="0.12291666666666666" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_about_company.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_add_pr.xml" value="0.2" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_add_pr.xml" value="0.1" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_add_practivity.xml" value="0.22447916666666667" />
-        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_add_round.xml" value="0.2109375" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_add_round.xml" value="0.1" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_declare_results.xml" value="0.17291666666666666" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_intro.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_main.xml" value="0.11413043478260869" />
-        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_new_company_details.xml" value="0.12360688956433637" />
-        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_placed_students.xml" value="0.24010416666666667" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_new_company_details.xml" value="0.264" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_placed_students.xml" value="0.2" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_placements_records.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_round_details.xml" value="0.152" />
-        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_sign_in.xml" value="0.10916919959473151" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_sign_in.xml" value="0.1" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_sign_up.xml" value="0.2" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_splash.xml" value="0.12360688956433637" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_update_profile.xml" value="0.2" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/activity_view_results.xml" value="0.2" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/app_bar_main.xml" value="0.10916919959473151" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/content_main.xml" value="0.4" />
+        <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/dialog_progress.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/item_company.xml" value="0.11639492753623189" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/item_company_placements_records.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/hp/Desktop/GoogleDrive/MyProjects/EZPlace/app/src/main/res/layout/item_round.xml" value="0.2265625" />

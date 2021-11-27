@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".activities.SignInActivity"
-    app:layout_constraintCircleRadius="10dp">
+    app:layout_constraintCircleRadius="10dp"
+    tools:context=".activities.SignInActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_sign_in_activity"
@@ -27,6 +27,17 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/table_margin"
+        android:gravity="center"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/important_fields"
+        android:textColor="@color/black"
+        android:textSize="@dimen/important_fields_text_size" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,16 +45,6 @@
         android:layout_marginTop="@dimen/authentication_screen_content_marginTop"
         android:layout_marginBottom="@dimen/authentication_screen_marginBottom"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
-            android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
-            android:gravity="center"
-            android:text="@string/sign_in_description_text"
-            android:textColor="@color/secondary_text_color"
-            android:textSize="@dimen/authentication_description_text_size" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -94,8 +95,8 @@
 
         <View
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/btn_sign_in"

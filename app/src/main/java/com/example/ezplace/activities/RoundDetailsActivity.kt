@@ -20,8 +20,7 @@ import kotlinx.android.synthetic.main.activity_round_details.*
 
 class RoundDetailsActivity : BaseActivity() {
 
-    lateinit var resultLauncher: ActivityResultLauncher<Intent>
-
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private lateinit var company: Company
     private lateinit var collegeCode: String
     private lateinit var mStudent: Student
@@ -37,6 +36,7 @@ class RoundDetailsActivity : BaseActivity() {
         toolbar_round_details.title = company.name + "$'s rounds"
         setupActionBar(toolbar_round_details)
 
+        /** used to refresh the content when any activity return to this activity */
         resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 refresh()
@@ -44,8 +44,8 @@ class RoundDetailsActivity : BaseActivity() {
 
         onCreateOptionsMenu(toolbar_round_details.menu)
         handleIntent(intent)
-
-        if(company.roundsOver==1){
+        /** show in UI that rounds are over */
+        if (company.roundsOver == 1) {
             tv_rounds_over.visibility = View.VISIBLE
         }
 
@@ -56,6 +56,7 @@ class RoundDetailsActivity : BaseActivity() {
         }
     }
 
+    /** set up toolbar menu */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menu.clear()
         menuInflater.inflate(R.menu.options_menu, menu)
@@ -93,6 +94,7 @@ class RoundDetailsActivity : BaseActivity() {
         addItem.icon = ContextCompat.getDrawable(this, R.drawable.ic_add)
     }
 
+    /** functions of each item of menu*/
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.add -> {
@@ -142,6 +144,7 @@ class RoundDetailsActivity : BaseActivity() {
         }
     }
 
+    /** show content to TPO */
     private fun setForTpo() {
         val roundsList: ArrayList<Round> = company.roundsList
 
@@ -167,18 +170,27 @@ class RoundDetailsActivity : BaseActivity() {
         }
     }
 
+    /** show content to student */
     private fun setForStudent() {
-        if (mStudent.placed == 1 ) {
+        /** show the student if he/she is placed in the current company */
+        if (mStudent.placedCompanyName == company.name) {
             tv_alread_placed_round_details.visibility = View.VISIBLE
-            if(mStudent.placedCompanyName==company.name)
-                tv_alread_placed_round_details.text=getString(R.string.you_have_been_placed_here)
-
+            tv_alread_placed_round_details.text = getString(R.string.you_have_been_placed_here)
         }
+
+        /** all rounds list */
         val roundsList: ArrayList<Round> = company.roundsList
-        var studentRoundsList: ArrayList<Round> = ArrayList()
+        /** the list which will be shown to the student */
+        val studentRoundsList: ArrayList<Round> = ArrayList()
+        /** last round for which student appeared */
         var lastRoundForCompany = 0
+
+        /** the last round status, 0 , 1 or 2
+         * 0 -> not cleared, 1 -> cleared, 2 -> results pending
+         */
         var lastRoundClearedForThisCompany = 1
 
+        /** set above 2 variables from students details */
         for ((companyName, lastRound, lastRoundCleared) in mStudent.companiesListAndLastRound) {
             if (companyName == company.name) {
                 lastRoundForCompany = lastRound
@@ -192,7 +204,6 @@ class RoundDetailsActivity : BaseActivity() {
         }
 
         if (studentRoundsList.size > 0) {
-
             /** Setting up recycler view */
             rv_rounds_list.visibility = View.VISIBLE
             tv_no_rounds_added.visibility = View.GONE

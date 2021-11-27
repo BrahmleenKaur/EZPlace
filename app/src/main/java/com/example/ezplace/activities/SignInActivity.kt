@@ -26,54 +26,40 @@ class SignInActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
-
+        setupActionBar(toolbar_sign_in_activity)
         fullScreenMode()
 
         mSharedPreferences =
             this.getSharedPreferences(Constants.EZ_PLACE_PREFERENCES, Context.MODE_PRIVATE)
 
-        setupActionBar(toolbar_sign_in_activity)
-
-        if(intent.hasExtra(Constants.IS_PR)){
-            isPr = true
-        }
-        else if(intent.hasExtra(Constants.PR_EMAIL)){
-            isPr = true
-            val extras : Bundle = intent.extras!!
-            email = extras.getString(Constants.PR_EMAIL,"default")
-            password = extras.getString(Constants.PR_PASSWORD,"default")
-            // Sign-In using FirebaseAuth
-            showProgressDialog(getString(R.string.please_wait))
-            FirebaseAuthClass().signIn(email, password,this)
-        }
-        else if(intent.hasExtra(Constants.STUDENT_EMAIL)){
-            val extras : Bundle = intent.extras!!
-            email = extras.getString(Constants.STUDENT_EMAIL,"default")
-            password = extras.getString(Constants.STUDENT_PASSWORD,"default")
-            // Sign-In using FirebaseAuth
-            showProgressDialog(getString(R.string.please_wait))
-            FirebaseAuthClass().signIn(email, password,this)
+        /** check whether the user is coming from main activity
+         * if yes then he/she is student or PR
+         */
+        when{
+            intent.hasExtra(Constants.IS_PR) ->{
+                isPr = true
+            }
+            intent.hasExtra(Constants.PR_EMAIL) ->{
+                isPr = true
+                val extras : Bundle = intent.extras!!
+                email = extras.getString(Constants.PR_EMAIL,"default")
+                password = extras.getString(Constants.PR_PASSWORD,"default")
+                // Sign-In using FirebaseAuth
+                showProgressDialog(getString(R.string.please_wait))
+                FirebaseAuthClass().signIn(email, password,this)
+            }
+            intent.hasExtra(Constants.STUDENT_EMAIL) ->{
+                val extras : Bundle = intent.extras!!
+                email = extras.getString(Constants.STUDENT_EMAIL,"default")
+                password = extras.getString(Constants.STUDENT_PASSWORD,"default")
+                // Sign-In using FirebaseAuth
+                showProgressDialog(getString(R.string.please_wait))
+                FirebaseAuthClass().signIn(email, password,this)
+            }
         }
 
         btn_sign_in.setOnClickListener{
             signInRegisteredUser()
-        }
-    }
-
-    /**
-     * A function for Sign-In using the registered user using the email and password.
-     */
-    private fun signInRegisteredUser() {
-        // Here we get the text from editText and trim the space
-        email = et_email_sign_in.text.toString().trim { it <= ' ' }
-        password = et_password_sign_in.text.toString().trim { it <= ' ' }
-
-        if (validateForm(email, password)) {
-            // Show the progress dialog.
-            showProgressDialog(resources.getString(R.string.please_wait))
-
-            // Sign-In using FirebaseAuth
-            FirebaseAuthClass().signIn(email, password,this)
         }
     }
 
@@ -92,6 +78,23 @@ class SignInActivity : BaseActivity() {
                 false
             }
             else -> true
+        }
+    }
+
+    /**
+     * A function for Sign-In using the registered user using the email and password.
+     */
+    private fun signInRegisteredUser() {
+        // Here we get the text from editText and trim the space
+        email = et_email_sign_in.text.toString().trim { it <= ' ' }
+        password = et_password_sign_in.text.toString().trim { it <= ' ' }
+
+        if (validateForm(email = email, password = password)) {
+            // Show the progress dialog.
+            showProgressDialog(resources.getString(R.string.please_wait))
+
+            // Sign-In using FirebaseAuth
+            FirebaseAuthClass().signIn(email, password,this)
         }
     }
 

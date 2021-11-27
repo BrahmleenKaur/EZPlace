@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.RoundDetailsActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activities.RoundDetailsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_round_details"
@@ -25,74 +25,78 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/tv_alread_placed_round_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/already_placed"
-        android:layout_margin="@dimen/tv_top_item_margin_round_details"
-        android:paddingLeft="5dp"
-        android:gravity="start"
-        android:visibility="gone"
-        android:textSize="@dimen/tv_declare_results_text_size"
-        android:textColor="@color/black"
-        android:paddingRight="5dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_rounds_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/recycler_view_margin_top"
-            android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"
-            android:paddingBottom="@dimen/recycler_view_padding_bottom"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tv_no_rounds_added"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="200dp"
-            android:layout_marginHorizontal="10dp"
-            android:text="@string/no_rounds_added"
-            android:textColor="@color/secondary_text_color" />
-
-        <TextView
-            android:id="@+id/tv_rounds_over"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:visibility="gone"
-            android:layout_gravity="bottom"
-            android:textAllCaps="true"
-            android:textSize="30sp"
-            android:text="@string/rounds_over"
-            android:textColor="@color/dark_blue" />
-
-
-    </LinearLayout>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_alread_placed_round_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/tv_top_item_margin_round_details"
+                    android:gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/tv_declare_results_text_size"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_rounds_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/recycler_view_margin_top"
+                    android:layout_marginBottom="@dimen/rv_rounds_margin_bottom"
+                    android:paddingBottom="@dimen/recycler_view_padding_bottom"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_no_rounds_added"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="200dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/no_rounds_added"
+                    android:textColor="@color/secondary_text_color"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_rounds_over"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/tv_rounds_over_margin_bottom"
+                    android:gravity="center"
+                    android:text="@string/rounds_over"
+                    android:textAllCaps="true"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="30sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_about_company"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            app:borderWidth="0dp"
-            android:layout_marginBottom="@dimen/fab_margin_about_company"
             android:layout_marginEnd="@dimen/fab_margin_about_company"
+            android:layout_marginBottom="@dimen/fab_margin_about_company"
             android:backgroundTint="@color/dark_blue"
+            android:contentDescription="@string/about_company"
             android:src="@drawable/ic_info"
-            app:maxImageSize="30dp"
-            android:contentDescription="@string/about_company" />
+            app:borderWidth="0dp"
+            app:maxImageSize="30dp" />
 
     </FrameLayout>
 

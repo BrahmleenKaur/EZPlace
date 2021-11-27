@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,23 +28,24 @@
         android:id="@+id/cb_declare_results"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/is_this_the_last_round"
         android:layout_gravity="start"
         android:layout_margin="@dimen/table_margin"
-        android:paddingLeft="5dp"
-        android:textSize="@dimen/tv_declare_results_text_size"/>
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/is_this_the_last_round"
+        android:textSize="@dimen/tv_declare_results_text_size" />
 
     <TextView
         android:id="@+id/tv_top_declare_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/declare_results_text_view"
         android:layout_margin="@dimen/table_margin"
-        android:paddingLeft="5dp"
         android:gravity="start"
-        android:textSize="@dimen/tv_declare_results_text_size"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/declare_results_text_view"
         android:textColor="@color/black"
-        android:paddingRight="5dp"/>
+        android:textSize="@dimen/tv_declare_results_text_size" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -55,8 +55,8 @@
             android:id="@+id/table_declare_results"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_margin="@dimen/table_margin"
+            android:layout_marginTop="10dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp">
 
@@ -69,25 +69,25 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
                     android:gravity="center"
-                    android:textColor="@color/black"
                     android:padding="5dp"
-                    android:text="@string/roll_number" />
+                    android:text="@string/roll_number"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_name_table_heading"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
                     android:background="@drawable/table_cell_background_header"
-                    android:padding="5dp"
-                    android:textColor="@color/black"
                     android:gravity="center"
-                    android:text="@string/name" />
+                    android:padding="5dp"
+                    android:text="@string/name"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </TableRow>
 
@@ -97,23 +97,22 @@
 
     <View
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <Button
         android:id="@+id/btn_declare_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_button_rounded_blue"
-        android:foreground="?attr/selectableItemBackground"
         android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+        android:layout_marginTop="@dimen/declare_btn_margin_top_bottom"
         android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
+        android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"
+        android:background="@drawable/shape_button_rounded_blue"
         android:paddingTop="@dimen/btn_paddingTopBottom"
         android:paddingBottom="@dimen/btn_paddingTopBottom"
         android:text="@string/submit"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/btn_text_size"
-        android:layout_marginTop="@dimen/declare_btn_margin_top_bottom"
-        android:layout_marginBottom="@dimen/declare_btn_margin_top_bottom"/>
+        android:textSize="@dimen/btn_text_size" />
 
 </LinearLayout>

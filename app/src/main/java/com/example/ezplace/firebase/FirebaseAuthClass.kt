@@ -57,7 +57,8 @@ class FirebaseAuthClass() {
                     tpo.id = firebaseUser.uid
                     when(activity){
                         is SignUpActivity ->{
-                            // call the registerUser function of FirestoreClass to make an entry in the database.
+                            /**call the registerUser function of FirestoreClass
+                             * to make an entry in the database. */
                             FirestoreClass().registerTPO(activity, tpo)
                         }
                         is AddPrActivity ->{
@@ -96,7 +97,7 @@ class FirebaseAuthClass() {
                         task.exception!!.message,
                         Toast.LENGTH_LONG
                     ).show()
-                    Log.e("signinerror", "${task.exception!!.message}")
+                    Log.e("signInError", "${task.exception!!.message}")
                     activity.hideProgressDialog()
                 }
             }
@@ -118,7 +119,7 @@ class FirebaseAuthClass() {
 
     fun getCurrentUserMailId(): String? {
         auth = Firebase.auth
-        var user = auth.currentUser
+        val user = auth.currentUser
         if(user != null) return user.email
         return ""
     }

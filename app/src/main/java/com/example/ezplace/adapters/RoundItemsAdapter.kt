@@ -66,19 +66,21 @@ open class RoundItemsAdapter(
             val roundDate: Long = round.date
             val roundTime: String = round.time
             val roundVenue: String = round.venue
-
-            holder.itemView.tv_item_round_name.text = roundName
-
             val myFormat = "dd/MM/yyyy"
             val sdf = SimpleDateFormat(myFormat, Locale.US)
+
+            holder.itemView.tv_item_round_name.text = roundName
             holder.itemView.tv_item_round_date.text = sdf.format(roundDate)
             holder.itemView.tv_item_round_time.text = roundTime
             holder.itemView.tv_item_round_venue.text = roundVenue
 
+            /** This is used in the onClick function at last */
             val tagHashMap = HashMap<String, Any>()
             val size = roundsList.size
 
-            // lastClearedRound = -1 means it is tpo, else it is student whose min vale is 0
+            /** lastClearedRound = -1 means it is tpo,
+             * else it is student whose min vale is 0
+             */
             if (lastRoundCleared == -1) {
                 if (round.isOver == 1) {
                     holder.itemView.tv_declare_results.text = Constants.VIEW_RESULTS
@@ -108,6 +110,7 @@ open class RoundItemsAdapter(
                 }
             } else {
                 holder.itemView.cv_declare_results.visibility = View.GONE
+                /** -1 is done bacause position follows 0-indexig */
                 if (position < lastRound - 1) {
                     holder.itemView.tv_item_round_status.text = Constants.CLEARED
                 } else {
@@ -174,26 +177,30 @@ open class RoundItemsAdapter(
     /**
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      */
-    private class MyViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
+    private class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var btnResult = itemView.findViewById(R.id.cv_declare_results) as CardView
         var btnTextView = itemView.findViewById(R.id.tv_declare_results) as TextView
         var context: Context = itemView.context
 
-
-        constructor(itemView: View) : super(itemView) {
+        init {
             btnResult.setOnClickListener(this)
         }
 
+        /** on click event for view/declare results button */
         override fun onClick(view: View?) {
+            /** this is passed from the onBindViewHolder function */
             val tagHashMap = itemView.tag as HashMap<String, Any>
             val round = tagHashMap[Constants.ROUND] as Round
             val company = tagHashMap[Constants.COMPANY] as Company
 
+            /** VIEW results */
             if (btnTextView.text == Constants.VIEW_RESULTS) {
                 val intent = Intent(context, ViewResultsActivity::class.java)
                 intent.putExtra(Constants.ROUND, round)
                 context.startActivity(intent)
-            } else {
+            }
+            /** DECLARE RESULTS */
+            else {
                 val secondLastRound = tagHashMap[Constants.SECOND_LAST_ROUND] as Round
                 val intent = Intent(context, DeclareResultsActivity::class.java)
                 intent.putExtra(Constants.ROUND, round)

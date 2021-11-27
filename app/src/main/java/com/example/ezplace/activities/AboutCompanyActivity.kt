@@ -13,38 +13,41 @@ import java.util.*
 
 class AboutCompanyActivity : BaseActivity() {
 
+    /** object containing company info */
     lateinit var company : Company
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_company)
-
         setupActionBar(toolbar_about_company)
 
+        /** initialise the company object variable here passed from intent */
         company = intent.getParcelableExtra<Company>(Constants.COMPANY_DETAIL)!!
 
         setCompanyDetailsInUI()
     }
 
+    /** Displays the company details in the UI */
     private fun setCompanyDetailsInUI() {
-        tv_cgpa_cut_off.text = company.cgpaCutOff.toString()
+
+        /** get details from company object */
         val backlogs = if(company.backLogsAllowed ==1){
             "Allowed"
         } else{
             "Not allowed"
         }
-        tv_backlogs.text = backlogs
-
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter(this,
             android.R.layout.simple_list_item_1, company.branchesAllowed)
-        lv_branches.adapter = arrayAdapter
-
-        tv_ctc.text = company.ctcDetails
-        tv_location.text = company.location
-        tv_job_profile.text = company.jobProfile
-
         val myFormat = "dd/MM/yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
+
+        /** Set in UI */
+        tv_cgpa_cut_off.text = company.cgpaCutOff.toString()
+        tv_backlogs.text = backlogs
         tv_deadline_top_apply.text = sdf.format(company.deadlineToApply)
+        tv_location.text = company.location
+        tv_job_profile.text = company.jobProfile
+        lv_branches.adapter = arrayAdapter
+        tv_ctc.text = company.ctcDetails
     }
 }

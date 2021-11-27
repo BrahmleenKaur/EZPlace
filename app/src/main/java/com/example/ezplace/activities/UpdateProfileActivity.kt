@@ -1,6 +1,5 @@
 package com.example.ezplace.activities
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +7,7 @@ import android.text.TextUtils
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.example.ezplace.R
 import com.example.ezplace.firebase.FirestoreClass
 import com.example.ezplace.models.Company
@@ -23,7 +23,7 @@ class UpdateProfileActivity : BaseActivity() {
     private lateinit var mStudentDetails: Student
 
     /** Create a hashmap of fields to be updated */
-    val userHashMap = HashMap<String, Any>()
+    private val userHashMap = HashMap<String, Any>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +36,17 @@ class UpdateProfileActivity : BaseActivity() {
         btn_update.setOnClickListener {
             /** Call a function to update user details in the database. */
             updateStudentProfileData()
+        }
+    }
+
+    /** Show branches list in layout */
+    private fun addBranchesRadioButtonsInLayout() {
+        val branchesRadioGroup = rg_branches_update_profile
+
+        for (i in Constants.ALL_BRANCHES.indices) {
+            val radioButton = RadioButton(this)
+            radioButton.text = Constants.ALL_BRANCHES[i]
+            branchesRadioGroup.addView(radioButton)
         }
     }
 
@@ -61,17 +72,6 @@ class UpdateProfileActivity : BaseActivity() {
         FirestoreClass().loadStudentData(this)
     }
 
-    /** Show branches list in layout */
-    private fun addBranchesRadioButtonsInLayout() {
-        val branchesRadioGroup = rg_branches_update_profile
-
-        for (i in Constants.ALL_BRANCHES.indices) {
-            val radioButton = RadioButton(this)
-            radioButton.text = Constants.ALL_BRANCHES[i]
-            branchesRadioGroup.addView(radioButton)
-        }
-    }
-
     /**
      * A function to set the existing details in UI.
      */
@@ -87,8 +87,8 @@ class UpdateProfileActivity : BaseActivity() {
         val collegeNamePosition = dropdownAdapter.getPosition(student.collegeCode)
         dropdown_college_name.setSelection(collegeNamePosition)
 
+        /** Select that branch's radio button which matches student's details*/
         for (i in 0 until rg_branches_update_profile.childCount) {
-
             val radioButton = rg_branches_update_profile.getChildAt(i) as RadioButton
             if (radioButton.text.toString() == student.branch) {
                 rg_branches_update_profile.check(radioButton.id)
@@ -114,20 +114,25 @@ class UpdateProfileActivity : BaseActivity() {
     }
 
     /** College details are fetched successfully */
-    @SuppressLint("UseCompatLoadingForDrawables")
     fun getCollegeSuccess(isUpdateButtonEnabled: Long) {
         hideProgressDialog()
         val one: Long = 1
-        btn_update.isEnabled = isUpdateButtonEnabled == one
-        if (isUpdateButtonEnabled != one) btn_update.background =
-            getDrawable(R.drawable.grey_border_shape_button_rounded)
+        if (isUpdateButtonEnabled != one) {
+            btn_update.background =
+                ContextCompat.getDrawable(this, R.drawable.grey_border_shape_button_rounded)
+
+            /**Tell the student that button is disabled by TPO*/
+            btn_update.setOnClickListener {
+                Toast.makeText(this, "Update button is disabled by the TPO.", Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
     }
 
     /**
      * A function to update the user profile details into the database.
      */
     private fun updateStudentProfileData() {
-
         /** Read the data from layout and trim the space */
         val firstname = et_first_name_update_profile.text.toString().trim { it <= ' ' }
         val lastName = et_last_name_update_profile.text.toString().trim { it <= ' ' }
@@ -147,7 +152,7 @@ class UpdateProfileActivity : BaseActivity() {
                 backlogs
             )
         ) {
-            /** Check if the entered value is same as previous vale */
+            /** Check if the entered value is same as previous value */
             if (firstname != mStudentDetails.firstName) {
                 userHashMap[Constants.FIRST_NAME] = firstname
             }
@@ -175,7 +180,6 @@ class UpdateProfileActivity : BaseActivity() {
 
             /** Update the data in the database. */
             if (userHashMap.size > 0) {
-
                 val isRollNumberEmpty = mStudentDetails.rollNumber.isEmpty()
 
                 /** Set the mStudents global variable */
@@ -212,9 +216,13 @@ class UpdateProfileActivity : BaseActivity() {
         }
     }
 
+    /** companies for a student are loaded successfully
+     * This is called when student has signed up for the first time
+     * so might have missed companies which are already in the database */
     fun getEligibleCompaniesNamesSuccess(companies: ArrayList<Company>) {
-
         val companyHashMap = HashMap<String, Any>()
+
+        /** add the current student's names to the companies' selected students */
         for (company in companies) {
             company.roundsList[0].selectedStudents.add(mStudentDetails.id)
             companyHashMap[Constants.ROUNDS_LIST] = company.roundsList
@@ -226,9 +234,10 @@ class UpdateProfileActivity : BaseActivity() {
             )
         }
 
-        var companyNamesAndLastRounds = ArrayList<CompanyNameAndLastRound>()
+        /** Update student profile */
+        val companyNamesAndLastRounds = ArrayList<CompanyNameAndLastRound>()
         for (company in companies) {
-            var companyNameAndLastRoundObject = CompanyNameAndLastRound()
+            val companyNameAndLastRoundObject = CompanyNameAndLastRound()
             companyNameAndLastRoundObject.companyName = company.name
             companyNameAndLastRoundObject.lastRound = 1
             companyNameAndLastRoundObject.lastRoundCleared = 1
@@ -282,7 +291,7 @@ class UpdateProfileActivity : BaseActivity() {
                 showErrorSnackBar(getString(R.string.enter_cgpa))
                 false
             }
-            cgpa.toFloat() < 0 -> {
+            cgpa.toFloat() < 1 -> {
                 showErrorSnackBar(getString(R.string.valid_cgpa))
                 false
             }

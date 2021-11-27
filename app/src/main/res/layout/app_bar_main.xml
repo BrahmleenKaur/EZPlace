@@ -35,124 +35,122 @@
             android:id="@+id/tv_block_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:alpha="0.9"
             android:background="@color/white"
-            android:visibility="gone"
-            android:alpha="0.9"/>
+            android:visibility="gone" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginBottom="85dp"
             android:layout_marginEnd="@dimen/fab_margin"
-            app:borderWidth="0dp"
+            android:layout_marginBottom="85dp"
             android:backgroundTint="@color/dark_blue"
             android:src="@drawable/ic_add"
-            app:maxImageSize="40dp" />
+            app:borderWidth="0dp"
+            app:maxImageSize="40dp"
+            android:contentDescription="@string/click_to_see_fab" />
 
         <LinearLayout
             android:id="@+id/ll_enable_or_disable_update_profile"
+            style="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="bold"
-            android:layout_marginBottom="85dp"
+            android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/fab_margin"
-            android:textColor="@color/black"
+            android:layout_marginBottom="85dp"
             android:orientation="horizontal"
-            android:layout_gravity="bottom|end">
+            android:textColor="@color/black">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_enable_or_disable_update_profile"
+                style="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="bold"
-                android:textColor="@color/black"
-                android:visibility="gone"
                 android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/tv_fab_margin_end"
-                android:text="@string/disable_update_profile_button_fab"/>
+                android:text="@string/disable_update_profile_button_fab"
+                android:textColor="@color/black"
+                android:visibility="gone" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_enable_or_disable_update_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                app:borderWidth="0dp"
                 android:backgroundTint="@color/light_blue"
                 android:src="@drawable/ic_lock"
-                app:maxImageSize="30dp"
-                />
+                app:borderWidth="0dp"
+                app:maxImageSize="30dp"/>
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_add_new_company"
+            style="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="bold"
-            android:layout_marginBottom="85dp"
+            android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/fab_margin"
-            android:textColor="@color/black"
+            android:layout_marginBottom="85dp"
             android:orientation="horizontal"
-            android:layout_gravity="bottom|end">
+            android:textColor="@color/black">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_add_new_company"
+                style="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="bold"
-                android:textColor="@color/black"
-                android:visibility="gone"
                 android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/tv_fab_margin_end"
-                android:text="@string/add_new_company"/>
+                android:text="@string/add_new_company"
+                android:textColor="@color/black"
+                android:visibility="gone" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_new_company"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                app:borderWidth="0dp"
                 android:backgroundTint="@color/light_blue"
                 android:src="@drawable/ic_add_company"
-                app:maxImageSize="50dp"
-                />
+                app:borderWidth="0dp"
+                app:maxImageSize="50dp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_add_new_pr"
+            style="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="bold"
-            android:layout_marginBottom="85dp"
+            android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/fab_margin"
-            android:textColor="@color/black"
+            android:layout_marginBottom="85dp"
             android:orientation="horizontal"
-            android:layout_gravity="bottom|end">
+            android:textColor="@color/black">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_add_new_pr"
+                style="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="bold"
-                android:visibility="gone"
-                android:textColor="@color/black"
                 android:layout_gravity="center"
                 android:layout_marginEnd="@dimen/tv_fab_margin_end"
-                android:text="@string/add_new_pr"/>
+                android:text="@string/add_new_pr"
+                android:textColor="@color/black"
+                android:visibility="gone" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_new_pr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                app:borderWidth="0dp"
                 android:backgroundTint="@color/light_blue"
-                app:maxImageSize="30dp"
                 android:src="@drawable/ic_add_pr"
-                />
+                app:borderWidth="0dp"
+                app:maxImageSize="30dp" />
 
         </LinearLayout>
 

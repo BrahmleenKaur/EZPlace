@@ -38,7 +38,7 @@ class SplashActivity : BaseActivity() {
         }, 300)
     }
 
-    /** Student is auto signed-in successfully */
+    /** Student is signed-in successfully */
     fun signInSuccessByStudent(loggedInStudent: Student) {
         Toast.makeText(this, "${loggedInStudent.firstName} signed in successfully.", Toast.LENGTH_LONG).show()
 
@@ -54,7 +54,7 @@ class SplashActivity : BaseActivity() {
         this.finish()
     }
 
-    /** TPO is auto signed-in successfully */
+    /** TPO is signed-in successfully */
     fun signInSuccessByTPO(loggedInTPO: TPO) {
         Toast.makeText(this, "${loggedInTPO.firstName} signed in successfully.", Toast.LENGTH_SHORT).show()
 

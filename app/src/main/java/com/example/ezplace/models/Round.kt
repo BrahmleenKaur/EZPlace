@@ -11,16 +11,14 @@ data class Round(
     var time : String ="",
     var venue : String ="",
     var selectedStudents : ArrayList<String> = ArrayList(),
-    var notSelectedStudents : ArrayList<String> = ArrayList(),
     var isOver : Int = 0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
-        parcel.readLong()!!,
+        parcel.readLong(),
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readArrayList(null)!! as ArrayList<String>,
         parcel.readArrayList(null)!! as ArrayList<String>,
         parcel.readInt()
     )
@@ -32,7 +30,6 @@ data class Round(
         parcel.writeString(time)
         parcel.writeString(venue)
         parcel.writeList(selectedStudents)
-        parcel.writeList(notSelectedStudents)
         parcel.writeInt(isOver)
     }
 
