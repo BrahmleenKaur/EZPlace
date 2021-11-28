@@ -1,5 +1,5 @@
 # EZPlace
-Android application which makes the placement process in colleges easy and transparent.
+EZ Place or Easy Place is an android application which makes the placement process in colleges easy and transparent.
 
 ## Some information related to the scope of the project:
 1. In colleges, there are placement cells. TPO(Training and Placement Officer ) is part of the cell. 
